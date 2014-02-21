@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>SJC Device Log</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="../css/bootstrap.min.css" rel="stylesheet">
+		<link href="../css/extra-global.css" rel="stylesheet">
+		<link href="../css/ui-lightness/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
+		<style>
+			.input-mysize { width: 40% } <!-- Makes the search bar the right size -->
+		</style>
+	</head>
+
+	<body>
+		<div style="padding-top:25px;">
+			<button type="button" class="btn btn-primary" onClick="document.location = 'tabs/devices.html'">Back</button>
+		</div>
+		<div style="padding-top:25px">
+	 		<div class="panel panel-primary input-mysize">
+	 			<form role="form" style="padding-top:25px">
+					<div class="form-group input-mysize" style="padding-left:25px">
+						<label for="exampleInputEmail1">Email address</label>
+						<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+					</div>
+					<div class="form-group input-mysize" style="padding-left:25px">
+						<label for="exampleInputPassword1">Password</label>
+						<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+					</div>
+					<div class="checkbox" style="padding-left:45px">
+						<label>
+							<input type="checkbox"> Staff
+						</label>
+					</div>
+					<div class="checkbox" style="padding-left:45px">
+						<label>
+							<input type="checkbox"> Active
+						</label>
+					</div>
+					<div style="padding-left:25px; padding-bottom:25px">
+						<button type="button" class="btn btn-primary">Cancel</button>.
+						<button type="button" class="btn btn-primary">OK</button>
+					</div>
+				</form>	 
+			</div>
+		</div>
+	</body>
+</html>	

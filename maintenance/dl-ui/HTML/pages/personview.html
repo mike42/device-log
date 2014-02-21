@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SJC Device Log</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/ui-lightness/jquery-ui-1.10.3.custom.min.css"
+	rel="stylesheet">
+<style>
+.input-mysize {
+	width: 40%
+} /* Makes the search bar the right size */
+</style>
+</head>
+
+<body>
+	<div class="container jumbotron">
+		<h1>SJC Device Log</h1>
+	</div>
+	<div class="container">
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#people" data-toggle="tab">People</a></li>
+			<li><a href="#overview" data-toggle="tab">Overview</a></li>
+			<li><a href="#Devices" data-toggle="tab">Devices</a></li>
+			<li><a href="#software" data-toggle="tab">Software</a></li>
+			<li><a href="#keys" data-toggle="tab">Keys</a></li>
+		</ul>
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<!-- =============People============= -->
+			<div class="tab-pane active" id="people">
+				
+			</div>
+			<!-- =============Overview============= -->
+			<div class="tab-pane" id="overview">
+				<p>
+					<br>Quick Search:
+				</p>
+				<nav class="navbar navbar input-mysize">
+					<form class="navbar-form navbar-left" role="search">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="">
+						</div>
+						<button type="submit" class="btn btn-default">Submit</button>
+					</form>
+				</nav>
+				<table class="table table-striped">
+					<tr>
+						<th>Device ID</th>
+						<th>Device Type</th>
+						<th>Loan Date</th>
+						<th>Loanee Surname</th>
+						<th>Loanee Firstname</th>
+					</tr>
+					<tr>
+						<td>31251561</td>
+						<td>iPad</td>
+						<td>02/01/1970</td>
+						<td>Johnson</td>
+						<td>Billy</td>
+					</tr>
+					<tr>
+						<td>1863846284</td>
+						<td>MacBook Pro</td>
+						<td>02/01/1970</td>
+						<td>Doe</td>
+						<td>John</td>
+					</tr>
+				</table>
+			</div>
+			<!-- =============Devices============= -->
+			<div class="tab-pane" id="Devices">
+				<p>
+					<br>Quick Search:
+				</p>
+				<nav class="navbar navbar input-mysize">
+					<form class="navbar-form navbar-left" role="search">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="">
+						</div>
+						<button type="submit" class="btn btn-default">Submit</button>
+					</form>
+				</nav>
+				<table class="table table-striped">
+					<tr>
+						<th>Device ID</th>
+						<th>Spare</th>
+						<th>Damaged</th>
+						<th>Device Serial</th>
+						<th>MAC Eth0</th>
+						<th>MAC Wlan0</th>
+						<th>Owner Code</th>
+						<th>Device Status</th>
+						<th>Bought</th>
+						<th>Type</th>
+					</tr>
+					<tr>
+						<td>13574862</td>
+						<th>N</th>
+						<th>Y</th>
+						<td>S18561846148642aa548fd7</td>
+						<td>01-a0-22-b3-0f-gg</td>
+						<td>01-a0-22-b3-0f-gc</td>
+						<th>JBL</th>
+						<th>Out</th>
+						<th>Y</th>
+						<td>Macbook Pro</td>
+					</tr>
+					<tr>
+						<td>13574842</td>
+						<th>N</th>
+						<th>Y</th>
+						<td>S181a568f34e487a52gcfd7</td>
+						<td>01-ad-12-ea-1f-gg</td>
+						<td>01-ad-12-ea-1f-gc</td>
+						<th>JBL</th>
+						<th>Out</th>
+						<th>Y</th>
+						<td>Macbook Pro</td>
+					</tr>
+				</table>
+			</div>
+			<!-- =============Software============= -->
+			<div class="tab-pane" id="software">
+				<p>
+					<br>Quick Search:
+				</p>
+				<nav class="navbar navbar input-mysize">
+					<form class="navbar-form navbar-left" role="search">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="">
+						</div>
+						<button type="submit" class="btn btn-default">Submit</button>
+					</form>
+				</nav>
+				<table class="table table-striped">
+					<tr>
+						<th>App ID</th>
+						<th>Code</th>
+						<th>Type</th>
+						<th>Person</th>
+						<th>Bought</th>
+					</tr>
+					<tr>
+						<td>324</td>
+						<td>as86-dds1-345a-2222</td>
+						<td>Education</td>
+						<td>JBloggs</td>
+						<td>N</td>
+					</tr>
+					<tr>
+						<td>854</td>
+						<td>1123-12da-2xgq-2222</td>
+						<td>Media</td>
+						<td>JDoe</td>
+						<td>Y</td>
+					</tr>
+				</table>
+			</div>
+			<!-- =============Keys============= -->
+			<div class="tab-pane" id="keys">
+				<p>
+					<br>Quick Search:
+				</p>
+				<nav class="navbar navbar input-mysize">
+					<form class="navbar-form navbar-left" role="search">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="">
+						</div>
+						<button type="submit" class="btn btn-default">Submit</button>
+					</form>
+				</nav>
+				<table class="table table-striped">
+					<tr>
+						<th>ID</th>
+						<th>Serial</th>
+						<th>Person</th>
+						<th>Spare</th>
+					</tr>
+					<tr>
+						<td>03</td>
+						<td>1531618431</td>
+						<td>JBL</td>
+						<td>N</td>
+					</tr>
+					<tr>
+						<td>01</td>
+						<td>1123317578</td>
+						<td>JDO</td>
+						<td>N</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery-1.9.1.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+</body>
+
+</html>
