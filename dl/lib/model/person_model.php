@@ -1,11 +1,35 @@
 <?php
 class person_model {
+	/**
+	 * @var int id Person's code, as found on their identification
+	 */
 	private $id;
+
+	/**
+	 * @var string code Identification code, as scanned from ID card
+	 */
 	private $code;
+
+	/**
+	 * @var int is_staff 1 for staff, 0 for non-staff
+	 */
 	private $is_staff;
+
+	/**
+	 * @var int is_active 0 for inactive people, 1 for active
+	 */
 	private $is_active;
+
+	/**
+	 * @var string firstname Person's given name
+	 */
 	private $firstname;
+
+	/**
+	 * @var string surname Person's surname
+	 */
 	private $surname;
+
 	private $model_variables_changed; // Only variables which have been changed
 	private $model_variables_set; // All variables which have been set (initially or with a setter)
 
@@ -16,6 +40,21 @@ class person_model {
 	public $list_key;
 	public $list_key_history;
 	public $list_device_history;
+
+	/**
+	 * Initialise and load related tables
+	 */
+	public static function init() {
+		core::loadClass("database");
+
+		/* Child tables */
+		core::loadClass("device_model");
+		core::loadClass("software_model");
+		core::loadClass("software_history_model");
+		core::loadClass("key_model");
+		core::loadClass("key_history_model");
+		core::loadClass("device_history_model");
+	}
 
 	/**
 	 * Construct new person from field list
@@ -43,6 +82,12 @@ class person_model {
 		}
 
 		$this -> model_variables_changed = array();
+		$this -> list_device = array();
+		$this -> list_software = array();
+		$this -> list_software_history = array();
+		$this -> list_key = array();
+		$this -> list_key_history = array();
+		$this -> list_device_history = array();
 	}
 
 	/**
@@ -68,7 +113,44 @@ class person_model {
 	 * @param string $role The user role to use
 	 */
 	public function to_array_filtered($role = "anon") {
-		// TODO: Insert code for person permission-check
+		if(core::$permission[$role]['person']['read'] === false) {
+			return false;
+		}
+		$values = array();
+		$everything = $this -> to_array();
+		foreach(core::$permission[$role]['person']['read'] as $field) {
+			if(!isset($everything[$field])) {
+				throw new Exception("Check permissions: '$field' is not a real field in person");
+			}
+			$values[$field] = $everything[$field];
+		}
+
+		/* Add filtered versions of everything that's been loaded */
+		$values['device'] = array();
+		$values['software'] = array();
+		$values['software_history'] = array();
+		$values['key'] = array();
+		$values['key_history'] = array();
+		$values['device_history'] = array();
+		foreach($this -> list_device as $device) {
+			$values['device'][] = $device -> to_array_filtered($role);
+		}
+		foreach($this -> list_software as $software) {
+			$values['software'][] = $software -> to_array_filtered($role);
+		}
+		foreach($this -> list_software_history as $software_history) {
+			$values['software_history'][] = $software_history -> to_array_filtered($role);
+		}
+		foreach($this -> list_key as $key) {
+			$values['key'][] = $key -> to_array_filtered($role);
+		}
+		foreach($this -> list_key_history as $key_history) {
+			$values['key_history'][] = $key_history -> to_array_filtered($role);
+		}
+		foreach($this -> list_device_history as $device_history) {
+			$values['device_history'][] = $device_history -> to_array_filtered($role);
+		}
+		return $values;
 	}
 
 	/**
@@ -254,14 +336,17 @@ class person_model {
 
 		/* Compose list of changed fields */
 		$fieldset = array();
+		$everything = $this -> to_array();
+		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
 			$fieldset[] = "$col = :$col";
+			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
 		$sth = database::$dbh -> prepare("UPDATE person SET $fields WHERE id = :id");
-		$sth -> execute($this -> to_array());
+		$sth -> execute($data);
 	}
 
 	/**
@@ -274,16 +359,19 @@ class person_model {
 
 		/* Compose list of set fields */
 		$fieldset = array();
+		$data = array();
+		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
 			$fieldset[] = $col;
 			$fieldset_colon[] = ":$col";
+			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO person ($fields) VALUES ($vals);");
-		$sth -> execute($this -> to_array());
+		$sth -> execute($data);
 	}
 
 	/**
@@ -291,81 +379,100 @@ class person_model {
 	 */
 	public function delete() {
 		$sth = database::$dbh -> prepare("DELETE FROM person WHERE id = :id");
-		$sth -> execute($this -> to_array());
+		$data['id'] = $this -> get_id();
+		$sth -> execute($data);
 	}
 
 	/**
-	 * Get associated rows from device table
+	 * List associated rows from device table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
 	public function populate_list_device($start = 0, $limit = -1) {
+		$person_id = $this -> get_id();
 		$this -> list_device = device_model::list_by_person_id($person_id, $start, $limit);
 	}
 
 	/**
-	 * Get associated rows from software table
+	 * List associated rows from software table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
 	public function populate_list_software($start = 0, $limit = -1) {
+		$person_id = $this -> get_id();
 		$this -> list_software = software_model::list_by_software_person_id($person_id, $start, $limit);
 	}
 
 	/**
-	 * Get associated rows from software_history table
+	 * List associated rows from software_history table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
 	public function populate_list_software_history($start = 0, $limit = -1) {
+		$person_id = $this -> get_id();
 		$this -> list_software_history = software_history_model::list_by_person_id($person_id, $start, $limit);
 	}
 
 	/**
-	 * Get associated rows from key table
+	 * List associated rows from key table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
 	public function populate_list_key($start = 0, $limit = -1) {
+		$person_id = $this -> get_id();
 		$this -> list_key = key_model::list_by_person_id($person_id, $start, $limit);
 	}
 
 	/**
-	 * Get associated rows from key_history table
+	 * List associated rows from key_history table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
 	public function populate_list_key_history($start = 0, $limit = -1) {
+		$person_id = $this -> get_id();
 		$this -> list_key_history = key_history_model::list_by_person_id($person_id, $start, $limit);
 	}
 
 	/**
-	 * Get associated rows from device_history table
+	 * List associated rows from device_history table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
 	public function populate_list_device_history($start = 0, $limit = -1) {
+		$person_id = $this -> get_id();
 		$this -> list_device_history = device_history_model::list_by_person_id($person_id, $start, $limit);
 	}
 
+	/**
+	 * Retrieve by primary key
+	 */
 	public static function get($id) {
 		$sth = database::$dbh -> prepare("SELECT person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM person  WHERE person.id = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
+		if($row === false){
+			return false;
+		}
 		$assoc = self::row_to_assoc($row);
 		return new person_model($assoc);
 	}
 
+	/**
+	 * Retrieve by person_code
+	 */
 	public static function get_by_person_code($code) {
 		$sth = database::$dbh -> prepare("SELECT person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM person  WHERE person.code = :code;");
 		$sth -> execute(array('code' => $code));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
+		if($row === false){
+			return false;
+		}
 		$assoc = self::row_to_assoc($row);
 		return new person_model($assoc);
 	}

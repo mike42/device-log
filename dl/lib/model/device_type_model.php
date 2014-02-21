@@ -1,13 +1,35 @@
 <?php
 class device_type_model {
+	/**
+	 * @var int id ID for this device type
+	 */
 	private $id;
+
+	/**
+	 * @var string name Human-readable device family description
+	 */
 	private $name;
+
+	/**
+	 * @var string model_no Manufacturer model number
+	 */
 	private $model_no;
+
 	private $model_variables_changed; // Only variables which have been changed
 	private $model_variables_set; // All variables which have been set (initially or with a setter)
 
 	/* Child tables */
 	public $list_device;
+
+	/**
+	 * Initialise and load related tables
+	 */
+	public static function init() {
+		core::loadClass("database");
+
+		/* Child tables */
+		core::loadClass("device_model");
+	}
 
 	/**
 	 * Construct new device_type from field list
@@ -26,6 +48,7 @@ class device_type_model {
 		}
 
 		$this -> model_variables_changed = array();
+		$this -> list_device = array();
 	}
 
 	/**
@@ -48,7 +71,24 @@ class device_type_model {
 	 * @param string $role The user role to use
 	 */
 	public function to_array_filtered($role = "anon") {
-		// TODO: Insert code for device_type permission-check
+		if(core::$permission[$role]['device_type']['read'] === false) {
+			return false;
+		}
+		$values = array();
+		$everything = $this -> to_array();
+		foreach(core::$permission[$role]['device_type']['read'] as $field) {
+			if(!isset($everything[$field])) {
+				throw new Exception("Check permissions: '$field' is not a real field in device_type");
+			}
+			$values[$field] = $everything[$field];
+		}
+
+		/* Add filtered versions of everything that's been loaded */
+		$values['device'] = array();
+		foreach($this -> list_device as $device) {
+			$values['device'][] = $device -> to_array_filtered($role);
+		}
+		return $values;
 	}
 
 	/**
@@ -153,14 +193,17 @@ class device_type_model {
 
 		/* Compose list of changed fields */
 		$fieldset = array();
+		$everything = $this -> to_array();
+		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
 			$fieldset[] = "$col = :$col";
+			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
 		$sth = database::$dbh -> prepare("UPDATE device_type SET $fields WHERE id = :id");
-		$sth -> execute($this -> to_array());
+		$sth -> execute($data);
 	}
 
 	/**
@@ -173,16 +216,19 @@ class device_type_model {
 
 		/* Compose list of set fields */
 		$fieldset = array();
+		$data = array();
+		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
 			$fieldset[] = $col;
 			$fieldset_colon[] = ":$col";
+			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO device_type ($fields) VALUES ($vals);");
-		$sth -> execute($this -> to_array());
+		$sth -> execute($data);
 	}
 
 	/**
@@ -190,31 +236,45 @@ class device_type_model {
 	 */
 	public function delete() {
 		$sth = database::$dbh -> prepare("DELETE FROM device_type WHERE id = :id");
-		$sth -> execute($this -> to_array());
+		$data['id'] = $this -> get_id();
+		$sth -> execute($data);
 	}
 
 	/**
-	 * Get associated rows from device table
+	 * List associated rows from device table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
 	public function populate_list_device($start = 0, $limit = -1) {
+		$device_type_id = $this -> get_id();
 		$this -> list_device = device_model::list_by_device_type_id($device_type_id, $start, $limit);
 	}
 
+	/**
+	 * Retrieve by primary key
+	 */
 	public static function get($id) {
 		$sth = database::$dbh -> prepare("SELECT device_type.id, device_type.name, device_type.model_no FROM device_type  WHERE device_type.id = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
+		if($row === false){
+			return false;
+		}
 		$assoc = self::row_to_assoc($row);
 		return new device_type_model($assoc);
 	}
 
+	/**
+	 * Retrieve by name
+	 */
 	public static function get_by_name($name) {
 		$sth = database::$dbh -> prepare("SELECT device_type.id, device_type.name, device_type.model_no FROM device_type  WHERE device_type.name = :name;");
 		$sth -> execute(array('name' => $name));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
+		if($row === false){
+			return false;
+		}
 		$assoc = self::row_to_assoc($row);
 		return new device_type_model($assoc);
 	}

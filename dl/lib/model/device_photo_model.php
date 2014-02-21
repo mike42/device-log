@@ -1,14 +1,38 @@
 <?php
 class device_photo_model {
+	/**
+	 * @var int id ID of the photo
+	 */
 	private $id;
+
+	/**
+	 * @var string checksum ASCII rendering of SHA-256 hash of the file, for storage
+	 */
 	private $checksum;
+
+	/**
+	 * @var string filename Filename at upload, used for labelling only
+	 */
 	private $filename;
+
+	/**
+	 * @var int device_history_id Associated log entry
+	 */
 	private $device_history_id;
+
 	private $model_variables_changed; // Only variables which have been changed
 	private $model_variables_set; // All variables which have been set (initially or with a setter)
 
 	/* Parent tables */
 	public $device_history;
+
+	/**
+	 * Initialise and load related tables
+	 */
+	public static function init() {
+		core::loadClass("database");
+		core::loadClass("device_history_model");
+	}
 
 	/**
 	 * Construct new device_photo from field list
@@ -54,7 +78,19 @@ class device_photo_model {
 	 * @param string $role The user role to use
 	 */
 	public function to_array_filtered($role = "anon") {
-		// TODO: Insert code for device_photo permission-check
+		if(core::$permission[$role]['device_photo']['read'] === false) {
+			return false;
+		}
+		$values = array();
+		$everything = $this -> to_array();
+		foreach(core::$permission[$role]['device_photo']['read'] as $field) {
+			if(!isset($everything[$field])) {
+				throw new Exception("Check permissions: '$field' is not a real field in device_photo");
+			}
+			$values[$field] = $everything[$field];
+		}
+		$values['device_history'] = $this -> device_history -> to_array_filtered($role);
+		return $values;
 	}
 
 	/**
@@ -220,14 +256,17 @@ class device_photo_model {
 
 		/* Compose list of changed fields */
 		$fieldset = array();
+		$everything = $this -> to_array();
+		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
 			$fieldset[] = "$col = :$col";
+			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
 		$sth = database::$dbh -> prepare("UPDATE device_photo SET $fields WHERE id = :id");
-		$sth -> execute($this -> to_array());
+		$sth -> execute($data);
 	}
 
 	/**
@@ -240,16 +279,19 @@ class device_photo_model {
 
 		/* Compose list of set fields */
 		$fieldset = array();
+		$data = array();
+		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
 			$fieldset[] = $col;
 			$fieldset_colon[] = ":$col";
+			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO device_photo ($fields) VALUES ($vals);");
-		$sth -> execute($this -> to_array());
+		$sth -> execute($data);
 	}
 
 	/**
@@ -257,13 +299,20 @@ class device_photo_model {
 	 */
 	public function delete() {
 		$sth = database::$dbh -> prepare("DELETE FROM device_photo WHERE id = :id");
-		$sth -> execute($this -> to_array());
+		$data['id'] = $this -> get_id();
+		$sth -> execute($data);
 	}
 
+	/**
+	 * Retrieve by primary key
+	 */
 	public static function get($id) {
 		$sth = database::$dbh -> prepare("SELECT device_photo.id, device_photo.checksum, device_photo.filename, device_photo.device_history_id, device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_photo JOIN device_history ON device_photo.device_history_id = device_history.id JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE device_photo.id = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
+		if($row === false){
+			return false;
+		}
 		$assoc = self::row_to_assoc($row);
 		return new device_photo_model($assoc);
 	}

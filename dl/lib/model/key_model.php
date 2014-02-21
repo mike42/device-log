@@ -1,11 +1,35 @@
 <?php
 class key_model {
+	/**
+	 * @var int id ID for this key
+	 */
 	private $id;
+
+	/**
+	 * @var string serial Serial number appearing on the key
+	 */
 	private $serial;
+
+	/**
+	 * @var int person_id Person who currently has the key
+	 */
 	private $person_id;
+
+	/**
+	 * @var int is_spare 1 if the key is 'spare', 0 if it is not
+	 */
 	private $is_spare;
+
+	/**
+	 * @var int key_type_id ID of the type of key
+	 */
 	private $key_type_id;
+
+	/**
+	 * @var int key_status_id Current leu status
+	 */
 	private $key_status_id;
+
 	private $model_variables_changed; // Only variables which have been changed
 	private $model_variables_set; // All variables which have been set (initially or with a setter)
 
@@ -16,6 +40,19 @@ class key_model {
 
 	/* Child tables */
 	public $list_key_history;
+
+	/**
+	 * Initialise and load related tables
+	 */
+	public static function init() {
+		core::loadClass("database");
+		core::loadClass("person_model");
+		core::loadClass("key_type_model");
+		core::loadClass("key_status_model");
+
+		/* Child tables */
+		core::loadClass("key_history_model");
+	}
 
 	/**
 	 * Construct new key from field list
@@ -46,6 +83,7 @@ class key_model {
 		$this -> person = new person_model($fields);
 		$this -> key_type = new key_type_model($fields);
 		$this -> key_status = new key_status_model($fields);
+		$this -> list_key_history = array();
 	}
 
 	/**
@@ -71,7 +109,27 @@ class key_model {
 	 * @param string $role The user role to use
 	 */
 	public function to_array_filtered($role = "anon") {
-		// TODO: Insert code for key permission-check
+		if(core::$permission[$role]['key']['read'] === false) {
+			return false;
+		}
+		$values = array();
+		$everything = $this -> to_array();
+		foreach(core::$permission[$role]['key']['read'] as $field) {
+			if(!isset($everything[$field])) {
+				throw new Exception("Check permissions: '$field' is not a real field in key");
+			}
+			$values[$field] = $everything[$field];
+		}
+		$values['person'] = $this -> person -> to_array_filtered($role);
+		$values['key_type'] = $this -> key_type -> to_array_filtered($role);
+		$values['key_status'] = $this -> key_status -> to_array_filtered($role);
+
+		/* Add filtered versions of everything that's been loaded */
+		$values['key_history'] = array();
+		foreach($this -> list_key_history as $key_history) {
+			$values['key_history'][] = $key_history -> to_array_filtered($role);
+		}
+		return $values;
 	}
 
 	/**
@@ -267,14 +325,17 @@ class key_model {
 
 		/* Compose list of changed fields */
 		$fieldset = array();
+		$everything = $this -> to_array();
+		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
 			$fieldset[] = "$col = :$col";
+			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
 		$sth = database::$dbh -> prepare("UPDATE key SET $fields WHERE id = :id");
-		$sth -> execute($this -> to_array());
+		$sth -> execute($data);
 	}
 
 	/**
@@ -287,16 +348,19 @@ class key_model {
 
 		/* Compose list of set fields */
 		$fieldset = array();
+		$data = array();
+		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
 			$fieldset[] = $col;
 			$fieldset_colon[] = ":$col";
+			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO key ($fields) VALUES ($vals);");
-		$sth -> execute($this -> to_array());
+		$sth -> execute($data);
 	}
 
 	/**
@@ -304,23 +368,31 @@ class key_model {
 	 */
 	public function delete() {
 		$sth = database::$dbh -> prepare("DELETE FROM key WHERE id = :id");
-		$sth -> execute($this -> to_array());
+		$data['id'] = $this -> get_id();
+		$sth -> execute($data);
 	}
 
 	/**
-	 * Get associated rows from key_history table
+	 * List associated rows from key_history table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
 	public function populate_list_key_history($start = 0, $limit = -1) {
+		$key_id = $this -> get_id();
 		$this -> list_key_history = key_history_model::list_by_key_id($key_id, $start, $limit);
 	}
 
+	/**
+	 * Retrieve by primary key
+	 */
 	public static function get($id) {
 		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id WHERE key.id = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
+		if($row === false){
+			return false;
+		}
 		$assoc = self::row_to_assoc($row);
 		return new key_model($assoc);
 	}
