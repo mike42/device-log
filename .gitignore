@@ -1,1 +1,8 @@
 dl/site/config.php
+config.php
+
+# Eclipse files
+.settings/*
+.project
+.buildpath
+
