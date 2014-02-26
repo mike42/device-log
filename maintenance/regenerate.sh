@@ -2,6 +2,7 @@
 # Save the config
 echo "Saving"..
 mv ../dl/site ../
+cp ../dl/*.html ../
 rm -Rf ../dl
 
 # Regenerate
@@ -15,3 +16,4 @@ cd ../device-log
 echo "Replacing.."
 mv dl/site dl/site.default
 mv site dl/
+mv *.html dl/
