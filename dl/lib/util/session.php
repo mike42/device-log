@@ -25,11 +25,15 @@ class session {
 	 * @param string $username
 	 * @param string $password
 	 */
-	public static function authenticate($username, $password) {
-		/* TODO: Authenicate against your database here */
-
+	public static function authenticate($login, $password) {
+		core::loadClass('technician_model');
+		$technician = technician_model::get_by_technician_login($login);
+		if(!$technician) {
+			return false;
+		}
+		
 		$_SESSION['username'] = $username;
-		$_SESSION['role'] = 'user';
+		$_SESSION['role'] = 'user';		
 		return true;
 	}
 

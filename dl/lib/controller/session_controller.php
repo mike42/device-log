@@ -16,6 +16,7 @@ class session_controller {
 		if($ok) {
 			return array('success' => 'true', 'username' => $username, 'role' => session::getRole());
 		}
+		sleep(2);
 		return array('error' => 'Login failed', 'code' => '403');
 	}
 	
