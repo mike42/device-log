@@ -83,18 +83,19 @@
         </div>
         <div class="modal-body">
           <div class="btn-group">
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-    Choose type <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" role="menu">
-    <li><a href="#">Person</a></li>
-    <li><a href="#">Device</a></li>
-    <li><a href="#">Software</a></li>
-    <li><a href="#">Key</a></li>
-  </ul>
-<form style="display:none">
-
-</form>
+<select  id="dropDown" class="btn btn-default dropdown-toggle" >
+  <option>Select</option>
+    <option value="addperson">Person</option>
+    <option value="adddevice">Device</option>
+    <option value="addsoftware">Software</option>
+    <option value="addkey">Key</option>
+  </select>
+<div id="addperson" class="show-hide">
+blaahswg rgawg
+</div>
+<div id="adddevice" class="show-hide">
+asdfjkd
+</div>
 </div>
 
         </div>
@@ -109,6 +110,16 @@
 		<script src="../js/bootstrap.min.js"></script>
 		<script src="../js/jquery-1.9.1.js"></script>
 		<script src="../js/bootstrap.min.js"></script>
+		<script type="text/javascript">
+			$('.show-hide').hide();
+			$('#dropDown').change(function () {
+    				$('.show-hide').hide()
+   				 $('#' + this.value).show();
+			});
+		</script>
 	</body>
 
-</html>	
+</html>
+
+        
+
