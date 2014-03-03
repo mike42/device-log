@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="public/css/bootstrap.min.css" rel="stylesheet">
+<link href="public/css/extra-global.css" rel="stylesheet">
+
+<title>Device Log</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row quarter-spacer">
+			<div class="col-sm-6">
+				<!--Heading -->
+				<h1>SJC Device Log</h1>
+			</div>
+			<div class="col-sm-6 half-spacer" style="text-align: right">
+				<button class="btn btn-sm btn-default" id="btnAddNew">
+					<span class="glyphicon glyphicon-plus"></span> Add New
+				</button>
+				<button class="btn btn-sm btn-primary" id="btnLogout">
+					<span class="glyphicon glyphicon-log-out"></span> Log out
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<!-- Tabs list copy/paste/edit name to add more -->
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
+			<li><a href="#people" data-toggle="tab">People</a></li>
+			<li><a href="#devices" data-toggle="tab">Devices</a></li>
+			<li><a href="#software" data-toggle="tab">Software</a></li>
+			<li><a href="#keys" data-toggle="tab">Keys</a></li>
+		</ul>
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<!-- List of people -->
+			<div class="tab-pane active" id="overview">
+			'id', 'is_spare', 'is_damaged', 'sn', 'mac_eth0', 'mac_wlan0', 'is_bought', 'person_id', 'device_status_id', 'device_type_id'
+			<button onClick="foobar();" class="btn btn-default">aaa</button>
+			</div>
+			
+			<div class="tab-pane" id="people">
+				People
+			</div>
+
+			<div class="tab-pane" id="devices">
+				Devices
+			</div>
+
+			<div class="tab-pane" id="software">
+				Software
+			</div>
+
+			<div class="tab-pane" id="keys">
+				Keys
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Add New</h4>
+				</div>
+				<div class="modal-body">
+					<div class="btn-group">
+						<select id="dropDown" class="btn btn-default dropdown-toggle">
+							<option>Select</option>
+							<option value="addperson">Person</option>
+							<option value="adddevice">Device</option>
+							<option value="addsoftware">Software</option>
+							<option value="addkey">Key</option>
+						</select>
+						<div id="addperson" class="show-hide">blaahswg rgawg</div>
+						<div id="adddevice" class="show-hide">asdfjkd</div>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="public/js/jquery-1.10.2.min.js"></script>
+	<script src="public/js/bootstrap.min.js"></script>
+	<script src="public/js/underscore-min.js"></script>
+	<script src="public/js/backbone-min.js"></script>
+	<script src="public/js/dl.js"></script>
+</body>
+</html>

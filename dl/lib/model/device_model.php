@@ -80,6 +80,7 @@ class device_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
+		$this -> id = '';
 		if(isset($fields['device.id'])) {
 			$this -> set_id($fields['device.id']);
 		}
@@ -150,6 +151,7 @@ class device_model {
 		}
 		$values = array();
 		$everything = $this -> to_array();
+		print_r($everything);
 		foreach(core::$permission[$role]['device']['read'] as $field) {
 			if(!isset($everything[$field])) {
 				throw new Exception("Check permissions: '$field' is not a real field in device");
@@ -487,7 +489,7 @@ class device_model {
 	 * Add new device
 	 */
 	public function insert() {
-		if(count($this -> model_variables_changed) == 0) {
+		if(count($this -> model_variables_set) == 0) {
 			throw new Exception("No fields have been set!");
 		}
 

@@ -14,10 +14,11 @@ class device_controller {
 
 		/* Find fields to insert */
 		$fields = array('id', 'is_spare', 'is_damaged', 'sn', 'mac_eth0', 'mac_wlan0', 'is_bought', 'person_id', 'device_status_id', 'device_type_id');
+		$set = json_decode(file_get_contents('php://input'), true, 2);
 		$init = array();
 		foreach($fields as $field) {
-			if(isset($_POST[$field])) {
-				$init["device.$field"] = $_POST[$field];
+			if(isset($set[$field])) {
+				$init["device.$field"] = $set[$field];
 			}
 		}
 		$device = new device_model($init);

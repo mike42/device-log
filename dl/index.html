@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DeviceLog</title>
+<title>Device Log</title>
 <link href="public/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
@@ -21,13 +21,7 @@
 	font-weight: bold;
 }
 
-acht {
-	display: block;
-	background: #f00;
-}
 </style>
-</head>
-
 </head>
 <body>
 	<div class="container">
@@ -51,7 +45,8 @@ acht {
 								placeholder="Password">
 						</div>
 						<button type="submit" class="btn btn-primary" id="loginSubmit">Submit</button>
-						<img id="loginIndicator" src="public/loading.gif" style="display: none"/>
+						<img id="loginIndicator" src="public/loading.gif"
+							style="display: none" />
 					</form>
 				</div>
 			</div>
@@ -66,29 +61,39 @@ acht {
 		$.backstretch("public/bg.jpg");
 		$('#loginUsername').focus();
 
-		$('#loginForm').on('submit', function(event) {
-			event.preventDefault();
-			$("#loginSubmit").prop('disabled', true);
-			$("#loginIndicator").show(100);
-			
-			/* Submit login */
-			var username = $('#loginUsername').val();
-			var password = $('#loginPassword').val();
-			var details = {username: username, password: password};
-			var jqxhr = $.post("api/session/login/", details)
-			.done(function(data) {
-				window.location.href='technician.html';
-			}).fail(function() {
-				$('#loginPassword').focus();
-				$('#loginWarning').show(500);
-				$('#loginPassword').val('');
-			}).always(function() {
-				$('#loginPassword').val('');
-				$("#loginSubmit").prop('disabled', false);
-				$("#loginIndicator").hide();			
-			});
-			return false;
-		});
+		$('#loginForm').on(
+				'submit',
+				function(event) {
+					event.preventDefault();
+
+					/* Submit login */
+					var username = $('#loginUsername').val();
+					var password = $('#loginPassword').val();
+					if(password == '' || username == '') {
+						$('#loginWarning').show(500);
+						return false;
+					}
+					
+					$("#loginSubmit").prop('disabled', true);
+					$("#loginIndicator").show(100);
+					var details = {
+						username : username,
+						password : password
+					};
+					var jqxhr = $.post("api/session/login/", details).done(
+							function(data) {
+								window.location.href = 'technician.html';
+							}).fail(function() {
+						$('#loginPassword').focus();
+						$('#loginWarning').show(500);
+						$('#loginPassword').val('');
+					}).always(function() {
+						$('#loginPassword').val('');
+						$("#loginSubmit").prop('disabled', false);
+						$("#loginIndicator").hide();
+					});
+					return false;
+				});
 
 		$('#loginWarning').on('click', function(event) {
 			$('#loginWarning').hide(500);

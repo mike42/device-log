@@ -1,0 +1,26 @@
+tr:hover {
+      opacity:0.4;
+
+}
+tr:first-child:hover {
+      opacity:1;
+}
+
+object {
+width: 100%;
+min-height:90%;
+}
+
+.input-mysize { 
+width: 40% 
+} /* Makes the quick search bar and add new box the right size */
+
+td, th {
+font-size: 85%
+}
+
+ .spacer {  margin-top: 40px; }
+
+.half-spacer { margin-top: 20px; }
+
+ .quarter-spacer {  margin-top: 10px; }
