@@ -16,7 +16,7 @@
 				<div class="col-sm-10"><!--Heading -->
 					<h1 onClick="document.location='index.html'">SJC Device Log</h1>
 				</div>
-				<div class="col-sm-2 half-spacer">
+				<div class="col-sm-2 half-spacer"><!-- Add New button -->
 					<button class="btn btn-primary" data-toggle="modal" onClick="$('#myModal').modal();"> 
 						<span class="glyphicon glyphicon-plus"></span>  
 						Add New
@@ -25,7 +25,7 @@
 			</div>
 		</div>
 		<div class="container">
-			<!-- Tabs list copy/paste/edit name to add more -->
+			<!-- Tabs list -->
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
 				<li><a href="#people" data-toggle="tab">People</a></li>
@@ -50,30 +50,30 @@
 
 				</div>
 
-
+				<!-- Devices -->
 				<div class="tab-pane" id="Devices">
 					<object 
 					data="../tabs/devices.html">
 					</object> 
 
 				</div>
-
+			<!-- Software -->
 		<div class="tab-pane" id="software">
 					<object  
 					data="../tabs/software.html">
 					</object> 
 
 				</div>
-
+			<!-- Keys -->
 		<div class="tab-pane" id="keys">
 				<object
-					data="../tabs/software.html">
+					data="../tabs/keys.html">
 					</object> 
 
 				</div>
 				</div>
 		</div>
-  <!-- Modal -->
+  <!-- Add New Modal -->
    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -83,33 +83,162 @@
         </div>
         <div class="modal-body">
           <div class="btn-group">
-<select  id="dropDown" class="btn btn-default dropdown-toggle" >
-  <option>Select</option>
-    <option value="addperson">Person</option>
-    <option value="adddevice">Device</option>
-    <option value="addsoftware">Software</option>
-    <option value="addkey">Key</option>
-  </select>
-<div id="addperson" class="show-hide">
-blaahswg rgawg
+	<!-- Choose Form Dropdown -->
+		<select  id="dropDown" class="btn btn-default dropdown-toggle" >
+			<option>Select</option>
+			<option value="addperson">Person</option>
+			<option value="adddevice">Device</option>
+			<option value="addsoftware">Software</option>
+			<option value="addkey">Key</option>
+		</select>
+		<!-- Add Person Form -->
+		<div id="addperson" class="show-hide">
+ 			<form role="form" style="padding-top:40px">
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputUserCode">Code</label>
+					<input type="text" class="form-control" id="inputUserCode" placeholder="Enter Code">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputFirstName">First Name</label>
+					<input type="text" class="form-control" id="inputFirstName" placeholder="First Name">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputLastName">Surname</label>
+					<input type="text" class="form-control" id="inputLastName" placeholder="Surname">
+				</div>
+				<div class="checkbox" style="padding-left:45px">
+					<label>
+						<input type="checkbox"> Staff
+					</label>
+				</div>
+				<div class="checkbox" style="padding-left:45px">
+					<label>
+						<input type="checkbox"> Active
+					</label>
+				</div>
+				<div style="padding-left:25px;">
+				</div>
+			</form>	 	 
+		</div>
+				<!-- Add Device Form -->
+		<div id="adddevice" class="show-hide">
+			<form role="form" style="padding-top:40px">
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputSerial">Serial</label>
+					<input type="text" class="form-control" id="inputSerial" placeholder="Serial">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputMAC1">MAC Address Eth0</label>
+					<input type="text" class="form-control" id="inputMAC1" placeholder="MAC Address 1">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputMAC2">MAC Address Wlan0</label>
+					<input type="text" class="form-control" id="inputMAC2" placeholder="MAC Address 2">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputOwner">Owner</label>
+					<input type="text" class="form-control" id="inputOwner" placeholder="Owner">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="selectType">Type</label>
+					<select  id="selectType" class="btn btn-default dropdown-toggle form-control" >
+						<option>Select</option>
+						<option value="addMacBook">MacBook</option>
+ 						<option value="addiPad">iPad</option>
+					</select>
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="selectStatus">Status</label>
+					<select  id="selectStatus" class="btn btn-default dropdown-toggle form-control" >
+						<option value="addIn">In</option>
+						<option value="addOut">Out</option>
+					</select>
+				</div>
+				<div class="checkbox" style="padding-left:45px">
+					<label>
+						<input type="checkbox"> Spare
+					</label>
+				</div>
+				<div class="checkbox" style="padding-left:45px">
+					<label>
+						<input type="checkbox"> Damaged
+					</label>
+				</div>
+				<div class="checkbox" style="padding-left:45px">
+					<label>
+						<input type="checkbox"> Bought
+					</label>
+				</div>
+				<div style="padding-left:25px;">
+				</div>
+			</form>	 	 
+		</div>
+				<!-- Add Software Form -->
+		<div id="addsoftware" class="show-hide">
+			<form role="form" style="padding-top:40px">
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputAppID">App ID</label>
+					<input type="text" class="form-control" id="inputAppID" placeholder="Enter ID">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputSFCode">Code</label>
+					<input type="text" class="form-control" id="inputSFCode" placeholder="Code">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputOwner">Person</label>
+					<input type="text" class="form-control" id="inputOwner" placeholder="Person">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="selectSFType">Type</label>
+					<select  id="selectSFType" class="btn btn-default dropdown-toggle form-control" >
+						<option>Select</option>
+						<option value="addMedia">Media</option>
+ 						<option value="addEdu">Educational</option>
+					</select>
+				</div>
+				<div class="checkbox" style="padding-left:45px">
+					<label>
+						<input type="checkbox">Bought
+					</label>
+				</div>
+				<div style="padding-left:25px;">
+				</div>
+			</form>	 
+		</div>
+				<!-- Add Key Form -->
+		<div id="addkey" class="show-hide">
+			<form role="form" style="padding-top:40px">
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputKeySerial">Serial</label>
+					<input type="text" class="form-control" id="inputKeySerial" placeholder="Serial">
+				</div>
+				<div class="form-group" style="padding-left:25px">
+					<label for="inputPersonCode">Owner</label>
+					<input type="text" class="form-control" id="inputPersonCode" placeholder="Staff Code">
+				</div>
+				<div class="checkbox" style="padding-left:45px">
+					<label>
+						<input type="checkbox"> Spare
+					</label>
+				</div>
+				<div style="padding-left:25px;">
+				</div>
+			</form>	 
+		</div>
+	</div>
 </div>
-<div id="adddevice" class="show-hide">
-asdfjkd
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	<button type="button" class="btn btn-primary">Add</button>
 </div>
-</div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-
+</div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	
 		<script src="../js/bootstrap.min.js"></script>
 		<script src="../js/jquery-1.9.1.js"></script>
 		<script src="../js/bootstrap.min.js"></script>
+		<!-- Makes the dropdowns behave as I wish them to -->
 		<script type="text/javascript">
 			$('.show-hide').hide();
 			$('#dropDown').change(function () {
