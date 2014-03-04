@@ -23,19 +23,18 @@ class device_history_controller {
 		}
 			$device_history = new device_history_model($init);
 
-
-				/* Check parent tables */
+		/* Check parent tables */
 		if(!technician_model::get($device_history -> get_technician_id())) {
-			return array('error' => 'Cannot add because related technician does not exist', 'code' => '400');
+			return array('error' => 'device_history is invalid because related technician does not exist', 'code' => '400');
 		}
 		if(!device_model::get($device_history -> get_device_id())) {
-			return array('error' => 'Cannot add because related device does not exist', 'code' => '400');
+			return array('error' => 'device_history is invalid because related device does not exist', 'code' => '400');
 		}
 		if(!device_status_model::get($device_history -> get_device_status_id())) {
-			return array('error' => 'Cannot add because related device_status does not exist', 'code' => '400');
+			return array('error' => 'device_history is invalid because related device_status does not exist', 'code' => '400');
 		}
 		if(!person_model::get($device_history -> get_person_id())) {
-			return array('error' => 'Cannot add because related person does not exist', 'code' => '400');
+			return array('error' => 'device_history is invalid because related person does not exist', 'code' => '400');
 		}
 
 		/* Insert new row */
@@ -57,7 +56,7 @@ class device_history_controller {
 		/* Load device_history */
 		$device_history = device_history_model::get($id);
 		if(!$device_history) {
-			return array('error' => 'device_history not found');
+			return array('error' => 'device_history not found', 'code' => '404');
 		}
 		// $device_history -> populate_list_device_photo();
 		return $device_history -> to_array_filtered($role);
@@ -73,12 +72,12 @@ class device_history_controller {
 		/* Load device_history */
 		$device_history = device_history_model::get($id);
 		if(!$device_history) {
-			return array('error' => 'device_history not found');
+			return array('error' => 'device_history not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['date']) && in_array('date', core::$permission[$role]['device_history']['update'])) {
 			$device_history -> set_date($received['date']);
 		}
@@ -112,26 +111,41 @@ class device_history_controller {
 		if(isset($received['person_id']) && in_array('person_id', core::$permission[$role]['device_history']['update'])) {
 			$device_history -> set_person_id($received['person_id']);
 		}
-		$device_history -> update();
+
+		/* Check parent tables */
+		if(!technician_model::get($device_history -> get_technician_id())) {
+			return array('error' => 'device_history is invalid because related technician does not exist', 'code' => '400');
+		}
+		if(!device_model::get($device_history -> get_device_id())) {
+			return array('error' => 'device_history is invalid because related device does not exist', 'code' => '400');
+		}
+		if(!device_status_model::get($device_history -> get_device_status_id())) {
+			return array('error' => 'device_history is invalid because related device_status does not exist', 'code' => '400');
+		}
+		if(!person_model::get($device_history -> get_person_id())) {
+			return array('error' => 'device_history is invalid because related person does not exist', 'code' => '400');
+		}
+
+		/* Update the row */
+		try {
+			$device_history -> update();
+			return $device_history -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['device_history']['delete']) || core::$permission[$role]['device_history']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load device_history */
 		$device_history = device_history_model::get($id);
 		if(!$device_history) {
-			return array('error' => 'device_history not found');
+			return array('error' => 'device_history not found', 'code' => '404');
 		}
 
 		/* Check for child rows */
@@ -143,6 +157,7 @@ class device_history_controller {
 		/* Delete it */
 		try {
 			$device_history -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

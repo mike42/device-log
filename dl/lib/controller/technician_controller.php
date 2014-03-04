@@ -23,8 +23,6 @@ class technician_controller {
 		}
 			$technician = new technician_model($init);
 
-
-		
 		/* Insert new row */
 		try {
 			$technician -> insert();
@@ -44,7 +42,7 @@ class technician_controller {
 		/* Load technician */
 		$technician = technician_model::get($id);
 		if(!$technician) {
-			return array('error' => 'technician not found');
+			return array('error' => 'technician not found', 'code' => '404');
 		}
 		// $technician -> populate_list_software_history();
 		// $technician -> populate_list_key_history();
@@ -62,38 +60,39 @@ class technician_controller {
 		/* Load technician */
 		$technician = technician_model::get($id);
 		if(!$technician) {
-			return array('error' => 'technician not found');
+			return array('error' => 'technician not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['login']) && in_array('login', core::$permission[$role]['technician']['update'])) {
 			$technician -> set_login($received['login']);
 		}
 		if(isset($received['name']) && in_array('name', core::$permission[$role]['technician']['update'])) {
 			$technician -> set_name($received['name']);
 		}
-		$technician -> update();
+
+		/* Update the row */
+		try {
+			$technician -> update();
+			return $technician -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['technician']['delete']) || core::$permission[$role]['technician']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load technician */
 		$technician = technician_model::get($id);
 		if(!$technician) {
-			return array('error' => 'technician not found');
+			return array('error' => 'technician not found', 'code' => '404');
 		}
 
 		/* Check for child rows */
@@ -113,6 +112,7 @@ class technician_controller {
 		/* Delete it */
 		try {
 			$technician -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

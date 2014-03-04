@@ -504,6 +504,30 @@ class software_history_model {
 	}
 
 	/**
+	 * List all rows
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function list_all($start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start > 0 && $limit > 0) {
+			$ls = " LIMIT $start, " . ($start + $limit);
+		}
+		$sth = database::$dbh -> prepare("SELECT software_history.id, software_history.date, software_history.person_id, software_history.software_id, software_history.technician_id, software_history.software_status_id, software_history.comment, software_history.change, software_history.is_bought, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, technician.id, technician.login, technician.name, software_status.id, software_status.tag, software_type.id, software_type.name FROM software_history JOIN person ON software_history.person_id = person.id JOIN software ON software_history.software_id = software.id JOIN technician ON software_history.technician_id = technician.id JOIN software_status ON software_history.software_status_id = software_status.id JOIN software_type ON software.software_type_id = software_type.id" . $ls . ";");
+		$sth -> execute();
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new software_history_model($assoc);
+		}
+		return $ret;
+	}
+
+	/**
 	 * List rows by person_id index
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)

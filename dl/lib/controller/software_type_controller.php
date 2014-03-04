@@ -23,8 +23,6 @@ class software_type_controller {
 		}
 			$software_type = new software_type_model($init);
 
-
-		
 		/* Insert new row */
 		try {
 			$software_type -> insert();
@@ -44,7 +42,7 @@ class software_type_controller {
 		/* Load software_type */
 		$software_type = software_type_model::get($id);
 		if(!$software_type) {
-			return array('error' => 'software_type not found');
+			return array('error' => 'software_type not found', 'code' => '404');
 		}
 		// $software_type -> populate_list_software();
 		return $software_type -> to_array_filtered($role);
@@ -60,35 +58,36 @@ class software_type_controller {
 		/* Load software_type */
 		$software_type = software_type_model::get($id);
 		if(!$software_type) {
-			return array('error' => 'software_type not found');
+			return array('error' => 'software_type not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['name']) && in_array('name', core::$permission[$role]['software_type']['update'])) {
 			$software_type -> set_name($received['name']);
 		}
-		$software_type -> update();
+
+		/* Update the row */
+		try {
+			$software_type -> update();
+			return $software_type -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['software_type']['delete']) || core::$permission[$role]['software_type']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load software_type */
 		$software_type = software_type_model::get($id);
 		if(!$software_type) {
-			return array('error' => 'software_type not found');
+			return array('error' => 'software_type not found', 'code' => '404');
 		}
 
 		/* Check for child rows */
@@ -100,6 +99,7 @@ class software_type_controller {
 		/* Delete it */
 		try {
 			$software_type -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

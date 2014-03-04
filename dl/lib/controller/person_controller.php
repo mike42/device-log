@@ -23,8 +23,6 @@ class person_controller {
 		}
 			$person = new person_model($init);
 
-
-		
 		/* Insert new row */
 		try {
 			$person -> insert();
@@ -44,7 +42,7 @@ class person_controller {
 		/* Load person */
 		$person = person_model::get($id);
 		if(!$person) {
-			return array('error' => 'person not found');
+			return array('error' => 'person not found', 'code' => '404');
 		}
 		// $person -> populate_list_device();
 		// $person -> populate_list_software();
@@ -65,12 +63,12 @@ class person_controller {
 		/* Load person */
 		$person = person_model::get($id);
 		if(!$person) {
-			return array('error' => 'person not found');
+			return array('error' => 'person not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['code']) && in_array('code', core::$permission[$role]['person']['update'])) {
 			$person -> set_code($received['code']);
 		}
@@ -86,26 +84,27 @@ class person_controller {
 		if(isset($received['surname']) && in_array('surname', core::$permission[$role]['person']['update'])) {
 			$person -> set_surname($received['surname']);
 		}
-		$person -> update();
+
+		/* Update the row */
+		try {
+			$person -> update();
+			return $person -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['person']['delete']) || core::$permission[$role]['person']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load person */
 		$person = person_model::get($id);
 		if(!$person) {
-			return array('error' => 'person not found');
+			return array('error' => 'person not found', 'code' => '404');
 		}
 
 		/* Check for child rows */
@@ -137,6 +136,7 @@ class person_controller {
 		/* Delete it */
 		try {
 			$person -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

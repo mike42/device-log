@@ -23,19 +23,18 @@ class key_history_controller {
 		}
 			$key_history = new key_history_model($init);
 
-
-				/* Check parent tables */
+		/* Check parent tables */
 		if(!person_model::get($key_history -> get_person_id())) {
-			return array('error' => 'Cannot add because related person does not exist', 'code' => '400');
+			return array('error' => 'key_history is invalid because related person does not exist', 'code' => '400');
 		}
 		if(!key_model::get($key_history -> get_key_id())) {
-			return array('error' => 'Cannot add because related key does not exist', 'code' => '400');
+			return array('error' => 'key_history is invalid because related key does not exist', 'code' => '400');
 		}
 		if(!technician_model::get($key_history -> get_technician_id())) {
-			return array('error' => 'Cannot add because related technician does not exist', 'code' => '400');
+			return array('error' => 'key_history is invalid because related technician does not exist', 'code' => '400');
 		}
 		if(!key_status_model::get($key_history -> get_key_status_id())) {
-			return array('error' => 'Cannot add because related key_status does not exist', 'code' => '400');
+			return array('error' => 'key_history is invalid because related key_status does not exist', 'code' => '400');
 		}
 
 		/* Insert new row */
@@ -57,7 +56,7 @@ class key_history_controller {
 		/* Load key_history */
 		$key_history = key_history_model::get($id);
 		if(!$key_history) {
-			return array('error' => 'key_history not found');
+			return array('error' => 'key_history not found', 'code' => '404');
 		}
 		return $key_history -> to_array_filtered($role);
 	}
@@ -72,12 +71,12 @@ class key_history_controller {
 		/* Load key_history */
 		$key_history = key_history_model::get($id);
 		if(!$key_history) {
-			return array('error' => 'key_history not found');
+			return array('error' => 'key_history not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['date']) && in_array('date', core::$permission[$role]['key_history']['update'])) {
 			$key_history -> set_date($received['date']);
 		}
@@ -102,32 +101,48 @@ class key_history_controller {
 		if(isset($received['is_spare']) && in_array('is_spare', core::$permission[$role]['key_history']['update'])) {
 			$key_history -> set_is_spare($received['is_spare']);
 		}
-		$key_history -> update();
+
+		/* Check parent tables */
+		if(!person_model::get($key_history -> get_person_id())) {
+			return array('error' => 'key_history is invalid because related person does not exist', 'code' => '400');
+		}
+		if(!key_model::get($key_history -> get_key_id())) {
+			return array('error' => 'key_history is invalid because related key does not exist', 'code' => '400');
+		}
+		if(!technician_model::get($key_history -> get_technician_id())) {
+			return array('error' => 'key_history is invalid because related technician does not exist', 'code' => '400');
+		}
+		if(!key_status_model::get($key_history -> get_key_status_id())) {
+			return array('error' => 'key_history is invalid because related key_status does not exist', 'code' => '400');
+		}
+
+		/* Update the row */
+		try {
+			$key_history -> update();
+			return $key_history -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['key_history']['delete']) || core::$permission[$role]['key_history']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load key_history */
 		$key_history = key_history_model::get($id);
 		if(!$key_history) {
-			return array('error' => 'key_history not found');
+			return array('error' => 'key_history not found', 'code' => '404');
 		}
 
 
 		/* Delete it */
 		try {
 			$key_history -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

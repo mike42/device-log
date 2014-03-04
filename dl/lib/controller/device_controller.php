@@ -23,16 +23,15 @@ class device_controller {
 		}
 			$device = new device_model($init);
 
-
-				/* Check parent tables */
+		/* Check parent tables */
 		if(!person_model::get($device -> get_person_id())) {
-			return array('error' => 'Cannot add because related person does not exist', 'code' => '400');
+			return array('error' => 'device is invalid because related person does not exist', 'code' => '400');
 		}
 		if(!device_status_model::get($device -> get_device_status_id())) {
-			return array('error' => 'Cannot add because related device_status does not exist', 'code' => '400');
+			return array('error' => 'device is invalid because related device_status does not exist', 'code' => '400');
 		}
 		if(!device_type_model::get($device -> get_device_type_id())) {
-			return array('error' => 'Cannot add because related device_type does not exist', 'code' => '400');
+			return array('error' => 'device is invalid because related device_type does not exist', 'code' => '400');
 		}
 
 		/* Insert new row */
@@ -54,7 +53,7 @@ class device_controller {
 		/* Load device */
 		$device = device_model::get($id);
 		if(!$device) {
-			return array('error' => 'device not found');
+			return array('error' => 'device not found', 'code' => '404');
 		}
 		// $device -> populate_list_device_history();
 		return $device -> to_array_filtered($role);
@@ -70,12 +69,12 @@ class device_controller {
 		/* Load device */
 		$device = device_model::get($id);
 		if(!$device) {
-			return array('error' => 'device not found');
+			return array('error' => 'device not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['is_spare']) && in_array('is_spare', core::$permission[$role]['device']['update'])) {
 			$device -> set_is_spare($received['is_spare']);
 		}
@@ -103,26 +102,38 @@ class device_controller {
 		if(isset($received['device_type_id']) && in_array('device_type_id', core::$permission[$role]['device']['update'])) {
 			$device -> set_device_type_id($received['device_type_id']);
 		}
-		$device -> update();
+
+		/* Check parent tables */
+		if(!person_model::get($device -> get_person_id())) {
+			return array('error' => 'device is invalid because related person does not exist', 'code' => '400');
+		}
+		if(!device_status_model::get($device -> get_device_status_id())) {
+			return array('error' => 'device is invalid because related device_status does not exist', 'code' => '400');
+		}
+		if(!device_type_model::get($device -> get_device_type_id())) {
+			return array('error' => 'device is invalid because related device_type does not exist', 'code' => '400');
+		}
+
+		/* Update the row */
+		try {
+			$device -> update();
+			return $device -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['device']['delete']) || core::$permission[$role]['device']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load device */
 		$device = device_model::get($id);
 		if(!$device) {
-			return array('error' => 'device not found');
+			return array('error' => 'device not found', 'code' => '404');
 		}
 
 		/* Check for child rows */
@@ -134,6 +145,7 @@ class device_controller {
 		/* Delete it */
 		try {
 			$device -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

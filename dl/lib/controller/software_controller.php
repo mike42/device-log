@@ -23,16 +23,15 @@ class software_controller {
 		}
 			$software = new software_model($init);
 
-
-				/* Check parent tables */
+		/* Check parent tables */
 		if(!software_type_model::get($software -> get_software_type_id())) {
-			return array('error' => 'Cannot add because related software_type does not exist', 'code' => '400');
+			return array('error' => 'software is invalid because related software_type does not exist', 'code' => '400');
 		}
 		if(!software_status_model::get($software -> get_software_status_id())) {
-			return array('error' => 'Cannot add because related software_status does not exist', 'code' => '400');
+			return array('error' => 'software is invalid because related software_status does not exist', 'code' => '400');
 		}
 		if(!person_model::get($software -> get_person_id())) {
-			return array('error' => 'Cannot add because related person does not exist', 'code' => '400');
+			return array('error' => 'software is invalid because related person does not exist', 'code' => '400');
 		}
 
 		/* Insert new row */
@@ -54,7 +53,7 @@ class software_controller {
 		/* Load software */
 		$software = software_model::get($id);
 		if(!$software) {
-			return array('error' => 'software not found');
+			return array('error' => 'software not found', 'code' => '404');
 		}
 		// $software -> populate_list_software_history();
 		return $software -> to_array_filtered($role);
@@ -70,12 +69,12 @@ class software_controller {
 		/* Load software */
 		$software = software_model::get($id);
 		if(!$software) {
-			return array('error' => 'software not found');
+			return array('error' => 'software not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['code']) && in_array('code', core::$permission[$role]['software']['update'])) {
 			$software -> set_code($received['code']);
 		}
@@ -91,26 +90,38 @@ class software_controller {
 		if(isset($received['is_bought']) && in_array('is_bought', core::$permission[$role]['software']['update'])) {
 			$software -> set_is_bought($received['is_bought']);
 		}
-		$software -> update();
+
+		/* Check parent tables */
+		if(!software_type_model::get($software -> get_software_type_id())) {
+			return array('error' => 'software is invalid because related software_type does not exist', 'code' => '400');
+		}
+		if(!software_status_model::get($software -> get_software_status_id())) {
+			return array('error' => 'software is invalid because related software_status does not exist', 'code' => '400');
+		}
+		if(!person_model::get($software -> get_person_id())) {
+			return array('error' => 'software is invalid because related person does not exist', 'code' => '400');
+		}
+
+		/* Update the row */
+		try {
+			$software -> update();
+			return $software -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['software']['delete']) || core::$permission[$role]['software']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load software */
 		$software = software_model::get($id);
 		if(!$software) {
-			return array('error' => 'software not found');
+			return array('error' => 'software not found', 'code' => '404');
 		}
 
 		/* Check for child rows */
@@ -122,6 +133,7 @@ class software_controller {
 		/* Delete it */
 		try {
 			$software -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

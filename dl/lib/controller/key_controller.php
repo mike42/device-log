@@ -23,16 +23,15 @@ class key_controller {
 		}
 			$key = new key_model($init);
 
-
-				/* Check parent tables */
+		/* Check parent tables */
 		if(!person_model::get($key -> get_person_id())) {
-			return array('error' => 'Cannot add because related person does not exist', 'code' => '400');
+			return array('error' => 'key is invalid because related person does not exist', 'code' => '400');
 		}
 		if(!key_type_model::get($key -> get_key_type_id())) {
-			return array('error' => 'Cannot add because related key_type does not exist', 'code' => '400');
+			return array('error' => 'key is invalid because related key_type does not exist', 'code' => '400');
 		}
 		if(!key_status_model::get($key -> get_key_status_id())) {
-			return array('error' => 'Cannot add because related key_status does not exist', 'code' => '400');
+			return array('error' => 'key is invalid because related key_status does not exist', 'code' => '400');
 		}
 
 		/* Insert new row */
@@ -54,7 +53,7 @@ class key_controller {
 		/* Load key */
 		$key = key_model::get($id);
 		if(!$key) {
-			return array('error' => 'key not found');
+			return array('error' => 'key not found', 'code' => '404');
 		}
 		// $key -> populate_list_key_history();
 		return $key -> to_array_filtered($role);
@@ -70,12 +69,12 @@ class key_controller {
 		/* Load key */
 		$key = key_model::get($id);
 		if(!$key) {
-			return array('error' => 'key not found');
+			return array('error' => 'key not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['serial']) && in_array('serial', core::$permission[$role]['key']['update'])) {
 			$key -> set_serial($received['serial']);
 		}
@@ -91,26 +90,38 @@ class key_controller {
 		if(isset($received['key_status_id']) && in_array('key_status_id', core::$permission[$role]['key']['update'])) {
 			$key -> set_key_status_id($received['key_status_id']);
 		}
-		$key -> update();
+
+		/* Check parent tables */
+		if(!person_model::get($key -> get_person_id())) {
+			return array('error' => 'key is invalid because related person does not exist', 'code' => '400');
+		}
+		if(!key_type_model::get($key -> get_key_type_id())) {
+			return array('error' => 'key is invalid because related key_type does not exist', 'code' => '400');
+		}
+		if(!key_status_model::get($key -> get_key_status_id())) {
+			return array('error' => 'key is invalid because related key_status does not exist', 'code' => '400');
+		}
+
+		/* Update the row */
+		try {
+			$key -> update();
+			return $key -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['key']['delete']) || core::$permission[$role]['key']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load key */
 		$key = key_model::get($id);
 		if(!$key) {
-			return array('error' => 'key not found');
+			return array('error' => 'key not found', 'code' => '404');
 		}
 
 		/* Check for child rows */
@@ -122,6 +133,7 @@ class key_controller {
 		/* Delete it */
 		try {
 			$key -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

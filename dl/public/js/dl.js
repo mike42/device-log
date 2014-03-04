@@ -1,6 +1,12 @@
 function foobar() {
-	var a = new device_model({sn: 'aaa', person_id: 1, device_status_id: 1, device_type_id: 1});
-	a.save();
+	var a = new device_model({id: 16});
+	a.fetch({
+		success: function(results) {
+			a.destroy();
+		}
+	});
+	//var a = new device_model({sn: 'aaa', person_id: 1, device_status_id: 1, device_type_id: 1});
+	//a.save();
 }
 
 $('#btnLogout').on('click', function(event) {

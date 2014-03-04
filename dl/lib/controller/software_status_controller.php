@@ -23,8 +23,6 @@ class software_status_controller {
 		}
 			$software_status = new software_status_model($init);
 
-
-		
 		/* Insert new row */
 		try {
 			$software_status -> insert();
@@ -44,7 +42,7 @@ class software_status_controller {
 		/* Load software_status */
 		$software_status = software_status_model::get($id);
 		if(!$software_status) {
-			return array('error' => 'software_status not found');
+			return array('error' => 'software_status not found', 'code' => '404');
 		}
 		// $software_status -> populate_list_software();
 		// $software_status -> populate_list_software_history();
@@ -61,35 +59,36 @@ class software_status_controller {
 		/* Load software_status */
 		$software_status = software_status_model::get($id);
 		if(!$software_status) {
-			return array('error' => 'software_status not found');
+			return array('error' => 'software_status not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['tag']) && in_array('tag', core::$permission[$role]['software_status']['update'])) {
 			$software_status -> set_tag($received['tag']);
 		}
-		$software_status -> update();
+
+		/* Update the row */
+		try {
+			$software_status -> update();
+			return $software_status -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['software_status']['delete']) || core::$permission[$role]['software_status']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load software_status */
 		$software_status = software_status_model::get($id);
 		if(!$software_status) {
-			return array('error' => 'software_status not found');
+			return array('error' => 'software_status not found', 'code' => '404');
 		}
 
 		/* Check for child rows */
@@ -105,6 +104,7 @@ class software_status_controller {
 		/* Delete it */
 		try {
 			$software_status -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

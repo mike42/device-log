@@ -23,8 +23,6 @@ class device_type_controller {
 		}
 			$device_type = new device_type_model($init);
 
-
-		
 		/* Insert new row */
 		try {
 			$device_type -> insert();
@@ -44,7 +42,7 @@ class device_type_controller {
 		/* Load device_type */
 		$device_type = device_type_model::get($id);
 		if(!$device_type) {
-			return array('error' => 'device_type not found');
+			return array('error' => 'device_type not found', 'code' => '404');
 		}
 		// $device_type -> populate_list_device();
 		return $device_type -> to_array_filtered($role);
@@ -60,38 +58,39 @@ class device_type_controller {
 		/* Load device_type */
 		$device_type = device_type_model::get($id);
 		if(!$device_type) {
-			return array('error' => 'device_type not found');
+			return array('error' => 'device_type not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['name']) && in_array('name', core::$permission[$role]['device_type']['update'])) {
 			$device_type -> set_name($received['name']);
 		}
 		if(isset($received['model_no']) && in_array('model_no', core::$permission[$role]['device_type']['update'])) {
 			$device_type -> set_model_no($received['model_no']);
 		}
-		$device_type -> update();
+
+		/* Update the row */
+		try {
+			$device_type -> update();
+			return $device_type -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['device_type']['delete']) || core::$permission[$role]['device_type']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load device_type */
 		$device_type = device_type_model::get($id);
 		if(!$device_type) {
-			return array('error' => 'device_type not found');
+			return array('error' => 'device_type not found', 'code' => '404');
 		}
 
 		/* Check for child rows */
@@ -103,6 +102,7 @@ class device_type_controller {
 		/* Delete it */
 		try {
 			$device_type -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}

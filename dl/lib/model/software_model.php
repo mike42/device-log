@@ -407,6 +407,30 @@ class software_model {
 	}
 
 	/**
+	 * List all rows
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function list_all($start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start > 0 && $limit > 0) {
+			$ls = " LIMIT $start, " . ($start + $limit);
+		}
+		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id" . $ls . ";");
+		$sth -> execute();
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new software_model($assoc);
+		}
+		return $ret;
+	}
+
+	/**
 	 * List rows by software_type_id index
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)

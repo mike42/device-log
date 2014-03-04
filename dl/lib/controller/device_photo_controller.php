@@ -23,10 +23,9 @@ class device_photo_controller {
 		}
 			$device_photo = new device_photo_model($init);
 
-
-				/* Check parent tables */
+		/* Check parent tables */
 		if(!device_history_model::get($device_photo -> get_device_history_id())) {
-			return array('error' => 'Cannot add because related device_history does not exist', 'code' => '400');
+			return array('error' => 'device_photo is invalid because related device_history does not exist', 'code' => '400');
 		}
 
 		/* Insert new row */
@@ -48,7 +47,7 @@ class device_photo_controller {
 		/* Load device_photo */
 		$device_photo = device_photo_model::get($id);
 		if(!$device_photo) {
-			return array('error' => 'device_photo not found');
+			return array('error' => 'device_photo not found', 'code' => '404');
 		}
 		return $device_photo -> to_array_filtered($role);
 	}
@@ -63,12 +62,12 @@ class device_photo_controller {
 		/* Load device_photo */
 		$device_photo = device_photo_model::get($id);
 		if(!$device_photo) {
-			return array('error' => 'device_photo not found');
+			return array('error' => 'device_photo not found', 'code' => '404');
 		}
 
 		/* Find fields to update */
 		$update = false;
-		$received = json_decode(file_get_contents('php://input'), true, 2);
+		$received = json_decode(file_get_contents('php://input'), true);
 		if(isset($received['checksum']) && in_array('checksum', core::$permission[$role]['device_photo']['update'])) {
 			$device_photo -> set_checksum($received['checksum']);
 		}
@@ -78,32 +77,39 @@ class device_photo_controller {
 		if(isset($received['device_history_id']) && in_array('device_history_id', core::$permission[$role]['device_photo']['update'])) {
 			$device_photo -> set_device_history_id($received['device_history_id']);
 		}
-		$device_photo -> update();
+
+		/* Check parent tables */
+		if(!device_history_model::get($device_photo -> get_device_history_id())) {
+			return array('error' => 'device_photo is invalid because related device_history does not exist', 'code' => '400');
+		}
+
+		/* Update the row */
+		try {
+			$device_photo -> update();
+			return $device_photo -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to update row', 'code' => '500');
+		}
 	}
 
-	public static function delete() {
+	public static function delete($id) {
 		/* Check permission */
+		$role = session::getRole();
 		if(!isset(core::$permission[$role]['device_photo']['delete']) || core::$permission[$role]['device_photo']['delete'] != true) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 
-		/* Find fields for lookup */
-		$received = json_decode(file_get_contents('php://input'), true, 2);
-		if(!isset($received['id'])) {
-			return array('error' => 'id was not set', 'code' => '404');
-		}
-		$id = $received['id'];
-
 		/* Load device_photo */
 		$device_photo = device_photo_model::get($id);
 		if(!$device_photo) {
-			return array('error' => 'device_photo not found');
+			return array('error' => 'device_photo not found', 'code' => '404');
 		}
 
 
 		/* Delete it */
 		try {
 			$device_photo -> delete();
+			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
 		}
