@@ -60,6 +60,14 @@ class key_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
+/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		$this -> id = '';
+		$this -> serial = '';
+		$this -> person_id = '';
+		$this -> is_spare = '';
+		$this -> key_type_id = '';
+		$this -> key_status_id = '';
+
 		if(isset($fields['key.id'])) {
 			$this -> set_id($fields['key.id']);
 		}
@@ -342,7 +350,7 @@ class key_model {
 	 * Add new key
 	 */
 	public function insert() {
-		if(count($this -> model_variables_changed) == 0) {
+		if(count($this -> model_variables_set) == 0) {
 			throw new Exception("No fields have been set!");
 		}
 
@@ -361,6 +369,7 @@ class key_model {
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO key ($fields) VALUES ($vals);");
 		$sth -> execute($data);
+		$this -> set_id(database::$dbh->lastInsertId());
 	}
 
 	/**

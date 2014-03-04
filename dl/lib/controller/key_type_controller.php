@@ -15,14 +15,23 @@ class key_type_controller {
 		/* Find fields to insert */
 		$fields = array('id', 'name');
 		$init = array();
+		$received = json_decode(file_get_contents('php://input'), true, 2);
 		foreach($fields as $field) {
-			if(isset($_POST[$field])) {
-				$init["key_type.$field"] = $_POST[$field];
+			if(isset($received[$field])) {
+				$init["key_type.$field"] = $received[$field];
 			}
 		}
-		$key_type = new key_type_model($init);
-		$key_type -> insert();
-		return $key_type -> to_array_filtered($role);
+			$key_type = new key_type_model($init);
+
+
+		
+		/* Insert new row */
+		try {
+			$key_type -> insert();
+			return $key_type -> to_array_filtered($role);
+		} catch(Exception $e) {
+			return array('error' => 'Failed to add to database', 'code' => '500');
+		}
 	}
 
 	public static function read($id) {
@@ -54,14 +63,46 @@ class key_type_controller {
 			return array('error' => 'key_type not found');
 		}
 
+		/* Find fields to update */
 		$update = false;
-		if(isset($_POST['name']) && in_array('name', core::$permission[$role]['key_type']['update'])) {
-			$key_type -> set_name($_POST['name']);
+		$received = json_decode(file_get_contents('php://input'), true, 2);
+		if(isset($received['name']) && in_array('name', core::$permission[$role]['key_type']['update'])) {
+			$key_type -> set_name($received['name']);
 		}
 		$key_type -> update();
 	}
 
 	public static function delete() {
+		/* Check permission */
+		if(!isset(core::$permission[$role]['key_type']['delete']) || core::$permission[$role]['key_type']['delete'] != true) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+
+		/* Find fields for lookup */
+		$received = json_decode(file_get_contents('php://input'), true, 2);
+		if(!isset($received['id'])) {
+			return array('error' => 'id was not set', 'code' => '404');
+		}
+		$id = $received['id'];
+
+		/* Load key_type */
+		$key_type = key_type_model::get($id);
+		if(!$key_type) {
+			return array('error' => 'key_type not found');
+		}
+
+		/* Check for child rows */
+		$key_type -> populate_list_key(0, 1);
+		if(count($key_type -> list_key) > 0) {
+			return array('error' => 'Cannot delete key_type because of a related key entry', 'code' => '400');
+		}
+
+		/* Delete it */
+		try {
+			$key_type -> delete();
+		} catch(Exception $e) {
+			return array('error' => 'Failed to delete', 'code' => '500');
+		}
 	}
 }
 ?>

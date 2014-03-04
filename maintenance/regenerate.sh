@@ -1,8 +1,17 @@
 #!/bin/bash
 # Save the config
 echo "Saving"..
-mv ../dl/site ../
-cp ../dl/*.html ../
+mkdir -p ../dl.save
+mkdir -p ../dl.save/lib/util
+mkdir -p ../dl.save/public
+mkdir -p ../dl.save/public/js
+mkdir -p ../dl.save/public/css
+mv ../dl/site ../dl.save/
+cp ../dl/*.html ../dl.save/
+cp ../dl/public/bg.jpg  ../dl/public/loading.gif ../dl.save/public
+cp ../dl/public/css/extra-global.css ../dl.save/public/css
+cp ../dl/public/js/dl.js ../dl/public/js/jquery.backstretch.min.js ../dl.save/public/js
+cp ../dl/lib/util/session.php ../dl.save/lib/util/session.php
 rm -Rf ../dl
 
 # Regenerate
@@ -14,6 +23,5 @@ cd ../device-log
 
 # Replace config
 echo "Replacing.."
-mv dl/site dl/site.default
-mv site dl/
-mv *.html dl/
+cp -R dl.save/* dl && rm -Rf dl.save
+

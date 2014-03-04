@@ -80,7 +80,18 @@ class device_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
+/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
+		$this -> is_spare = '';
+		$this -> is_damaged = '';
+		$this -> sn = '';
+		$this -> mac_eth0 = '';
+		$this -> mac_wlan0 = '';
+		$this -> is_bought = '';
+		$this -> person_id = '';
+		$this -> device_status_id = '';
+		$this -> device_type_id = '';
+
 		if(isset($fields['device.id'])) {
 			$this -> set_id($fields['device.id']);
 		}
@@ -151,7 +162,6 @@ class device_model {
 		}
 		$values = array();
 		$everything = $this -> to_array();
-		print_r($everything);
 		foreach(core::$permission[$role]['device']['read'] as $field) {
 			if(!isset($everything[$field])) {
 				throw new Exception("Check permissions: '$field' is not a real field in device");
@@ -508,6 +518,7 @@ class device_model {
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO device ($fields) VALUES ($vals);");
 		$sth -> execute($data);
+		$this -> set_id(database::$dbh->lastInsertId());
 	}
 
 	/**

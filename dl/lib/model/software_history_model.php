@@ -72,6 +72,17 @@ class software_history_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
+/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		$this -> id = '';
+		$this -> date = '';
+		$this -> person_id = '';
+		$this -> software_id = '';
+		$this -> technician_id = '';
+		$this -> software_status_id = '';
+		$this -> comment = '';
+		$this -> change = '';
+		$this -> is_bought = '';
+
 		if(isset($fields['software_history.id'])) {
 			$this -> set_id($fields['software_history.id']);
 		}
@@ -447,7 +458,7 @@ class software_history_model {
 	 * Add new software_history
 	 */
 	public function insert() {
-		if(count($this -> model_variables_changed) == 0) {
+		if(count($this -> model_variables_set) == 0) {
 			throw new Exception("No fields have been set!");
 		}
 
@@ -466,6 +477,7 @@ class software_history_model {
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO software_history ($fields) VALUES ($vals);");
 		$sth -> execute($data);
+		$this -> set_id(database::$dbh->lastInsertId());
 	}
 
 	/**

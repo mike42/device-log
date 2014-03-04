@@ -34,6 +34,10 @@ class key_status_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
+/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		$this -> id = '';
+		$this -> name = '';
+
 		if(isset($fields['key_status.id'])) {
 			$this -> set_id($fields['key_status.id']);
 		}
@@ -181,7 +185,7 @@ class key_status_model {
 	 * Add new key_status
 	 */
 	public function insert() {
-		if(count($this -> model_variables_changed) == 0) {
+		if(count($this -> model_variables_set) == 0) {
 			throw new Exception("No fields have been set!");
 		}
 
@@ -200,6 +204,7 @@ class key_status_model {
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO key_status ($fields) VALUES ($vals);");
 		$sth -> execute($data);
+		$this -> set_id(database::$dbh->lastInsertId());
 	}
 
 	/**

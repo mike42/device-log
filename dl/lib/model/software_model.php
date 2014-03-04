@@ -60,6 +60,14 @@ class software_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
+/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		$this -> id = '';
+		$this -> code = '';
+		$this -> software_type_id = '';
+		$this -> software_status_id = '';
+		$this -> person_id = '';
+		$this -> is_bought = '';
+
 		if(isset($fields['software.id'])) {
 			$this -> set_id($fields['software.id']);
 		}
@@ -342,7 +350,7 @@ class software_model {
 	 * Add new software
 	 */
 	public function insert() {
-		if(count($this -> model_variables_changed) == 0) {
+		if(count($this -> model_variables_set) == 0) {
 			throw new Exception("No fields have been set!");
 		}
 
@@ -361,6 +369,7 @@ class software_model {
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO software ($fields) VALUES ($vals);");
 		$sth -> execute($data);
+		$this -> set_id(database::$dbh->lastInsertId());
 	}
 
 	/**

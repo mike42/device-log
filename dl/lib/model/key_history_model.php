@@ -72,6 +72,17 @@ class key_history_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
+/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		$this -> id = '';
+		$this -> date = '';
+		$this -> person_id = '';
+		$this -> key_id = '';
+		$this -> technician_id = '';
+		$this -> key_status_id = '';
+		$this -> comment = '';
+		$this -> change = '';
+		$this -> is_spare = '';
+
 		if(isset($fields['key_history.id'])) {
 			$this -> set_id($fields['key_history.id']);
 		}
@@ -449,7 +460,7 @@ class key_history_model {
 	 * Add new key_history
 	 */
 	public function insert() {
-		if(count($this -> model_variables_changed) == 0) {
+		if(count($this -> model_variables_set) == 0) {
 			throw new Exception("No fields have been set!");
 		}
 
@@ -468,6 +479,7 @@ class key_history_model {
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO key_history ($fields) VALUES ($vals);");
 		$sth -> execute($data);
+		$this -> set_id(database::$dbh->lastInsertId());
 	}
 
 	/**

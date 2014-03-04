@@ -93,6 +93,20 @@ class device_history_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
+/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		$this -> id = '';
+		$this -> date = '';
+		$this -> comment = '';
+		$this -> is_spare = '';
+		$this -> is_damaged = '';
+		$this -> has_photos = '';
+		$this -> is_bought = '';
+		$this -> change = '';
+		$this -> technician_id = '';
+		$this -> device_id = '';
+		$this -> device_status_id = '';
+		$this -> person_id = '';
+
 		if(isset($fields['device_history.id'])) {
 			$this -> set_id($fields['device_history.id']);
 		}
@@ -573,7 +587,7 @@ class device_history_model {
 	 * Add new device_history
 	 */
 	public function insert() {
-		if(count($this -> model_variables_changed) == 0) {
+		if(count($this -> model_variables_set) == 0) {
 			throw new Exception("No fields have been set!");
 		}
 
@@ -592,6 +606,7 @@ class device_history_model {
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO device_history ($fields) VALUES ($vals);");
 		$sth -> execute($data);
+		$this -> set_id(database::$dbh->lastInsertId());
 	}
 
 	/**

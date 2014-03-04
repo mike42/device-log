@@ -1,23 +1,5 @@
-Device = Backbone.Model.extend({
-	urlRoot: '/dl/api/device',
-	defaults: {
-		is_spare: 0,
-		is_damaged: 0,
-		sn: '',
-		mac_eth0: '',
-		mac_wlan0: '',
-		is_bought: 0,
-		person_id: 0,
-		device_status_id: 0,
-		device_type_id: 0
-    },
-	initialize: function(){
-	    // alert("Welcome to this world");
-	}
-});
-
 function foobar() {
-	var a = new Device({sn: 'aaa', person_id: 1, device_status_id: 1, device_type_id: 1});
+	var a = new device_model({sn: 'aaa', person_id: 1, device_status_id: 1, device_type_id: 1});
 	a.save();
 }
 

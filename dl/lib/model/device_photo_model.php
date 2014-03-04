@@ -40,6 +40,12 @@ class device_photo_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
+/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		$this -> id = '';
+		$this -> checksum = '';
+		$this -> filename = '';
+		$this -> device_history_id = '';
+
 		if(isset($fields['device_photo.id'])) {
 			$this -> set_id($fields['device_photo.id']);
 		}
@@ -273,7 +279,7 @@ class device_photo_model {
 	 * Add new device_photo
 	 */
 	public function insert() {
-		if(count($this -> model_variables_changed) == 0) {
+		if(count($this -> model_variables_set) == 0) {
 			throw new Exception("No fields have been set!");
 		}
 
@@ -292,6 +298,7 @@ class device_photo_model {
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO device_photo ($fields) VALUES ($vals);");
 		$sth -> execute($data);
+		$this -> set_id(database::$dbh->lastInsertId());
 	}
 
 	/**
