@@ -80,7 +80,7 @@ class device_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
-/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> is_spare = '';
 		$this -> is_damaged = '';
@@ -565,8 +565,8 @@ class device_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_status.id, device_status.tag, device_type.id, device_type.name, device_type.model_no FROM device JOIN person ON device.person_id = person.id JOIN device_status ON device.device_status_id = device_status.id JOIN device_type ON device.device_type_id = device_type.id" . $ls . ";");
 		$sth -> execute();
@@ -589,8 +589,8 @@ class device_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_status.id, device_status.tag, device_type.id, device_type.name, device_type.model_no FROM device JOIN person ON device.person_id = person.id JOIN device_status ON device.device_status_id = device_status.id JOIN device_type ON device.device_type_id = device_type.id WHERE device.person_id = :person_id" . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));
@@ -613,8 +613,8 @@ class device_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_status.id, device_status.tag, device_type.id, device_type.name, device_type.model_no FROM device JOIN person ON device.person_id = person.id JOIN device_status ON device.device_status_id = device_status.id JOIN device_type ON device.device_type_id = device_type.id WHERE device.device_status_id = :device_status_id" . $ls . ";");
 		$sth -> execute(array('device_status_id' => $device_status_id));
@@ -637,8 +637,8 @@ class device_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_status.id, device_status.tag, device_type.id, device_type.name, device_type.model_no FROM device JOIN person ON device.person_id = person.id JOIN device_status ON device.device_status_id = device_status.id JOIN device_type ON device.device_type_id = device_type.id WHERE device.device_type_id = :device_type_id" . $ls . ";");
 		$sth -> execute(array('device_type_id' => $device_type_id));

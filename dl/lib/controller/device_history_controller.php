@@ -46,7 +46,7 @@ class device_history_controller {
 		}
 	}
 
-	public static function read($id) {
+	public static function read($id = null) {
 		/* Check permission */
 		$role = session::getRole();
 		if(!isset(core::$permission[$role]['device_history']['read']) || count(core::$permission[$role]['device_history']['read']) == 0) {
@@ -62,7 +62,7 @@ class device_history_controller {
 		return $device_history -> to_array_filtered($role);
 	}
 
-	public static function update($id) {
+	public static function update($id = null) {
 		/* Check permission */
 		$role = session::getRole();
 		if(!isset(core::$permission[$role]['device_history']['update']) || count(core::$permission[$role]['device_history']['update']) == 0) {
@@ -135,7 +135,7 @@ class device_history_controller {
 		}
 	}
 
-	public static function delete($id) {
+	public static function delete($id = null) {
 		/* Check permission */
 		$role = session::getRole();
 		if(!isset(core::$permission[$role]['device_history']['delete']) || core::$permission[$role]['device_history']['delete'] != true) {
@@ -160,6 +160,29 @@ class device_history_controller {
 			return array('success' => 'yes');
 		} catch(Exception $e) {
 			return array('error' => 'Failed to delete', 'code' => '500');
+		}
+	}
+
+	public static function list_all($page = 1, $itemspp = 20) {
+		/* Check permission */
+		$role = session::getRole();
+		if(!isset(core::$permission[$role]['device_history']['read']) || count(core::$permission[$role]['device_history']['read']) == 0) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+		if($page < 1 || $itemspp < 1) {
+			return array('error' => 'Invalid page number or item count', 'code' => '400');
+		}
+
+		/* Retrieve and filter rows */
+		try {
+			$device_history_list = device_history_model::list_all(($page - 1) * $itemspp, $itemspp);
+			$ret = array();
+			foreach($device_history_list as $device_history) {
+				$ret[] = $device_history -> to_array_filtered($role);
+			}
+			return $ret;
+		} catch(Exception $e) {
+			return array('error' => 'Failed to list', 'code' => '500');
 		}
 	}
 }

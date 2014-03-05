@@ -62,7 +62,7 @@ class person_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
-/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> code = '';
 		$this -> is_staff = '';
@@ -496,8 +496,8 @@ class person_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM person " . $ls . ";");
 		$sth -> execute();

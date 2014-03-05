@@ -40,7 +40,7 @@ class device_photo_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
-/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> checksum = '';
 		$this -> filename = '';
@@ -334,8 +334,8 @@ class device_photo_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT device_photo.id, device_photo.checksum, device_photo.filename, device_photo.device_history_id, device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_photo JOIN device_history ON device_photo.device_history_id = device_history.id JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id" . $ls . ";");
 		$sth -> execute();
@@ -358,8 +358,8 @@ class device_photo_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT device_photo.id, device_photo.checksum, device_photo.filename, device_photo.device_history_id, device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_photo JOIN device_history ON device_photo.device_history_id = device_history.id JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE device_photo.device_history_id = :device_history_id" . $ls . ";");
 		$sth -> execute(array('device_history_id' => $device_history_id));

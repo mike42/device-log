@@ -41,7 +41,7 @@ class technician_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
-/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> login = '';
 		$this -> name = '';
@@ -345,8 +345,8 @@ class technician_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT technician.id, technician.login, technician.name FROM technician " . $ls . ";");
 		$sth -> execute();

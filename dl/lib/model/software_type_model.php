@@ -32,7 +32,7 @@ class software_type_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
-/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> name = '';
 
@@ -258,8 +258,8 @@ class software_type_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software_type.id, software_type.name FROM software_type " . $ls . ";");
 		$sth -> execute();

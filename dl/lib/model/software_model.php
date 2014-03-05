@@ -60,7 +60,7 @@ class software_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
-/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> code = '';
 		$this -> software_type_id = '';
@@ -416,8 +416,8 @@ class software_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id" . $ls . ";");
 		$sth -> execute();
@@ -440,8 +440,8 @@ class software_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id WHERE software.software_type_id = :software_type_id" . $ls . ";");
 		$sth -> execute(array('software_type_id' => $software_type_id));
@@ -464,8 +464,8 @@ class software_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id WHERE software.software_status_id = :software_status_id" . $ls . ";");
 		$sth -> execute(array('software_status_id' => $software_status_id));
@@ -488,8 +488,8 @@ class software_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id WHERE software.person_id = :person_id" . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));

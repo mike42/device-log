@@ -60,7 +60,7 @@ class key_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
-/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> serial = '';
 		$this -> person_id = '';
@@ -416,8 +416,8 @@ class key_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id" . $ls . ";");
 		$sth -> execute();
@@ -440,8 +440,8 @@ class key_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id WHERE key.person_id = :person_id" . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));
@@ -464,8 +464,8 @@ class key_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id WHERE key.key_type_id = :key_type_id" . $ls . ";");
 		$sth -> execute(array('key_type_id' => $key_type_id));
@@ -488,8 +488,8 @@ class key_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id WHERE key.key_status_id = :key_status_id" . $ls . ";");
 		$sth -> execute(array('key_status_id' => $key_status_id));

@@ -72,7 +72,7 @@ class software_history_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
-/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> date = '';
 		$this -> person_id = '';
@@ -513,8 +513,8 @@ class software_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software_history.id, software_history.date, software_history.person_id, software_history.software_id, software_history.technician_id, software_history.software_status_id, software_history.comment, software_history.change, software_history.is_bought, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, technician.id, technician.login, technician.name, software_status.id, software_status.tag, software_type.id, software_type.name FROM software_history JOIN person ON software_history.person_id = person.id JOIN software ON software_history.software_id = software.id JOIN technician ON software_history.technician_id = technician.id JOIN software_status ON software_history.software_status_id = software_status.id JOIN software_type ON software.software_type_id = software_type.id" . $ls . ";");
 		$sth -> execute();
@@ -537,8 +537,8 @@ class software_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software_history.id, software_history.date, software_history.person_id, software_history.software_id, software_history.technician_id, software_history.software_status_id, software_history.comment, software_history.change, software_history.is_bought, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, technician.id, technician.login, technician.name, software_status.id, software_status.tag, software_type.id, software_type.name FROM software_history JOIN person ON software_history.person_id = person.id JOIN software ON software_history.software_id = software.id JOIN technician ON software_history.technician_id = technician.id JOIN software_status ON software_history.software_status_id = software_status.id JOIN software_type ON software.software_type_id = software_type.id WHERE software_history.person_id = :person_id" . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));
@@ -561,8 +561,8 @@ class software_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software_history.id, software_history.date, software_history.person_id, software_history.software_id, software_history.technician_id, software_history.software_status_id, software_history.comment, software_history.change, software_history.is_bought, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, technician.id, technician.login, technician.name, software_status.id, software_status.tag, software_type.id, software_type.name FROM software_history JOIN person ON software_history.person_id = person.id JOIN software ON software_history.software_id = software.id JOIN technician ON software_history.technician_id = technician.id JOIN software_status ON software_history.software_status_id = software_status.id JOIN software_type ON software.software_type_id = software_type.id WHERE software_history.software_id = :software_id" . $ls . ";");
 		$sth -> execute(array('software_id' => $software_id));
@@ -585,8 +585,8 @@ class software_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software_history.id, software_history.date, software_history.person_id, software_history.software_id, software_history.technician_id, software_history.software_status_id, software_history.comment, software_history.change, software_history.is_bought, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, technician.id, technician.login, technician.name, software_status.id, software_status.tag, software_type.id, software_type.name FROM software_history JOIN person ON software_history.person_id = person.id JOIN software ON software_history.software_id = software.id JOIN technician ON software_history.technician_id = technician.id JOIN software_status ON software_history.software_status_id = software_status.id JOIN software_type ON software.software_type_id = software_type.id WHERE software_history.technician_id = :technician_id" . $ls . ";");
 		$sth -> execute(array('technician_id' => $technician_id));
@@ -609,8 +609,8 @@ class software_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT software_history.id, software_history.date, software_history.person_id, software_history.software_id, software_history.technician_id, software_history.software_status_id, software_history.comment, software_history.change, software_history.is_bought, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, technician.id, technician.login, technician.name, software_status.id, software_status.tag, software_type.id, software_type.name FROM software_history JOIN person ON software_history.person_id = person.id JOIN software ON software_history.software_id = software.id JOIN technician ON software_history.technician_id = technician.id JOIN software_status ON software_history.software_status_id = software_status.id JOIN software_type ON software.software_type_id = software_type.id WHERE software_history.software_status_id = :software_status_id" . $ls . ";");
 		$sth -> execute(array('software_status_id' => $software_status_id));

@@ -72,7 +72,7 @@ class key_history_model {
 	 * @return array
 	 */
 	public function __construct(array $fields = array()) {
-/* Initialise everything as blank to avoid tripping up the permissions fitlers */
+		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> date = '';
 		$this -> person_id = '';
@@ -515,8 +515,8 @@ class key_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN key ON key_history.key_id = key.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON key.key_type_id = key_type.id" . $ls . ";");
 		$sth -> execute();
@@ -539,8 +539,8 @@ class key_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN key ON key_history.key_id = key.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON key.key_type_id = key_type.id WHERE key_history.person_id = :person_id" . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));
@@ -563,8 +563,8 @@ class key_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN key ON key_history.key_id = key.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON key.key_type_id = key_type.id WHERE key_history.key_id = :key_id" . $ls . ";");
 		$sth -> execute(array('key_id' => $key_id));
@@ -587,8 +587,8 @@ class key_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN key ON key_history.key_id = key.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON key.key_type_id = key_type.id WHERE key_history.technician_id = :technician_id" . $ls . ";");
 		$sth -> execute(array('technician_id' => $technician_id));
@@ -611,8 +611,8 @@ class key_history_model {
 		$ls = "";
 		$start = (int)$start;
 		$limit = (int)$limit;
-		if($start > 0 && $limit > 0) {
-			$ls = " LIMIT $start, " . ($start + $limit);
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
 		}
 		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN key ON key_history.key_id = key.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON key.key_type_id = key_type.id WHERE key_history.key_status_id = :key_status_id" . $ls . ";");
 		$sth -> execute(array('key_status_id' => $key_status_id));
