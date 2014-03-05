@@ -1,11 +1,27 @@
 function foobar() {
-	var a = new device_model({id: 16});
+	var a = new device_model({id: 23});
 	a.fetch({
 		success: function(results) {
-			a.destroy();
+			console.log(results);
 		}
 	});
-	//var a = new device_model({sn: 'aaa', person_id: 1, device_status_id: 1, device_type_id: 1});
+	var a = new device_model({sn: 'aaa', person_id: 1, device_status_id: 1, device_type_id: 1});
+	
+	var ImageView = Backbone.View.extend({
+	    el: 'div#img',
+	    initialize: function () {
+	        this.render();
+	    },
+	    render: function () {
+	        this.$el.html( this.model.get('title') ) ;
+	        return this;
+	    }
+	});
+	// create new view
+	var firstView = new ImageView({model: firstImage});
+
+
+	Read more: http://mrbool.com/backbone-js-view/27972#ixzz2v3GslpLY
 	//a.save();
 }
 

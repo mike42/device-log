@@ -145,7 +145,7 @@ class software_controller {
 		if(!isset(core::$permission[$role]['software']['read']) || count(core::$permission[$role]['software']['read']) == 0) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
-		if($page < 1 || $itemspp < 1) {
+		if((int)$page < 1 || (int)$itemspp < 1) {
 			return array('error' => 'Invalid page number or item count', 'code' => '400');
 		}
 

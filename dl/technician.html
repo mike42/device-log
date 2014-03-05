@@ -8,6 +8,15 @@
 <link href="public/css/extra-global.css" rel="stylesheet">
 
 <title>Device Log</title>
+
+<script type="text/template" id="details">
+  <ul> 
+    <% _.each(devices, function(device)  { %>
+      <li><%= device.id %></li>
+    <% }); %>
+  </ul>
+</script>
+
 </head>
 <body>
 	<div class="container">

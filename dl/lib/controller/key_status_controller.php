@@ -116,7 +116,7 @@ class key_status_controller {
 		if(!isset(core::$permission[$role]['key_status']['read']) || count(core::$permission[$role]['key_status']['read']) == 0) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
-		if($page < 1 || $itemspp < 1) {
+		if((int)$page < 1 || (int)$itemspp < 1) {
 			return array('error' => 'Invalid page number or item count', 'code' => '400');
 		}
 
