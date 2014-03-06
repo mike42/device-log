@@ -17,6 +17,19 @@
   </ul>
 </script>
 
+<script type="text/template" id="device-template">
+	<tr>
+		<td><%= id %></td>
+		<td><%= device_type.name %></td>
+		<td><%= sn %></td>
+		<td><%= person.code %></td>
+		<td><%= device_status.tag %></td>
+		<td><%= is_spare %></td>
+		<td><%= is_damaged %></td>
+		<td><%= is_bought %></td>
+	</tr>
+</script>
+
 </head>
 <body>
 	<div class="container">
@@ -47,26 +60,45 @@
 		<!-- Tab panes -->
 		<div class="tab-content">
 			<!-- List of people -->
-			<div class="tab-pane active" id="overview">
-			'id', 'is_spare', 'is_damaged', 'sn', 'mac_eth0', 'mac_wlan0', 'is_bought', 'person_id', 'device_status_id', 'device_type_id'
-			<button onClick="foobar();" class="btn btn-default">aaa</button>
-			</div>
-			
-			<div class="tab-pane" id="people">
-				People
-			</div>
+			<div class="tab-pane active" id="overview">...</div>
+
+			<div class="tab-pane" id="people">People</div>
 
 			<div class="tab-pane" id="devices">
-				Devices
+				<p>
+					<br>Quick Search:
+				</p>
+				<nav class="navbar navbar input-mysize">
+					<form class="navbar-form navbar-left" role="search">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="">
+						</div>
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</form>
+				</nav>
+
+				<button onClick="foobar();" class="btn btn-default">Refresh</button>
+
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Type</th>
+							<th>Device Serial</th>
+							<th>Owner Code</th>
+							<th>Device Status</th>
+							<th>Spare</th>
+							<th>Damaged</th>
+							<th>Bought</th>
+						</tr>
+					</thead>
+					<tbody id="device-tbody"></tbody>
+				</table>
 			</div>
 
-			<div class="tab-pane" id="software">
-				Software
-			</div>
+			<div class="tab-pane" id="software">Software</div>
 
-			<div class="tab-pane" id="keys">
-				Keys
-			</div>
+			<div class="tab-pane" id="keys">Keys</div>
 		</div>
 	</div>
 
