@@ -3,10 +3,14 @@ var DeviceCollection = Backbone.Collection.extend({
 	model : device_model
 });
 
-var DeviceView = Backbone.View.extend({
-	template : _.template($('#device-template').html()),
+var PersonCollection = Backbone.Collection.extend({
+	url : '/dl/api/person/list_all/1/100',
+	model : person_model
+});
+
+var DeviceRowView = Backbone.View.extend({
+	template : _.template($('#device-template-tr').html()),
 	tagName : 'tr',
-	// el: 'div#device-table',
 
 	initialize : function(options) {
 		_.bindAll(this, 'render');
@@ -19,7 +23,22 @@ var DeviceView = Backbone.View.extend({
 	}
 });
 
-var DevicesView = Backbone.View.extend({
+var PersonRowView = Backbone.View.extend({
+	template : _.template($('#person-template-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+var DeviceTableView = Backbone.View.extend({
 	collection : null,
 	el : 'tbody#device-tbody',
 
@@ -35,7 +54,7 @@ var DevicesView = Backbone.View.extend({
 		element.empty();
 
 		this.collection.forEach(function(item) {
-			var itemView = new DeviceView({
+			var itemView = new DeviceRowView({
 				model : item
 			});
 			element.append(itemView.template(itemView.model.toJSON()));
@@ -44,23 +63,134 @@ var DevicesView = Backbone.View.extend({
 	}
 });
 
-function foobar() {
+var PersonTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#person-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new PersonRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+function handleFailedRequest(response) {
+	if(response.status == '403') {
+		sessionExpired();
+	} else {
+		var responseObj = $.parseJSON(response.responseText);
+		warn('Error: ' + responseObj.error);
+	}
+}
+
+function doLoadInitialData() {
 	var devices = new DeviceCollection();
 	devices.fetch({
 		success : function(results) {
-			var db = new DevicesView({
+			var db = new DeviceTableView({
 				collection : devices
 			});
 			db.render();
-			console.log(results);
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
 		}
 	});
+	
+	var people = new PersonCollection();
+	people.fetch({
+		success : function(results) {
+			var db = new PersonTableView({
+				collection : people
+			});
+			db.render();
+		},
+		
+	});
+}
 
-	// var a = new device_model({
-	// id : 23
-	// });
-	// a.fetch({
-	// success : function(results) {
+$('#btnAddNew').on('click', function(event) {
+	$("#myModal").modal();
+	return false;
+});
+
+function warn(message) {
+	console.log(message);
+}
+
+function doLogout() {
+	event.preventDefault();
+	$("#btnLogout").prop('disabled', true);
+
+	var jqxhr = $.get("api/session/logout/").done(function(data) {
+		sessionExpired();
+	}).fail(function() {
+		warn("Couldn't contact the server");
+	});
+}
+
+function sessionExpired() {
+	window.location.href = 'index.html';
+}
+
+function yn(val) {
+	if(val == 1) {
+		return 'Y';
+	}
+	return 'N';
+}
+
+var AppRouter = Backbone.Router.extend({
+    routes: {
+        "person/:id": "loadPerson",
+        "device/:id": "loadDevice",
+        "*actions": "defaultRoute" // Backbone will try match the route above first
+    }
+});
+
+var app_router = new AppRouter;
+app_router.on('route:loadPerson', function (id) {
+	var person = new person_model({
+		id : id
+	});
+	person.fetch({
+		success : function(results) {
+			// TODO change tabs and display
+			alert(results);
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+});
+
+app_router.on('route:loadDevice', function (id) {
+	var device = new device_model({
+		id : id
+	});
+	device.fetch({
+		success : function(results) {
+			alert(results);
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+	
 	// var firstView = new DeviceView({
 	// model : a
 	// });
@@ -76,26 +206,16 @@ function foobar() {
 	// });
 
 	// a.save();
-
-}
-
-$('#btnLogout').on('click', function(event) {
-	event.preventDefault();
-	$("#btnLogout").prop('disabled', true);
-
-	var jqxhr = $.get("api/session/logout/").done(function(data) {
-		window.location.href = 'index.html';
-	}).fail(function() {
-		warn("Couldn't contact the server");
-	});
-	return false;
 });
 
-$('#btnAddNew').on('click', function(event) {
-	$("#myModal").modal();
-	return false;
+app_router.on('route:defaultRoute', function (actions) {
+    switch(actions) {
+    case 'logout':
+		doLogout();
+    default:
+    	doLoadInitialData();
+    }
 });
 
-function warn(message) {
-	console.log(message);
-}
+// Start Backbone history a necessary step for bookmarkable URL's
+Backbone.history.start();

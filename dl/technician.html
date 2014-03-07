@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="public/tablet.png" />
 <link href="public/css/bootstrap.min.css" rel="stylesheet">
 <link href="public/css/extra-global.css" rel="stylesheet">
 
@@ -17,16 +18,27 @@
   </ul>
 </script>
 
-<script type="text/template" id="device-template">
+<script type="text/template" id="device-template-tr">
 	<tr>
-		<td><%= id %></td>
+		<td><a href="#device/<%= id %>">#<%= id %></a></td>
 		<td><%= device_type.name %></td>
-		<td><%= sn %></td>
-		<td><%= person.code %></td>
+		<td><a href="#device/<%= id %>"><%= sn %></a></td>
+		<td><a href="#person/<%= person.id %>"><%= person.code %></a></td>
 		<td><%= device_status.tag %></td>
-		<td><%= is_spare %></td>
-		<td><%= is_damaged %></td>
-		<td><%= is_bought %></td>
+		<td><%= yn(is_spare) %></td>
+		<td><%= yn(is_damaged) %></td>
+		<td><%= yn(is_bought) %></td>
+	</tr>
+</script>
+
+<script type="text/template" id="person-template-tr">
+	<tr>
+		<td><a href="#person/<%= id %>">#<%= id %></a></td>
+		<td><a href="#person/<%= id %>"><%= code %></a></td>
+		<td><%= firstname %></td>
+		<td><%= surname %></td>
+		<td><%= yn(is_staff) %></td>
+		<td><%= yn(is_active) %></td>
 	</tr>
 </script>
 
@@ -36,15 +48,15 @@
 		<div class="row quarter-spacer">
 			<div class="col-sm-6">
 				<!--Heading -->
-				<h1>SJC Device Log</h1>
+				<h1><img src="public/tablet.png" /> Device Log</h1>
 			</div>
 			<div class="col-sm-6 half-spacer" style="text-align: right">
 				<button class="btn btn-sm btn-default" id="btnAddNew">
 					<span class="glyphicon glyphicon-plus"></span> Add New
 				</button>
-				<button class="btn btn-sm btn-primary" id="btnLogout">
+				<a class="btn btn-sm btn-primary" id="btnLogout" href="">
 					<span class="glyphicon glyphicon-log-out"></span> Log out
-				</button>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -62,7 +74,21 @@
 			<!-- List of people -->
 			<div class="tab-pane active" id="overview">...</div>
 
-			<div class="tab-pane" id="people">People</div>
+			<div class="tab-pane" id="people">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Code</th>
+							<th>First name</th>
+							<th>Surname</th>
+							<th>Staff</th>
+							<th>Active</th>
+						</tr>
+					</thead>
+					<tbody id="person-tbody"></tbody>
+				</table>
+			</div>
 
 			<div class="tab-pane" id="devices">
 				<p>
