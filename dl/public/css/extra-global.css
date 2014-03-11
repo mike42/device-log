@@ -24,3 +24,12 @@ font-size: 85%
 .half-spacer { margin-top: 20px; }
 
  .quarter-spacer {  margin-top: 10px; }
+
+.person-profile-img  img {
+	width: 75%;
+	margin: 5px;
+}
+
+.person-profile-img {
+	text-align: center;
+}

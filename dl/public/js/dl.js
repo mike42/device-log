@@ -38,6 +38,35 @@ var PersonRowView = Backbone.View.extend({
 	}
 });
 
+
+var PersonDetailView = Backbone.View.extend({
+	template : _.template($('#person-template-detail').html()),
+	el: 'div#personDetail',
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+var DeviceDetailView = Backbone.View.extend({
+	template : _.template($('#device-template-detail').html()),
+	el: 'div#deviceDetail',
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
 var DeviceTableView = Backbone.View.extend({
 	collection : null,
 	el : 'tbody#device-tbody',
@@ -97,7 +126,23 @@ function handleFailedRequest(response) {
 	}
 }
 
-function doLoadInitialData() {
+function doLoadPeople() {
+	$('#personDetail').hide();
+	$('#personList').show();
+	var people = new PersonCollection();
+	people.fetch({
+		success : function(results) {
+			var db = new PersonTableView({
+				collection : people
+			});
+			db.render();
+		},
+	});
+}
+
+function doLoadDevices() {
+	$('#deviceDetail').hide();
+	$('#deviceList').show();
 	var devices = new DeviceCollection();
 	devices.fetch({
 		success : function(results) {
@@ -110,17 +155,14 @@ function doLoadInitialData() {
 			handleFailedRequest(response);
 		}
 	});
-	
-	var people = new PersonCollection();
-	people.fetch({
-		success : function(results) {
-			var db = new PersonTableView({
-				collection : people
-			});
-			db.render();
-		},
-		
-	});
+}
+
+function doLoadSoftware() {
+	// Nothing to do yet
+}
+
+function doLoadKeys() {
+	// Also nothing to do here
 }
 
 $('#btnAddNew').on('click', function(event) {
@@ -154,6 +196,10 @@ function yn(val) {
 	return 'N';
 }
 
+function tabTo(tab) {
+	$('ul.nav a[href="#' + tab + '"]').tab('show');
+}
+
 var AppRouter = Backbone.Router.extend({
     routes: {
         "person/:id": "loadPerson",
@@ -169,8 +215,13 @@ app_router.on('route:loadPerson', function (id) {
 	});
 	person.fetch({
 		success : function(results) {
-			// TODO change tabs and display
-			alert(results);
+	    	tabTo('people');
+	    	$('#personList').hide();
+			var itemView = new PersonDetailView({
+				model : results
+			});
+			itemView.render();
+	    	$('#personDetail').show();
 		},
 		error : function(model, response) {
 			handleFailedRequest(response);
@@ -184,7 +235,13 @@ app_router.on('route:loadDevice', function (id) {
 	});
 	device.fetch({
 		success : function(results) {
-			alert(results);
+	    	tabTo('devices');
+	    	$('#deviceList').hide();
+			var itemView = new DeviceDetailView({
+				model : results
+			});
+			itemView.render();
+	    	$('#deviceDetail').show();
 		},
 		error : function(model, response) {
 			handleFailedRequest(response);
@@ -212,9 +269,31 @@ app_router.on('route:defaultRoute', function (actions) {
     switch(actions) {
     case 'logout':
 		doLogout();
+		break;
+    case 'people':
+    	tabTo('people');
+    	doLoadPeople();
+    	break;
+    case 'devices':
+    	tabTo('devices');
+    	doLoadDevices();
+    	break;
+    case 'software':
+    	tabTo('software');
+    	doLoadSoftware();
+    	break;
+    case 'keys':
+    	tabTo('keys');
+    	doLoadKeys();
+    	break;
     default:
-    	doLoadInitialData();
+    	//doLoadInitialData();
     }
+});
+
+
+$('.nav-tabs a').click(function (e) {
+	window.location.hash = this.hash;
 });
 
 // Start Backbone history a necessary step for bookmarkable URL's

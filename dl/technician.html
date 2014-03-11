@@ -33,13 +33,57 @@
 
 <script type="text/template" id="person-template-tr">
 	<tr>
-		<td><a href="#person/<%= id %>">#<%= id %></a></td>
 		<td><a href="#person/<%= id %>"><%= code %></a></td>
 		<td><%= firstname %></td>
 		<td><%= surname %></td>
 		<td><%= yn(is_staff) %></td>
 		<td><%= yn(is_active) %></td>
 	</tr>
+</script>
+
+<script type="text/template" id="person-template-detail">
+<div class="row">
+	<div class="col-md-3">
+		<div class="person-profile-img well">
+			<img class="img-thumbnail" src="/dl/api/person/photo/<%= id %>" alt="<%= code %>" />
+		</div>
+	</div>
+	<div class="col-md-9">
+		<h2><%= firstname %> <%= surname %></h2>
+		<table class="table">
+			<tbody>
+			<tr>
+				<th>Code</th><td><a href="#person/<%= id %>"><%= code %></a></td>
+				<th>Devices</th><td>..</a></td>
+			</tr>
+			<tr>
+				<th>Staff</th><td><%= yn(is_staff) %></td>
+				<th>Keys</th><td>..</td>
+			</tr>
+			<tr>
+				<th>Active</th><td><%= yn(is_active) %></td>
+				<th>Licenses</th><td>..</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+</script>
+
+<script type="text/template" id="device-template-detail">
+
+<table>
+	<tr>
+		<td><a href="#device/<%= id %>">#<%= id %></a></td>
+		<td><%= device_type.name %></td>
+		<td><a href="#device/<%= id %>"><%= sn %></a></td>
+		<td><a href="#person/<%= person.id %>"><%= person.code %></a></td>
+		<td><%= device_status.tag %></td>
+		<td><%= yn(is_spare) %></td>
+		<td><%= yn(is_damaged) %></td>
+		<td><%= yn(is_bought) %></td>
+	</tr>
+</table>
 </script>
 
 </head>
@@ -75,51 +119,59 @@
 			<div class="tab-pane active" id="overview">...</div>
 
 			<div class="tab-pane" id="people">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Code</th>
-							<th>First name</th>
-							<th>Surname</th>
-							<th>Staff</th>
-							<th>Active</th>
-						</tr>
-					</thead>
-					<tbody id="person-tbody"></tbody>
-				</table>
+				<div id="personList">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Code</th>
+								<th>First name</th>
+								<th>Surname</th>
+								<th>Staff</th>
+								<th>Active</th>
+							</tr>
+						</thead>
+						<tbody id="person-tbody"></tbody>
+					</table>
+				</div>
+				<div id="personDetail">
+					Person detail
+				</div>
 			</div>
 
 			<div class="tab-pane" id="devices">
-				<p>
-					<br>Quick Search:
-				</p>
-				<nav class="navbar navbar input-mysize">
-					<form class="navbar-form navbar-left" role="search">
-						<div class="form-group">
-							<input type="text" class="form-control" placeholder="">
-						</div>
-						<button type="submit" class="btn btn-primary">Submit</button>
-					</form>
-				</nav>
-
-				<button onClick="foobar();" class="btn btn-default">Refresh</button>
-
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Type</th>
-							<th>Device Serial</th>
-							<th>Owner Code</th>
-							<th>Device Status</th>
-							<th>Spare</th>
-							<th>Damaged</th>
-							<th>Bought</th>
-						</tr>
-					</thead>
-					<tbody id="device-tbody"></tbody>
-				</table>
+				<div id="deviceList">
+					<p>
+						<br>Quick Search:
+					</p>
+					<nav class="navbar navbar input-mysize">
+						<form class="navbar-form navbar-left" role="search">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="">
+							</div>
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</form>
+					</nav>
+	
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Type</th>
+								<th>Device Serial</th>
+								<th>Owner Code</th>
+								<th>Device Status</th>
+								<th>Spare</th>
+								<th>Damaged</th>
+								<th>Bought</th>
+							</tr>
+						</thead>
+						<tbody id="device-tbody"></tbody>
+					</table>
+				</div>
+				
+				<div id="deviceDetail">
+					Device detail
+				</div>
 			</div>
 
 			<div class="tab-pane" id="software">Software</div>

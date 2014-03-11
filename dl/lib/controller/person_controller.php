@@ -44,12 +44,12 @@ class person_controller {
 		if(!$person) {
 			return array('error' => 'person not found', 'code' => '404');
 		}
-		// $person -> populate_list_device();
-		// $person -> populate_list_software();
-		// $person -> populate_list_software_history();
-		// $person -> populate_list_key();
-		// $person -> populate_list_key_history();
-		// $person -> populate_list_device_history();
+		$person -> populate_list_device();
+		$person -> populate_list_software();
+		$person -> populate_list_software_history();
+		$person -> populate_list_key();
+		//$person -> populate_list_key_history();
+		$person -> populate_list_device_history();
 		return $person -> to_array_filtered($role);
 	}
 
@@ -163,6 +163,40 @@ class person_controller {
 		} catch(Exception $e) {
 			return array('error' => 'Failed to list', 'code' => '500');
 		}
+	}
+
+	public static function photo($id) {
+		/* Check permission */
+		$role = session::getRole();
+		if(!isset(core::$permission[$role]['person']['read']) || count(core::$permission[$role]['person']['read']) == 0) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+
+		/* Load person */
+		$person = person_model::get($id);
+		if(!$person) {
+			return array('error' => 'person not found', 'code' => '404');
+		}
+
+		try {
+			$code = preg_replace("/[^a-zA-Z0-9]+/", "", $person -> get_code());
+			if(strlen($code) < 1 || strlen($code) > 5 || $code != $person -> get_code()) {
+				throw new Exception("Code contains invalid characters");
+			}
+	
+			$fn = dirname(__FILE__) . "/../../site/photos/$code.jpg";
+			if(!file_exists($fn)) {
+				throw new Exception("Photo does not exist");
+			}
+
+		} catch(Exception $e) {
+			$fn = dirname(__FILE__) . "/../../public/profile-default.jpg";
+		}
+
+		header("content-type: image/jpeg");
+		$a = fopen($fn, "r");
+		fpassthru($a);
+		exit(0);
 	}
 }
 ?>
