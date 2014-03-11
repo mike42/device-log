@@ -1,36 +1,43 @@
 html {
-    overflow-y: scroll; 
+	overflow-y: scroll;
 }
 
 tr:hover {
-      opacity:0.4;
-
+	opacity: 0.4;
 }
+
 tr:first-child:hover {
-      opacity:1;
+	opacity: 1;
 }
 
 object {
-width: 100%;
-min-height:90%;
+	width: 100%;
+	min-height: 90%;
 }
 
-.input-mysize { 
-width: 40% 
-} /* Makes the quick search bar and add new box the right size */
-
-td, th {
-font-size: 85%
+.input-mysize {
+	width: 40%
 }
 
- .spacer {  margin-top: 40px; }
+td,th {
+	font-size: 85%
+}
 
-.half-spacer { margin-top: 20px; }
+.spacer {
+	margin-top: 40px;
+}
 
- .quarter-spacer {  margin-top: 10px; }
+.half-spacer {
+	margin-top: 20px;
+}
+
+.quarter-spacer {
+	margin-top: 10px;
+}
 
 .person-profile-img  img {
 	width: 75%;
+	max-width: 300px !important;
 	margin: 5px;
 }
 
@@ -38,37 +45,40 @@ font-size: 85%
 	text-align: center;
 }
 
- 
 /* Side notes for calling out things
 -------------------------------------------------- */
- 
+
 /* Base styles (regardless of theme) */
 .bs-callout {
-  margin: 20px 0;
-  padding: 15px 30px 15px 15px;
-  border-left: 5px solid #eee;
+	margin: 20px 0;
+	padding: 15px 30px 15px 15px;
+	border-left: 5px solid #eee;
 }
+
 .bs-callout h4 {
-  margin-top: 0;
+	margin-top: 0;
 }
+
 .bs-callout p:last-child {
-  margin-bottom: 0;
+	margin-bottom: 0;
 }
-.bs-callout code,
-.bs-callout .highlight {
-  background-color: #fff;
+
+.bs-callout code,.bs-callout .highlight {
+	background-color: #fff;
 }
- 
+
 /* Themes for different contexts */
 .bs-callout-danger {
-  background-color: #fcf2f2;
-  border-color: #dFb5b4;
+	background-color: #fcf2f2;
+	border-color: #dFb5b4;
 }
+
 .bs-callout-warning {
-  background-color: #fefbed;
-  border-color: #f1e7bc;
+	background-color: #fefbed;
+	border-color: #f1e7bc;
 }
+
 .bs-callout-info {
-  background-color: #f0f7fd;
-  border-color: #d0e3f0;
+	background-color: #f0f7fd;
+	border-color: #d0e3f0;
 }

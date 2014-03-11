@@ -166,7 +166,7 @@ function doLoadKeys() {
 }
 
 $('#btnAddNew').on('click', function(event) {
-	$("#myModal").modal();
+	$("#modalAddNew").modal();
 	return false;
 });
 
@@ -222,6 +222,10 @@ app_router.on('route:loadPerson', function (id) {
 			});
 			itemView.render();
 	    	$('#personDetail').show();
+	    	$('#btnPersonDeviceList').click(function() {
+	    		$("#modalPersonDeviceList").modal();
+	    		return false;
+	    	});
 		},
 		error : function(model, response) {
 			handleFailedRequest(response);

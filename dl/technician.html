@@ -43,26 +43,26 @@
 
 <script type="text/template" id="person-template-detail">
 <div class="row">
-	<div class="col-md-3">
+	<div class="col-sm-2">
 		<div class="person-profile-img well">
 			<img class="img-thumbnail" src="/dl/api/person/photo/<%= id %>" alt="<%= code %>" />
 		</div>
 	</div>
-	<div class="col-md-9">
+	<div class="col-sm-10">
 		<h2><%= firstname %> <%= surname %></h2>
 		<table class="table">
 			<tbody>
 			<tr>
 				<th>Code</th><td><a href="#person/<%= id %>"><%= code %></a></td>
-				<th>Devices</th><td>..</a></td>
+				<th>Devices</th><td><a href="#" id="btnPersonDeviceList"><%= device.length %></a></td>
 			</tr>
 			<tr>
 				<th>Staff</th><td><%= yn(is_staff) %></td>
-				<th>Keys</th><td>..</td>
+				<th>Keys</th><td><%= doorkey.length %></td>
 			</tr>
 			<tr>
 				<th>Active</th><td><%= yn(is_active) %></td>
-				<th>Licenses</th><td>..</td>
+				<th>Licenses</th><td><%= software.length %></td>
 			</tr>
 			</tbody>
 		</table>
@@ -72,7 +72,6 @@
 </script>
 
 <script type="text/template" id="device-template-detail">
-
 <table>
 	<tr>
 		<td><a href="#device/<%= id %>">#<%= id %></a></td>
@@ -202,7 +201,7 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+	<div class="modal fade" id="modalAddNew" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
