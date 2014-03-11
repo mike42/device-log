@@ -150,7 +150,7 @@ $permission['user'] = array(
 			'id',
 			'name'),
 		'delete' => true),
-	'key' => array(
+	'doorkey' => array(
 		'create' => true,
 		'read' => array(
 			'id',
@@ -382,7 +382,7 @@ $permission['admin'] = array(
 			'id',
 			'name'),
 		'delete' => true),
-	'key' => array(
+	'doorkey' => array(
 		'create' => true,
 		'read' => array(
 			'id',

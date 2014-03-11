@@ -1,5 +1,5 @@
 <?php
-class key_model {
+class doorkey_model {
 	/**
 	 * @var int id ID for this key
 	 */
@@ -55,7 +55,7 @@ class key_model {
 	}
 
 	/**
-	 * Construct new key from field list
+	 * Construct new doorkey from field list
 	 * 
 	 * @return array
 	 */
@@ -68,23 +68,23 @@ class key_model {
 		$this -> key_type_id = '';
 		$this -> key_status_id = '';
 
-		if(isset($fields['key.id'])) {
-			$this -> set_id($fields['key.id']);
+		if(isset($fields['doorkey.id'])) {
+			$this -> set_id($fields['doorkey.id']);
 		}
-		if(isset($fields['key.serial'])) {
-			$this -> set_serial($fields['key.serial']);
+		if(isset($fields['doorkey.serial'])) {
+			$this -> set_serial($fields['doorkey.serial']);
 		}
-		if(isset($fields['key.person_id'])) {
-			$this -> set_person_id($fields['key.person_id']);
+		if(isset($fields['doorkey.person_id'])) {
+			$this -> set_person_id($fields['doorkey.person_id']);
 		}
-		if(isset($fields['key.is_spare'])) {
-			$this -> set_is_spare($fields['key.is_spare']);
+		if(isset($fields['doorkey.is_spare'])) {
+			$this -> set_is_spare($fields['doorkey.is_spare']);
 		}
-		if(isset($fields['key.key_type_id'])) {
-			$this -> set_key_type_id($fields['key.key_type_id']);
+		if(isset($fields['doorkey.key_type_id'])) {
+			$this -> set_key_type_id($fields['doorkey.key_type_id']);
 		}
-		if(isset($fields['key.key_status_id'])) {
-			$this -> set_key_status_id($fields['key.key_status_id']);
+		if(isset($fields['doorkey.key_status_id'])) {
+			$this -> set_key_status_id($fields['doorkey.key_status_id']);
 		}
 
 		$this -> model_variables_changed = array();
@@ -95,7 +95,7 @@ class key_model {
 	}
 
 	/**
-	 * Convert key to shallow associative array
+	 * Convert doorkey to shallow associative array
 	 * 
 	 * @return array
 	 */
@@ -111,20 +111,20 @@ class key_model {
 	}
 
 	/**
-	 * Convert key to associative array, including only visible fields,
+	 * Convert doorkey to associative array, including only visible fields,
 	 * parent tables, and loaded child tables
 	 * 
 	 * @param string $role The user role to use
 	 */
 	public function to_array_filtered($role = "anon") {
-		if(core::$permission[$role]['key']['read'] === false) {
+		if(core::$permission[$role]['doorkey']['read'] === false) {
 			return false;
 		}
 		$values = array();
 		$everything = $this -> to_array();
-		foreach(core::$permission[$role]['key']['read'] as $field) {
+		foreach(core::$permission[$role]['doorkey']['read'] as $field) {
 			if(!isset($everything[$field])) {
-				throw new Exception("Check permissions: '$field' is not a real field in key");
+				throw new Exception("Check permissions: '$field' is not a real field in doorkey");
 			}
 			$values[$field] = $everything[$field];
 		}
@@ -148,12 +148,12 @@ class key_model {
 	 */
 	private static function row_to_assoc(array $row) {
 		$values = array(
-			"key.id" => $row[0],
-			"key.serial" => $row[1],
-			"key.person_id" => $row[2],
-			"key.is_spare" => $row[3],
-			"key.key_type_id" => $row[4],
-			"key.key_status_id" => $row[5],
+			"doorkey.id" => $row[0],
+			"doorkey.serial" => $row[1],
+			"doorkey.person_id" => $row[2],
+			"doorkey.is_spare" => $row[3],
+			"doorkey.key_type_id" => $row[4],
+			"doorkey.key_status_id" => $row[5],
 			"person.id" => $row[6],
 			"person.code" => $row[7],
 			"person.is_staff" => $row[8],
@@ -174,7 +174,7 @@ class key_model {
 	 */
 	public function get_id() {
 		if(!isset($this -> model_variables_set['id'])) {
-			throw new Exception("key.id has not been initialised.");
+			throw new Exception("doorkey.id has not been initialised.");
 		}
 		return $this -> id;
 	}
@@ -186,7 +186,7 @@ class key_model {
 	 */
 	private function set_id($id) {
 		if(!is_numeric($id)) {
-			throw new Exception("key.id must be numeric");
+			throw new Exception("doorkey.id must be numeric");
 		}
 		$this -> id = $id;
 		$this -> model_variables_changed['id'] = true;
@@ -200,7 +200,7 @@ class key_model {
 	 */
 	public function get_serial() {
 		if(!isset($this -> model_variables_set['serial'])) {
-			throw new Exception("key.serial has not been initialised.");
+			throw new Exception("doorkey.serial has not been initialised.");
 		}
 		return $this -> serial;
 	}
@@ -212,7 +212,7 @@ class key_model {
 	 */
 	public function set_serial($serial) {
 		if(strlen($serial) > 128) {
-			throw new Exception("key.serial cannot be longer than 128 characters");
+			throw new Exception("doorkey.serial cannot be longer than 128 characters");
 		}
 		$this -> serial = $serial;
 		$this -> model_variables_changed['serial'] = true;
@@ -226,7 +226,7 @@ class key_model {
 	 */
 	public function get_person_id() {
 		if(!isset($this -> model_variables_set['person_id'])) {
-			throw new Exception("key.person_id has not been initialised.");
+			throw new Exception("doorkey.person_id has not been initialised.");
 		}
 		return $this -> person_id;
 	}
@@ -238,7 +238,7 @@ class key_model {
 	 */
 	public function set_person_id($person_id) {
 		if(!is_numeric($person_id)) {
-			throw new Exception("key.person_id must be numeric");
+			throw new Exception("doorkey.person_id must be numeric");
 		}
 		$this -> person_id = $person_id;
 		$this -> model_variables_changed['person_id'] = true;
@@ -252,7 +252,7 @@ class key_model {
 	 */
 	public function get_is_spare() {
 		if(!isset($this -> model_variables_set['is_spare'])) {
-			throw new Exception("key.is_spare has not been initialised.");
+			throw new Exception("doorkey.is_spare has not been initialised.");
 		}
 		return $this -> is_spare;
 	}
@@ -264,7 +264,7 @@ class key_model {
 	 */
 	public function set_is_spare($is_spare) {
 		if(!is_numeric($is_spare)) {
-			throw new Exception("key.is_spare must be numeric");
+			throw new Exception("doorkey.is_spare must be numeric");
 		}
 		$this -> is_spare = $is_spare;
 		$this -> model_variables_changed['is_spare'] = true;
@@ -278,7 +278,7 @@ class key_model {
 	 */
 	public function get_key_type_id() {
 		if(!isset($this -> model_variables_set['key_type_id'])) {
-			throw new Exception("key.key_type_id has not been initialised.");
+			throw new Exception("doorkey.key_type_id has not been initialised.");
 		}
 		return $this -> key_type_id;
 	}
@@ -290,7 +290,7 @@ class key_model {
 	 */
 	public function set_key_type_id($key_type_id) {
 		if(!is_numeric($key_type_id)) {
-			throw new Exception("key.key_type_id must be numeric");
+			throw new Exception("doorkey.key_type_id must be numeric");
 		}
 		$this -> key_type_id = $key_type_id;
 		$this -> model_variables_changed['key_type_id'] = true;
@@ -304,7 +304,7 @@ class key_model {
 	 */
 	public function get_key_status_id() {
 		if(!isset($this -> model_variables_set['key_status_id'])) {
-			throw new Exception("key.key_status_id has not been initialised.");
+			throw new Exception("doorkey.key_status_id has not been initialised.");
 		}
 		return $this -> key_status_id;
 	}
@@ -316,7 +316,7 @@ class key_model {
 	 */
 	public function set_key_status_id($key_status_id) {
 		if(!is_numeric($key_status_id)) {
-			throw new Exception("key.key_status_id must be numeric");
+			throw new Exception("doorkey.key_status_id must be numeric");
 		}
 		$this -> key_status_id = $key_status_id;
 		$this -> model_variables_changed['key_status_id'] = true;
@@ -324,7 +324,7 @@ class key_model {
 	}
 
 	/**
-	 * Update key
+	 * Update doorkey
 	 */
 	public function update() {
 		if(count($this -> model_variables_changed) == 0) {
@@ -342,12 +342,12 @@ class key_model {
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("UPDATE key SET $fields WHERE id = :id");
+		$sth = database::$dbh -> prepare("UPDATE doorkey SET $fields WHERE id = :id");
 		$sth -> execute($data);
 	}
 
 	/**
-	 * Add new key
+	 * Add new doorkey
 	 */
 	public function insert() {
 		if(count($this -> model_variables_set) == 0) {
@@ -367,16 +367,16 @@ class key_model {
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("INSERT INTO key ($fields) VALUES ($vals);");
+		$sth = database::$dbh -> prepare("INSERT INTO doorkey ($fields) VALUES ($vals);");
 		$sth -> execute($data);
 		$this -> set_id(database::$dbh->lastInsertId());
 	}
 
 	/**
-	 * Delete key
+	 * Delete doorkey
 	 */
 	public function delete() {
-		$sth = database::$dbh -> prepare("DELETE FROM key WHERE id = :id");
+		$sth = database::$dbh -> prepare("DELETE FROM doorkey WHERE id = :id");
 		$data['id'] = $this -> get_id();
 		$sth -> execute($data);
 	}
@@ -396,14 +396,14 @@ class key_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id WHERE key.id = :id;");
+		$sth = database::$dbh -> prepare("SELECT doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM doorkey JOIN person ON doorkey.person_id = person.id JOIN key_type ON doorkey.key_type_id = key_type.id JOIN key_status ON doorkey.key_status_id = key_status.id WHERE doorkey.id = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
 			return false;
 		}
 		$assoc = self::row_to_assoc($row);
-		return new key_model($assoc);
+		return new doorkey_model($assoc);
 	}
 
 	/**
@@ -419,13 +419,13 @@ class key_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM doorkey JOIN person ON doorkey.person_id = person.id JOIN key_type ON doorkey.key_type_id = key_type.id JOIN key_status ON doorkey.key_status_id = key_status.id" . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
 		foreach($rows as $row) {
 			$assoc = self::row_to_assoc($row);
-			$ret[] = new key_model($assoc);
+			$ret[] = new doorkey_model($assoc);
 		}
 		return $ret;
 	}
@@ -443,13 +443,13 @@ class key_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id WHERE key.person_id = :person_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM doorkey JOIN person ON doorkey.person_id = person.id JOIN key_type ON doorkey.key_type_id = key_type.id JOIN key_status ON doorkey.key_status_id = key_status.id WHERE doorkey.person_id = :person_id" . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
 		foreach($rows as $row) {
 			$assoc = self::row_to_assoc($row);
-			$ret[] = new key_model($assoc);
+			$ret[] = new doorkey_model($assoc);
 		}
 		return $ret;
 	}
@@ -467,13 +467,13 @@ class key_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id WHERE key.key_type_id = :key_type_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM doorkey JOIN person ON doorkey.person_id = person.id JOIN key_type ON doorkey.key_type_id = key_type.id JOIN key_status ON doorkey.key_status_id = key_status.id WHERE doorkey.key_type_id = :key_type_id" . $ls . ";");
 		$sth -> execute(array('key_type_id' => $key_type_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
 		foreach($rows as $row) {
 			$assoc = self::row_to_assoc($row);
-			$ret[] = new key_model($assoc);
+			$ret[] = new doorkey_model($assoc);
 		}
 		return $ret;
 	}
@@ -491,13 +491,13 @@ class key_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key.id, key.serial, key.person_id, key.is_spare, key.key_type_id, key.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM key JOIN person ON key.person_id = person.id JOIN key_type ON key.key_type_id = key_type.id JOIN key_status ON key.key_status_id = key_status.id WHERE key.key_status_id = :key_status_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM doorkey JOIN person ON doorkey.person_id = person.id JOIN key_type ON doorkey.key_type_id = key_type.id JOIN key_status ON doorkey.key_status_id = key_status.id WHERE doorkey.key_status_id = :key_status_id" . $ls . ";");
 		$sth -> execute(array('key_status_id' => $key_status_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
 		foreach($rows as $row) {
 			$assoc = self::row_to_assoc($row);
-			$ret[] = new key_model($assoc);
+			$ret[] = new doorkey_model($assoc);
 		}
 		return $ret;
 	}

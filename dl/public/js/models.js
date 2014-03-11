@@ -111,9 +111,9 @@ key_status_model = Backbone.Model.extend({
 	}
 });
 
-/* key */
-key_model = Backbone.Model.extend({
-	urlRoot: '/dl/api/key',
+/* doorkey */
+doorkey_model = Backbone.Model.extend({
+	urlRoot: '/dl/api/doorkey',
 	defaults: {
 		serial: '',
 		person_id: 0,

@@ -66,6 +66,7 @@
 			</tr>
 			</tbody>
 		</table>
+	<h3>History</h3>
 	</div>
 </div>
 </script>
@@ -92,14 +93,16 @@
 		<div class="row quarter-spacer">
 			<div class="col-sm-6">
 				<!--Heading -->
-				<h1><img src="public/tablet.png" /> Device Log</h1>
+				<h1>
+					<img src="public/tablet.png" /> Device Log
+				</h1>
 			</div>
 			<div class="col-sm-6 half-spacer" style="text-align: right">
 				<button class="btn btn-sm btn-default" id="btnAddNew">
 					<span class="glyphicon glyphicon-plus"></span> Add New
 				</button>
-				<a class="btn btn-sm btn-primary" id="btnLogout" href="">
-					<span class="glyphicon glyphicon-log-out"></span> Log out
+				<a class="btn btn-sm btn-primary" id="btnLogout" href="#logout"> <span
+					class="glyphicon glyphicon-log-out"></span> Log out
 				</a>
 			</div>
 		</div>
@@ -116,10 +119,25 @@
 		<!-- Tab panes -->
 		<div class="tab-content">
 			<!-- List of people -->
-			<div class="tab-pane active" id="overview">...</div>
+			<div class="tab-pane active" id="overview">
+				<div class="bs-callout bs-callout-info">
+					Welcome to <b>Device Log</b>.
+				</div>
+			</div>
 
 			<div class="tab-pane" id="people">
 				<div id="personList">
+					<p>
+						<br>Quick Search:
+					</p>
+					<nav class="navbar navbar input-mysize">
+						<form class="navbar-form navbar-left" role="search">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="">
+							</div>
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</form>
+					</nav>
 					<table class="table table-striped">
 						<thead>
 							<tr>
@@ -133,9 +151,7 @@
 						<tbody id="person-tbody"></tbody>
 					</table>
 				</div>
-				<div id="personDetail">
-					Person detail
-				</div>
+				<div id="personDetail">Person detail</div>
 			</div>
 
 			<div class="tab-pane" id="devices">
@@ -151,7 +167,7 @@
 							<button type="submit" class="btn btn-primary">Submit</button>
 						</form>
 					</nav>
-	
+
 					<table class="table table-striped">
 						<thead>
 							<tr>
@@ -168,15 +184,21 @@
 						<tbody id="device-tbody"></tbody>
 					</table>
 				</div>
-				
-				<div id="deviceDetail">
-					Device detail
+
+				<div id="deviceDetail">Device detail</div>
+			</div>
+
+			<div class="tab-pane" id="software">
+				<div class="bs-callout bs-callout-warning">
+					The <b>Software</b> tab has not been implemented yet.
 				</div>
 			</div>
 
-			<div class="tab-pane" id="software">Software</div>
-
-			<div class="tab-pane" id="keys">Keys</div>
+			<div class="tab-pane" id="keys">
+				<div class="bs-callout bs-callout-warning">
+					The <b>Keys</b> tab has not been implemented yet.
+				</div>
+			</div>
 		</div>
 	</div>
 

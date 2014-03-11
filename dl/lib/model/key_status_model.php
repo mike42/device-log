@@ -14,7 +14,7 @@ class key_status_model {
 	private $model_variables_set; // All variables which have been set (initially or with a setter)
 
 	/* Child tables */
-	public $list_key;
+	public $list_doorkey;
 	public $list_key_history;
 
 	/**
@@ -24,7 +24,7 @@ class key_status_model {
 		core::loadClass("database");
 
 		/* Child tables */
-		core::loadClass("key_model");
+		core::loadClass("doorkey_model");
 		core::loadClass("key_history_model");
 	}
 
@@ -46,7 +46,7 @@ class key_status_model {
 		}
 
 		$this -> model_variables_changed = array();
-		$this -> list_key = array();
+		$this -> list_doorkey = array();
 		$this -> list_key_history = array();
 	}
 
@@ -82,10 +82,10 @@ class key_status_model {
 		}
 
 		/* Add filtered versions of everything that's been loaded */
-		$values['key'] = array();
+		$values['doorkey'] = array();
 		$values['key_history'] = array();
-		foreach($this -> list_key as $key) {
-			$values['key'][] = $key -> to_array_filtered($role);
+		foreach($this -> list_doorkey as $doorkey) {
+			$values['doorkey'][] = $doorkey -> to_array_filtered($role);
 		}
 		foreach($this -> list_key_history as $key_history) {
 			$values['key_history'][] = $key_history -> to_array_filtered($role);
@@ -217,14 +217,14 @@ class key_status_model {
 	}
 
 	/**
-	 * List associated rows from key table
+	 * List associated rows from doorkey table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
-	public function populate_list_key($start = 0, $limit = -1) {
+	public function populate_list_doorkey($start = 0, $limit = -1) {
 		$key_status_id = $this -> get_id();
-		$this -> list_key = key_model::list_by_key_status_id($key_status_id, $start, $limit);
+		$this -> list_doorkey = doorkey_model::list_by_key_status_id($key_status_id, $start, $limit);
 	}
 
 	/**

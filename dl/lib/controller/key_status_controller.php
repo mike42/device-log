@@ -44,7 +44,7 @@ class key_status_controller {
 		if(!$key_status) {
 			return array('error' => 'key_status not found', 'code' => '404');
 		}
-		// $key_status -> populate_list_key();
+		// $key_status -> populate_list_doorkey();
 		// $key_status -> populate_list_key_history();
 		return $key_status -> to_array_filtered($role);
 	}
@@ -92,9 +92,9 @@ class key_status_controller {
 		}
 
 		/* Check for child rows */
-		$key_status -> populate_list_key(0, 1);
-		if(count($key_status -> list_key) > 0) {
-			return array('error' => 'Cannot delete key_status because of a related key entry', 'code' => '400');
+		$key_status -> populate_list_doorkey(0, 1);
+		if(count($key_status -> list_doorkey) > 0) {
+			return array('error' => 'Cannot delete key_status because of a related doorkey entry', 'code' => '400');
 		}
 		$key_status -> populate_list_key_history(0, 1);
 		if(count($key_status -> list_key_history) > 0) {

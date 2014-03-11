@@ -27,8 +27,8 @@ class key_history_controller {
 		if(!person_model::get($key_history -> get_person_id())) {
 			return array('error' => 'key_history is invalid because related person does not exist', 'code' => '400');
 		}
-		if(!key_model::get($key_history -> get_key_id())) {
-			return array('error' => 'key_history is invalid because related key does not exist', 'code' => '400');
+		if(!doorkey_model::get($key_history -> get_key_id())) {
+			return array('error' => 'key_history is invalid because related doorkey does not exist', 'code' => '400');
 		}
 		if(!technician_model::get($key_history -> get_technician_id())) {
 			return array('error' => 'key_history is invalid because related technician does not exist', 'code' => '400');
@@ -106,8 +106,8 @@ class key_history_controller {
 		if(!person_model::get($key_history -> get_person_id())) {
 			return array('error' => 'key_history is invalid because related person does not exist', 'code' => '400');
 		}
-		if(!key_model::get($key_history -> get_key_id())) {
-			return array('error' => 'key_history is invalid because related key does not exist', 'code' => '400');
+		if(!doorkey_model::get($key_history -> get_key_id())) {
+			return array('error' => 'key_history is invalid because related doorkey does not exist', 'code' => '400');
 		}
 		if(!technician_model::get($key_history -> get_technician_id())) {
 			return array('error' => 'key_history is invalid because related technician does not exist', 'code' => '400');

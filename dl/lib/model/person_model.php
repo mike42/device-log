@@ -37,7 +37,7 @@ class person_model {
 	public $list_device;
 	public $list_software;
 	public $list_software_history;
-	public $list_key;
+	public $list_doorkey;
 	public $list_key_history;
 	public $list_device_history;
 
@@ -51,7 +51,7 @@ class person_model {
 		core::loadClass("device_model");
 		core::loadClass("software_model");
 		core::loadClass("software_history_model");
-		core::loadClass("key_model");
+		core::loadClass("doorkey_model");
 		core::loadClass("key_history_model");
 		core::loadClass("device_history_model");
 	}
@@ -93,7 +93,7 @@ class person_model {
 		$this -> list_device = array();
 		$this -> list_software = array();
 		$this -> list_software_history = array();
-		$this -> list_key = array();
+		$this -> list_doorkey = array();
 		$this -> list_key_history = array();
 		$this -> list_device_history = array();
 	}
@@ -137,7 +137,7 @@ class person_model {
 		$values['device'] = array();
 		$values['software'] = array();
 		$values['software_history'] = array();
-		$values['key'] = array();
+		$values['doorkey'] = array();
 		$values['key_history'] = array();
 		$values['device_history'] = array();
 		foreach($this -> list_device as $device) {
@@ -149,8 +149,8 @@ class person_model {
 		foreach($this -> list_software_history as $software_history) {
 			$values['software_history'][] = $software_history -> to_array_filtered($role);
 		}
-		foreach($this -> list_key as $key) {
-			$values['key'][] = $key -> to_array_filtered($role);
+		foreach($this -> list_doorkey as $doorkey) {
+			$values['doorkey'][] = $doorkey -> to_array_filtered($role);
 		}
 		foreach($this -> list_key_history as $key_history) {
 			$values['key_history'][] = $key_history -> to_array_filtered($role);
@@ -426,14 +426,14 @@ class person_model {
 	}
 
 	/**
-	 * List associated rows from key table
+	 * List associated rows from doorkey table
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
 	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
 	 */
-	public function populate_list_key($start = 0, $limit = -1) {
+	public function populate_list_doorkey($start = 0, $limit = -1) {
 		$person_id = $this -> get_id();
-		$this -> list_key = key_model::list_by_person_id($person_id, $start, $limit);
+		$this -> list_doorkey = doorkey_model::list_by_person_id($person_id, $start, $limit);
 	}
 
 	/**

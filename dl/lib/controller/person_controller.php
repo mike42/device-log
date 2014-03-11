@@ -47,8 +47,8 @@ class person_controller {
 		$person -> populate_list_device();
 		$person -> populate_list_software();
 		$person -> populate_list_software_history();
-		$person -> populate_list_key();
-		//$person -> populate_list_key_history();
+		$person -> populate_list_doorkey();
+		$person -> populate_list_key_history();
 		$person -> populate_list_device_history();
 		return $person -> to_array_filtered($role);
 	}
@@ -120,9 +120,9 @@ class person_controller {
 		if(count($person -> list_software_history) > 0) {
 			return array('error' => 'Cannot delete person because of a related software_history entry', 'code' => '400');
 		}
-		$person -> populate_list_key(0, 1);
-		if(count($person -> list_key) > 0) {
-			return array('error' => 'Cannot delete person because of a related key entry', 'code' => '400');
+		$person -> populate_list_doorkey(0, 1);
+		if(count($person -> list_doorkey) > 0) {
+			return array('error' => 'Cannot delete person because of a related doorkey entry', 'code' => '400');
 		}
 		$person -> populate_list_key_history(0, 1);
 		if(count($person -> list_key_history) > 0) {

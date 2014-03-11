@@ -221,9 +221,9 @@ COMMENT = 'Lost of key statuses';
 
 
 -- -----------------------------------------------------
--- Table `device-log`.`key`
+-- Table `device-log`.`doorkey`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `device-log`.`key` (
+CREATE TABLE IF NOT EXISTS `device-log`.`doorkey` (
   `id` INT NOT NULL AUTO_INCREMENT COMMENT 'ID for this key',
   `serial` VARCHAR(128) NOT NULL COMMENT 'Serial number appearing on the key',
   `person_id` INT NOT NULL COMMENT 'Person who currently has the key',
@@ -249,7 +249,8 @@ CREATE TABLE IF NOT EXISTS `device-log`.`key` (
     REFERENCES `device-log`.`key_status` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'Phsical keys issued to people';
 
 
 -- -----------------------------------------------------
@@ -277,7 +278,7 @@ CREATE TABLE IF NOT EXISTS `device-log`.`key_history` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_key_history_key1`
     FOREIGN KEY (`key_id`)
-    REFERENCES `device-log`.`key` (`id`)
+    REFERENCES `device-log`.`doorkey` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_key_history_technician1`
@@ -291,7 +292,7 @@ CREATE TABLE IF NOT EXISTS `device-log`.`key_history` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-COMMENT = 'History of Key ownership';
+COMMENT = 'History of key ownership';
 
 
 -- -----------------------------------------------------
