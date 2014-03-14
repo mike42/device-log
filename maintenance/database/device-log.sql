@@ -10,7 +10,7 @@ USE `device-log` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `device-log`.`person` (
   `id` INT NOT NULL AUTO_INCREMENT COMMENT 'Person\'s code, as found on their identification',
-  `code` VARCHAR(5) NOT NULL COMMENT 'Identification code, as scanned from ID card',
+  `code` VARCHAR(64) NOT NULL COMMENT 'Identification code, as scanned from ID card',
   `is_staff` INT(1) NOT NULL DEFAULT 0 COMMENT '1 for staff, 0 for non-staff',
   `is_active` INT(1) NOT NULL DEFAULT 1 COMMENT '0 for inactive people, 1 for active',
   `firstname` VARCHAR(64) NOT NULL COMMENT 'Person\'s given name',
