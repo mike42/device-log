@@ -80,10 +80,9 @@
 						username : username,
 						password : password
 					};
-					var jqxhr = $.post("api/session/login/", details).done(
-							function(data) {
-								window.location.href = 'technician.html';
-							}).fail(function() {
+					var jqxhr = $.post("api/session/login/", details).done(function(data) {
+						window.location.href = 'technician.html';
+					}).fail(function() {
 						$('#loginPassword').focus();
 						$('#loginWarning').show(500);
 						$('#loginPassword').val('');
