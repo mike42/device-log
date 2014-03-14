@@ -72,18 +72,28 @@
 </script>
 
 <script type="text/template" id="device-template-detail">
-<table>
-	<tr>
-		<td><a href="#device/<%= id %>">#<%= id %></a></td>
-		<td><%= device_type.name %></td>
-		<td><a href="#device/<%= id %>"><%= sn %></a></td>
-		<td><a href="#person/<%= person.id %>"><%= person.code %></a></td>
-		<td><%= device_status.tag %></td>
-		<td><%= yn(is_spare) %></td>
-		<td><%= yn(is_damaged) %></td>
-		<td><%= yn(is_bought) %></td>
-	</tr>
-</table>
+<div class="row">
+	<div class="col-sm-2">&nbsp;</div>
+	<div class="col-sm-10">
+		<table class="table">
+			<tbody>
+			<tr>
+				<th>Code</th><td><a href="#person/<%= id %>"><%= code %></a></td>
+				<th>Devices</th><td><a href="#" id="btnPersonDeviceList"><%= device.length %></a></td>
+			</tr>
+			</tbody>
+		</table>
+		<h2><%= device_type.name %> / <%= sn %></h2>
+		<a href="#device/<%= id %>">#<%= id %></a>
+		<%= device_type.name %>
+		<a href="#device/<%= id %>"><%= sn %></a>
+		<a href="#person/<%= person.id %>"><%= person.code %></a>
+		<%= device_status.tag %>
+		<%= yn(is_spare) %>
+		<%= yn(is_damaged) %>
+		<%= yn(is_bought) %>
+	</div>
+</div>
 </script>
 
 </head>
@@ -100,8 +110,8 @@
 				<button class="btn btn-sm btn-default" id="btnAddNew">
 					<span class="glyphicon glyphicon-plus"></span> Add New
 				</button>
-				<a class="btn btn-sm btn-primary" id="btnLogout" href="#logout"> <span
-					class="glyphicon glyphicon-log-out"></span> Log out
+				<a class="btn btn-sm btn-primary" id="btnLogout" href="#logout">
+					<span class="glyphicon glyphicon-log-out"></span> Log out
 				</a>
 			</div>
 		</div>
@@ -212,24 +222,166 @@
 				</div>
 				<div class="modal-body">
 					<div class="btn-group">
-						<select id="dropDown" class="btn btn-default dropdown-toggle">
-							<option>Select</option>
+						<!-- Choose Form Dropdown -->
+						<select id="cboAddNew" class="btn btn-default dropdown-toggle">
+							<option value="addselect">(Please select)</option>
 							<option value="addperson">Person</option>
 							<option value="adddevice">Device</option>
 							<option value="addsoftware">Software</option>
 							<option value="addkey">Key</option>
 						</select>
-						<div id="addperson" class="show-hide">blaahswg rgawg</div>
-						<div id="adddevice" class="show-hide">asdfjkd</div>
+						<div id="addselect" class="show-hide">
+							<div class="bs-callout bs-callout-info" style="margin-top: 40px">
+								Choose from the drop-down box</div>
+						</div>
+						<!-- Add Person Form -->
+						<div id="addperson" class="show-hide" style="display: none">
+							<form role="form" style="padding-top: 40px">
+								<div id="addPersonStatus" class="bs-callout bs-callout-warning">...</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="addPersonUserCode">Code</label> <input type="text"
+										class="form-control" id="addPersonUserCode"
+										placeholder="Enter Code">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="addPersonFirstName">First Name</label> <input
+										type="text" class="form-control" id="addPersonFirstName"
+										placeholder="First Name">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="addPersonSurname">Surname</label> <input
+										type="text" class="form-control" id="addPersonSurname"
+										placeholder="Surname">
+								</div>
+								<div class="checkbox" style="padding-left: 45px">
+									<label> <input type="checkbox" id="addPersonIsStaff">
+										Staff
+									</label>
+								</div>
+								<div class="checkbox" style="padding-left: 45px">
+									<label> <input type="checkbox" id="addPersonIsActive"
+										checked="yes"> Active
+									</label>
+								</div>
+								<div style="padding-left: 25px;"></div>
+							</form>
+						</div>
+						<!-- Add Device Form -->
+						<div id="adddevice" class="show-hide" style="display: none">
+							<form role="form" style="padding-top: 40px">
+								<div id="addDeviceStatus" class="bs-callout bs-callout-warning">...</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="inputSerial">Serial</label> <input type="text"
+										class="form-control" id="inputSerial" placeholder="Serial">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="inputMAC1">MAC Address Eth0</label> <input
+										type="text" class="form-control" id="inputMAC1"
+										placeholder="MAC Address 1">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="inputMAC2">MAC Address Wlan0</label> <input
+										type="text" class="form-control" id="inputMAC2"
+										placeholder="MAC Address 2">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="inputOwner">Owner</label> <input type="text"
+										class="form-control" id="inputOwner" placeholder="Owner">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="selectType">Type</label> <select id="selectType"
+										class="btn btn-default dropdown-toggle form-control">
+										<option>Select</option>
+										<option value="addMacBook">MacBook</option>
+										<option value="addiPad">iPad</option>
+									</select>
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="selectStatus">Status</label> <select
+										id="selectStatus"
+										class="btn btn-default dropdown-toggle form-control">
+										<option value="addIn">In</option>
+										<option value="addOut">Out</option>
+									</select>
+								</div>
+								<div class="checkbox" style="padding-left: 45px">
+									<label> <input type="checkbox"> Spare
+									</label>
+								</div>
+								<div class="checkbox" style="padding-left: 45px">
+									<label> <input type="checkbox"> Damaged
+									</label>
+								</div>
+								<div class="checkbox" style="padding-left: 45px">
+									<label> <input type="checkbox"> Bought
+									</label>
+								</div>
+								<div style="padding-left: 25px;"></div>
+							</form>
+						</div>
+						<!-- Add Software Form -->
+						<div id="addsoftware" class="show-hide" style="display: none">
+							<form role="form" style="padding-top: 40px">
+								<div id="addSoftwareStatus"
+									class="bs-callout bs-callout-warning">...</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="inputAppID">App ID</label> <input type="text"
+										class="form-control" id="inputAppID" placeholder="Enter ID">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="inputSFCode">Code</label> <input type="text"
+										class="form-control" id="inputSFCode" placeholder="Code">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="inputOwner">Person</label> <input type="text"
+										class="form-control" id="inputOwner" placeholder="Person">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="selectSFType">Type</label> <select
+										id="selectSFType"
+										class="btn btn-default dropdown-toggle form-control">
+										<option>Select</option>
+										<option value="addMedia">Media</option>
+										<option value="addEdu">Educational</option>
+									</select>
+								</div>
+								<div class="checkbox" style="padding-left: 45px">
+									<label> <input type="checkbox">Bought
+									</label>
+								</div>
+								<div style="padding-left: 25px;"></div>
+							</form>
+						</div>
+						<!-- Add Key Form -->
+						<div id="addkey" class="show-hide" style="display: none">
+							<form role="form" style="padding-top: 40px">
+								<div id="addKeyStatus" class="bs-callout bs-callout-warning">...</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="inputKeySerial">Serial</label> <input type="text"
+										class="form-control" id="inputKeySerial" placeholder="Serial">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="inputPersonCode">Owner</label> <input type="text"
+										class="form-control" id="inputPersonCode"
+										placeholder="Staff Code">
+								</div>
+								<div class="checkbox" style="padding-left: 45px">
+									<label> <input type="checkbox"> Spare
+									</label>
+								</div>
+								<div style="padding-left: 25px;"></div>
+							</form>
+						</div>
 					</div>
-
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" id="submitAddNew">Add</button>
 				</div>
 			</div>
+			<!-- /.modal-content -->
 		</div>
+		<!-- /.modal-dialog -->
 	</div>
 
 	<script src="public/js/jquery-1.10.2.min.js"></script>

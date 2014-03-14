@@ -165,11 +165,6 @@ function doLoadKeys() {
 	// Also nothing to do here
 }
 
-$('#btnAddNew').on('click', function(event) {
-	$("#modalAddNew").modal();
-	return false;
-});
-
 function warn(message) {
 	console.log(message);
 }
@@ -204,7 +199,8 @@ var AppRouter = Backbone.Router.extend({
     routes: {
         "person/:id": "loadPerson",
         "device/:id": "loadDevice",
-        "*actions": "defaultRoute" // Backbone will try match the route above first
+        "*actions": "defaultRoute" // Backbone will try match the route above
+									// first
     }
 });
 
@@ -291,13 +287,69 @@ app_router.on('route:defaultRoute', function (actions) {
     	doLoadKeys();
     	break;
     default:
-    	//doLoadInitialData();
+    	// doLoadInitialData();
     }
 });
 
-
 $('.nav-tabs a').click(function (e) {
 	window.location.hash = this.hash;
+});
+
+$('#btnAddNew').on('click', function(event) {
+	/* Hide callout boxes and clear all input */
+	$("#modalAddNew .bs-callout-warning").hide();
+	$("#modalAddNew input[type=text]").val('');
+	$("#modalAddNew input[type=checkbox]").removeAttr('checked');
+	$("#cboAddNew").val('addselect');
+	$("#cboAddNew").change()
+	
+	$("#modalAddNew").modal();
+	return false;
+});
+
+$('#cboAddNew').change(function () {
+	$('.show-hide').hide()
+	$('#' + this.value).show();
+});
+
+$('#submitAddNew').click(function () {
+	switch($('#cboAddNew').val()) {
+	case 'addperson':
+		var person = new person_model({
+			code: $('#addPersonUserCode').val(),
+			firstname: $('#addPersonFirstName').val(),
+			surname: $('#addPersonSurname').val(),
+			is_active: $('#addPersonIsStaff').attr('checked') ? '1' : 0,
+			is_staff: $('#addPersonIsActive').attr('checked') ? '1' : 0
+		});
+		
+		person.save(null, {
+			success: function(model, response) {
+				var id = model.get('id');
+				app_router.navigate('person/' + id, {trigger: true});
+				$("#modalAddNew").modal('hide');
+			},
+			error: function(model, response) {
+				$('#addPersonStatus').html("Could not add person!");
+				$('#addPersonStatus').show();
+			}
+		});
+		break;
+	case 'adddevice':
+		$('#addDeviceStatus').html("You cannot add a <b>Device</b> yet.");
+		$('#addDeviceStatus').show();
+		break;
+	case 'addsoftware':
+		$('#addSoftwareStatus').html("You cannot add <b>Software</b> yet.");
+		$('#addSoftwareStatus').show();
+		break;
+	case 'addkey':
+		$('#addKeyStatus').html("You cannot add a <b>Key</b> yet.");
+		$('#addKeyStatus').show();
+		break;
+	default:
+		// Do nothing on the main page
+	}
 });
 
 // Start Backbone history a necessary step for bookmarkable URL's
