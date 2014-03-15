@@ -95,6 +95,11 @@
 				</tr>
 			</tbody>
 		</table>
+	<h3>History (<%= device_history.length %>)</h3>
+		<% _.each(device_history, function(entry)  { %>
+    	  entry.id
+    	<% }); %>
+		</div>
 	</div>
 </div>
 </script>
@@ -139,17 +144,16 @@
 
 			<div class="tab-pane" id="people">
 				<div id="personList">
-					<p>
-						<br>Quick Search:
+					<p style="padding-top: 10px">
+						Quick Search:
 					</p>
-					<nav class="navbar navbar input-mysize">
-						<form class="navbar-form navbar-left" role="search">
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="">
-							</div>
-							<button type="submit" class="btn btn-primary">Submit</button>
-						</form>
-					</nav>
+					
+					<form class="col-sm-6">
+						<div class="input-group">
+							<input id="personQuickSearch" type="text" class="form-control typeahead" placeholder="Person's Code" autocomplete="off">
+						</div>
+					</form>
+
 					<table class="table table-striped">
 						<thead>
 							<tr>
@@ -171,14 +175,16 @@
 					<p>
 						<br>Quick Search:
 					</p>
-					<nav class="navbar navbar input-mysize">
-						<form class="navbar-form navbar-left" role="search">
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="">
+
+					<form class="col-sm-4">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="">
+							<div class="input-group-btn">
+								<button type="submit" class="btn btn-primary">Submit</button>
 							</div>
-							<button type="submit" class="btn btn-primary">Submit</button>
-						</form>
-					</nav>
+						</div>
+					</form>
+
 
 					<table class="table table-striped">
 						<thead>
@@ -392,6 +398,7 @@
 	<script src="public/js/underscore-min.js"></script>
 	<script src="public/js/backbone-min.js"></script>
 	<script src="public/js/models.js"></script>
+	<script src="public/js/typeahead.bundle.js"></script>
 	<script src="public/js/dl.js"></script>
 </body>
 </html>

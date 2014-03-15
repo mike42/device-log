@@ -13,4 +13,5 @@ Client-side libraries used:
 * [bootstrap](http://getbootstrap.com/‎)
 * [backbone.js](http://backbonejs.org/‎)
 * [jQuery](http://jquery.com/‎)
+* [Bootstrap 3 Typeahead](https://github.com/bassjobsen/Bootstrap-3-Typeahead)
 

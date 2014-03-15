@@ -206,13 +206,13 @@ class person_controller {
 		if(!isset(core::$permission[$role]['person']['read']) || count(core::$permission[$role]['person']['read']) == 0) {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
-		if(!isset($_POST['search'])) {
+		if(!isset($_GET['q'])) {
 			return array('error' => 'No search term specified', 'code' => '403');
 		}
 		
 		/* Retrieve and filter rows */
 		try {
-			$search = $_POST['search'];
+			$search = $_GET['q'];
 			$person_list = person_model::search_by_code($search, ($page - 1) * $itemspp, $itemspp);
 			$ret = array();
 			foreach($person_list as $person) {

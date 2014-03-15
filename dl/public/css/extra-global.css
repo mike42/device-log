@@ -15,10 +15,6 @@ object {
 	min-height: 90%;
 }
 
-.input-mysize {
-	width: 40%
-}
-
 td,th {
 	font-size: 85%
 }
@@ -81,4 +77,20 @@ td,th {
 .bs-callout-info {
 	background-color: #f0f7fd;
 	border-color: #d0e3f0;
+}
+
+.tt-suggestions {
+	background: #fff;
+	border: 1px solid #eee;
+	padding-left: 7px;
+	width: 300px
+}
+
+.tt-suggestion {
+	border-top: 1px solid #eee;
+	width: 300px
+}
+
+.twitter-typeahead {
+  width: 300px
 }

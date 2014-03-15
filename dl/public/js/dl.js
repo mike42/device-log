@@ -272,9 +272,11 @@ app_router.on('route:defaultRoute', function (actions) {
 		break;
     case 'people':
     	tabTo('people');
+    	$('#personQuickSearch').val('');
     	doLoadPeople();
     	break;
     case 'devices':
+    	$('#deviceQuickSearch').val('');
     	tabTo('devices');
     	doLoadDevices();
     	break;
@@ -342,7 +344,7 @@ $('#submitAddNew').click(function () {
 	case 'addsoftware':
 		$('#addSoftwareStatus').html("You cannot add <b>Software</b> yet.");
 		$('#addSoftwareStatus').show();
-		break;
+		break;on
 	case 'addkey':
 		$('#addKeyStatus').html("You cannot add a <b>Key</b> yet.");
 		$('#addKeyStatus').show();
@@ -350,6 +352,26 @@ $('#submitAddNew').click(function () {
 	default:
 		// Do nothing on the main page
 	}
+});
+
+// Switch on autocomplete
+var personSearch = new Bloodhound({
+	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+	  queryTokenizer: Bloodhound.tokenizers.whitespace,
+	  remote: '/dl/api/person/search/1/10?q=%QUERY'
+});
+personSearch.initialize();
+	
+$('#personQuickSearch').typeahead({
+	minLength: 2
+},
+{
+	name: 'person-search',
+	displayKey: function(item) { return item.code + ' - ' + item.firstname + ' ' + item.surname; },
+	source: personSearch.ttAdapter()
+});
+$('#personQuickSearch').on('typeahead:selected', function(evt, item) {
+	app_router.navigate('person/' + item.id, {trigger: true});
 });
 
 // Start Backbone history a necessary step for bookmarkable URL's
