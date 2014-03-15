@@ -43,18 +43,14 @@
 
 <script type="text/template" id="person-template-detail">
 <div class="row">
-	<div class="col-sm-2">
-		<div class="person-profile-img well">
-			<img class="img-thumbnail" src="/dl/api/person/photo/<%= id %>" alt="<%= code %>" />
-		</div>
-	</div>
-	<div class="col-sm-10">
+	<div class="col-sm-12">
 		<h2><%= firstname %> <%= surname %></h2>
 		<table class="table">
 			<tbody>
 			<tr>
 				<th>Code</th><td><a href="#person/<%= id %>"><%= code %></a></td>
 				<th>Devices</th><td><a href="#" id="btnPersonDeviceList"><%= device.length %></a></td>
+				<td rowspan=4" style="width: 12em;"><img class="img-thumbnail" src="/dl/api/person/photo/<%= id %>" alt="<%= code %>" /></td>
 			</tr>
 			<tr>
 				<th>Staff</th><td><%= yn(is_staff) %></td>
@@ -64,34 +60,41 @@
 				<th>Active</th><td><%= yn(is_active) %></td>
 				<th>Licenses</th><td><%= software.length %></td>
 			</tr>
+			<tr> <!-- Dummy row so that the image does not scale other rows -->
+				<td>&nbsp;</td><td>&nbsp;</td>
+				<td>&nbsp;</td><td>&nbsp;</td>
+			</tr>
 			</tbody>
 		</table>
-	<h3>History</h3>
+	<h3>History (<%= device_history.length %>)</h3>
+	<% _.each(device_history, function(entry)  { %>
+      entry.id
+    <% }); %>
 	</div>
 </div>
 </script>
 
 <script type="text/template" id="device-template-detail">
 <div class="row">
-	<div class="col-sm-2">&nbsp;</div>
-	<div class="col-sm-10">
+	<div class="col-sm-12">
+		<h2><%= device_type.name %> / <%= sn %></h2>
 		<table class="table">
 			<tbody>
-			<tr>
-				<th>Code</th><td><a href="#person/<%= id %>"><%= code %></a></td>
-				<th>Devices</th><td><a href="#" id="btnPersonDeviceList"><%= device.length %></a></td>
-			</tr>
+				
+				<tr>
+					<th>Allocation</th><td><a href="#person/<%= person.id %>"><%= person.firstname + ' ' + person.surname%> (<%= person.code %>)</a></td><th>Status</th><td><%= device_status.tag %></td>
+				</tr>
+				<tr>
+					<th>Serial</th><td><a href="#device/<%= id %>"><%= sn %></a></td><th>Spare</th><td><%= yn(is_spare) %></td>
+				</tr>
+				<tr>
+					<th>Model name</th><td><%= device_type.name %></a></td><th>Damaged</th><td><%= yn(is_damaged) %></td>
+				</tr>
+				<tr>
+					<th>Model number</th><td><%= device_type.model_no %></a></td><th>Bought</th><td><%= yn(is_bought) %></td>
+				</tr>
 			</tbody>
 		</table>
-		<h2><%= device_type.name %> / <%= sn %></h2>
-		<a href="#device/<%= id %>">#<%= id %></a>
-		<%= device_type.name %>
-		<a href="#device/<%= id %>"><%= sn %></a>
-		<a href="#person/<%= person.id %>"><%= person.code %></a>
-		<%= device_status.tag %>
-		<%= yn(is_spare) %>
-		<%= yn(is_damaged) %>
-		<%= yn(is_bought) %>
 	</div>
 </div>
 </script>
