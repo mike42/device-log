@@ -762,5 +762,77 @@ class device_history_model {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Simple search within date field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_date($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE date LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_history_model($assoc);
+		}
+		return $ret;
+	}
+
+	/**
+	 * Simple search within comment field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_comment($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE comment LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_history_model($assoc);
+		}
+		return $ret;
+	}
+
+	/**
+	 * Simple search within change field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_change($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE change LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_history_model($assoc);
+		}
+		return $ret;
+	}
 }
 ?>

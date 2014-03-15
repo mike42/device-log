@@ -624,5 +624,77 @@ class key_history_model {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Simple search within date field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_date($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE date LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new key_history_model($assoc);
+		}
+		return $ret;
+	}
+
+	/**
+	 * Simple search within comment field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_comment($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE comment LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new key_history_model($assoc);
+		}
+		return $ret;
+	}
+
+	/**
+	 * Simple search within change field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_change($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE change LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new key_history_model($assoc);
+		}
+		return $ret;
+	}
 }
 ?>

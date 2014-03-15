@@ -289,5 +289,29 @@ class software_status_model {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Simple search within tag field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_tag($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT software_status.id, software_status.tag FROM software_status  WHERE tag LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new software_status_model($assoc);
+		}
+		return $ret;
+	}
 }
 ?>

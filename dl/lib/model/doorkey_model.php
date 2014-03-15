@@ -501,5 +501,29 @@ class doorkey_model {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Simple search within serial field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_serial($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, key_type.id, key_type.name, key_status.id, key_status.name FROM doorkey JOIN person ON doorkey.person_id = person.id JOIN key_type ON doorkey.key_type_id = key_type.id JOIN key_status ON doorkey.key_status_id = key_status.id WHERE serial LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new doorkey_model($assoc);
+		}
+		return $ret;
+	}
 }
 ?>

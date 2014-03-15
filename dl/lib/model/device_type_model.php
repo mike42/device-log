@@ -308,5 +308,53 @@ class device_type_model {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Simple search within name field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_name($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT device_type.id, device_type.name, device_type.model_no FROM device_type  WHERE name LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_type_model($assoc);
+		}
+		return $ret;
+	}
+
+	/**
+	 * Simple search within model_no field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_model_no($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT device_type.id, device_type.name, device_type.model_no FROM device_type  WHERE model_no LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_type_model($assoc);
+		}
+		return $ret;
+	}
 }
 ?>

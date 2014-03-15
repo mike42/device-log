@@ -650,5 +650,77 @@ class device_model {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Simple search within sn field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_sn($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_status.id, device_status.tag, device_type.id, device_type.name, device_type.model_no FROM device JOIN person ON device.person_id = person.id JOIN device_status ON device.device_status_id = device_status.id JOIN device_type ON device.device_type_id = device_type.id WHERE sn LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_model($assoc);
+		}
+		return $ret;
+	}
+
+	/**
+	 * Simple search within mac_eth0 field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_mac_eth0($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_status.id, device_status.tag, device_type.id, device_type.name, device_type.model_no FROM device JOIN person ON device.person_id = person.id JOIN device_status ON device.device_status_id = device_status.id JOIN device_type ON device.device_type_id = device_type.id WHERE mac_eth0 LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_model($assoc);
+		}
+		return $ret;
+	}
+
+	/**
+	 * Simple search within mac_wlan0 field
+	 * 
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_by_mac_wlan0($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_status.id, device_status.tag, device_type.id, device_type.name, device_type.model_no FROM device JOIN person ON device.person_id = person.id JOIN device_status ON device.device_status_id = device_status.id JOIN device_type ON device.device_type_id = device_type.id WHERE mac_wlan0 LIKE :search" . $ls . ";");
+		$sth -> execute(array('search' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_model($assoc);
+		}
+		return $ret;
+	}
 }
 ?>
