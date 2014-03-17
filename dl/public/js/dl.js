@@ -361,7 +361,14 @@ var personSearch = new Bloodhound({
 	  remote: '/dl/api/person/search/1/10?q=%QUERY'
 });
 personSearch.initialize();
-	
+
+var deviceSearch = new Bloodhound({
+	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+	  queryTokenizer: Bloodhound.tokenizers.whitespace,
+	  remote: '/dl/api/device/search/1/10?q=%QUERY'
+});
+deviceSearch.initialize();
+
 $('#personQuickSearch').typeahead({
 	minLength: 2
 },
@@ -370,8 +377,22 @@ $('#personQuickSearch').typeahead({
 	displayKey: function(item) { return item.code + ' - ' + item.firstname + ' ' + item.surname; },
 	source: personSearch.ttAdapter()
 });
+
+$('#deviceQuickSearch').typeahead({
+	minLength: 2
+},
+{
+	name: 'device-search',
+	displayKey: function(item) { return item.sn + ' - ' + item.person.firstname + ' ' + item.person.surname; },
+	source: deviceSearch.ttAdapter()
+});
+
 $('#personQuickSearch').on('typeahead:selected', function(evt, item) {
 	app_router.navigate('person/' + item.id, {trigger: true});
+});
+
+$('#deviceQuickSearch').on('typeahead:selected', function(evt, item) {
+	app_router.navigate('device/' + item.id, {trigger: true});
 });
 
 // Start Backbone history a necessary step for bookmarkable URL's
