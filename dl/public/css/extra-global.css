@@ -101,5 +101,10 @@ td,th {
 }
 
 .twitter-typeahead {
-  width: 300px
+	width: 300px;
+}
+
+.typeahead {
+	border-radius: 4px !important;
+	width: 300px;
 }

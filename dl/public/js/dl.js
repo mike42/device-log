@@ -365,6 +365,15 @@ $('#deviceQuickSearch').typeahead({
 	source: deviceSearch.ttAdapter()
 });
 
+$('#inputOwner').typeahead({
+	minLength: 2
+},
+{
+	name: 'person-search',
+	displayKey: function(item) { return item.code + ' - ' + item.firstname + ' ' + item.surname; },
+	source: personSearch.ttAdapter()
+});
+
 $('#personQuickSearch').on('typeahead:selected', function(evt, item) {
 	app_router.navigate('person/' + item.id, {trigger: true});
 });
@@ -372,6 +381,27 @@ $('#personQuickSearch').on('typeahead:selected', function(evt, item) {
 $('#deviceQuickSearch').on('typeahead:selected', function(evt, item) {
 	app_router.navigate('device/' + item.id, {trigger: true});
 });
+
+/* Buttons to show dialogs */
+function logIncident() {
+	$('#modalLogIncident').modal();
+	return false;
+}
+
+function editDevice() {
+	$('#modalEditDevice').modal();
+	return false;
+}
+
+function editPerson() {
+	$('#modalEditPerson').modal();
+	return false;
+}
+
+function editPersonSave() {
+	alert('not implemented');
+	$('#modalEditPerson').modal('hide');
+}
 
 /* Navigation */
 function tabTo(tab) {
