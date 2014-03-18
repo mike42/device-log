@@ -55,7 +55,7 @@ class device_controller {
 		if(!$device) {
 			return array('error' => 'device not found', 'code' => '404');
 		}
-		// $device -> populate_list_device_history();
+		$device -> populate_list_device_history();
 		return $device -> to_array_filtered($role);
 	}
 

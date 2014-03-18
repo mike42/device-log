@@ -31,6 +31,15 @@
 	</tr>
 </script>
 
+<script type="text/template" id="person-device-template-tr">
+	<tr>
+		<td><a href="#device/<%= id %>">#<%= id %></a></td>
+		<td><%= device_type.name %></td>
+		<td><a href="#device/<%= id %>"><%= sn %></a></td>
+		<td><%= device_status.tag %></td>
+	</tr>
+</script>
+
 <script type="text/template" id="person-template-tr">
 	<tr>
 		<td><a href="#person/<%= id %>"><%= code %></a></td>
@@ -41,67 +50,51 @@
 	</tr>
 </script>
 
-<script type="text/template" id="person-template-detail">
-<div class="row">
-	<div class="col-sm-12">
-		<h2><%= firstname %> <%= surname %></h2>
-		<table class="table">
-			<tbody>
-			<tr>
-				<th>Code</th><td><a href="#person/<%= id %>"><%= code %></a></td>
-				<th>Devices</th><td><a href="#" id="btnPersonDeviceList"><%= device.length %></a></td>
-				<td rowspan=4" style="width: 12em;"><img class="img-thumbnail" src="/dl/api/person/photo/<%= id %>" alt="<%= code %>" /></td>
-			</tr>
-			<tr>
-				<th>Staff</th><td><%= yn(is_staff) %></td>
-				<th>Keys</th><td><%= doorkey.length %></td>
-			</tr>
-			<tr>
-				<th>Active</th><td><%= yn(is_active) %></td>
-				<th>Licenses</th><td><%= software.length %></td>
-			</tr>
-			<tr> <!-- Dummy row so that the image does not scale other rows -->
-				<td>&nbsp;</td><td>&nbsp;</td>
-				<td>&nbsp;</td><td>&nbsp;</td>
-			</tr>
-			</tbody>
-		</table>
-	<h3>History (<%= device_history.length %>)</h3>
-	<% _.each(device_history, function(entry)  { %>
-      entry.id
-    <% }); %>
-	</div>
-</div>
+<script type="text/template" id="person-template-detail">		
+<h2><%= firstname %> <%= surname %></h2>
+<table class="table">
+	<tbody>
+		<tr>
+			<th>Code</th><td><a href="#person/<%= id %>"><%= code %></a></td>
+			<th>Devices</th><td><a href="#" id="btnPersonDeviceList"><%= device.length %></a></td>
+			<td rowspan=4" style="width: 12em;"><img class="img-thumbnail" src="/dl/api/person/photo/<%= id %>" alt="<%= code %>" /></td>
+		</tr>
+		<tr>
+			<th>Staff</th><td><%= yn(is_staff) %></td>
+			<th>Keys</th><td><%= doorkey.length %></td>
+		</tr>
+		<tr>
+			<th>Active</th><td><%= yn(is_active) %></td>
+			<th>Licenses</th><td><%= software.length %></td>
+		</tr>
+		<tr> <!-- Dummy row so that the image does not scale other rows -->
+			<td>&nbsp;</td><td>&nbsp;</td>
+			<td>&nbsp;</td><td>&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+<h3>History (<%= device_history.length %>)</h3>
 </script>
 
 <script type="text/template" id="device-template-detail">
-<div class="row">
-	<div class="col-sm-12">
-		<h2><%= device_type.name %> / <%= sn %></h2>
-		<table class="table">
-			<tbody>
-				
-				<tr>
-					<th>Allocation</th><td><a href="#person/<%= person.id %>"><%= person.firstname + ' ' + person.surname%> (<%= person.code %>)</a></td><th>Status</th><td><%= device_status.tag %></td>
-				</tr>
-				<tr>
-					<th>Serial</th><td><a href="#device/<%= id %>"><%= sn %></a></td><th>Spare</th><td><%= yn(is_spare) %></td>
-				</tr>
-				<tr>
-					<th>Model name</th><td><%= device_type.name %></a></td><th>Damaged</th><td><%= yn(is_damaged) %></td>
-				</tr>
-				<tr>
-					<th>Model number</th><td><%= device_type.model_no %></a></td><th>Bought</th><td><%= yn(is_bought) %></td>
-				</tr>
-			</tbody>
-		</table>
-	<h3>History (<%= device_history.length %>)</h3>
-		<% _.each(device_history, function(entry)  { %>
-    	  entry.id
-    	<% }); %>
-		</div>
-	</div>
-</div>
+<h2><%= device_type.name %> / <%= sn %></h2>
+<table class="table">
+	<tbody>
+		<tr>
+			<th>Allocation</th><td><a href="#person/<%= person.id %>"><%= person.firstname + ' ' + person.surname%> (<%= person.code %>)</a></td><th>Status</th><td><%= device_status.tag %></td>
+		</tr>
+		<tr>
+			<th>Serial</th><td><a href="#device/<%= id %>"><%= sn %></a></td><th>Spare</th><td><%= yn(is_spare) %></td>
+		</tr>
+		<tr>
+			<th>Model name</th><td><%= device_type.name %></a></td><th>Damaged</th><td><%= yn(is_damaged) %></td>
+		</tr>
+		<tr>
+			<th>Model number</th><td><%= device_type.model_no %></a></td><th>Bought</th><td><%= yn(is_bought) %></td>
+		</tr>
+	</tbody>
+</table>
+<h3>History (<%= device_history.length %>)</h3>
 </script>
 
 </head>
@@ -167,13 +160,20 @@
 						<tbody id="person-tbody"></tbody>
 					</table>
 				</div>
-				<div id="personDetail">Person detail</div>
+				<div id="personDetail">
+					<div class="row">
+						<div class="col-sm-12">
+							<div id="personDetailTop"></div>
+							<div id="personDetailHistory"></div>
+						</div>
+					</div>	
+				</div>
 			</div>
 
 			<div class="tab-pane" id="devices">
 				<div id="deviceList">
-					<p>
-						<br>Quick Search:
+					<p style="padding-top: 10px">
+						Quick Search:
 					</p>
 
 					<form class="col-sm-6">
@@ -200,7 +200,14 @@
 					</table>
 				</div>
 
-				<div id="deviceDetail">Device detail</div>
+				<div id="deviceDetail">
+					<div class="row">
+						<div class="col-sm-12">
+							<div id="deviceDetailTop"></div>
+							<div id="deviceDetailHistory"></div>
+						</div>
+					</div>				
+				</div>
 			</div>
 
 			<div class="tab-pane" id="software">
@@ -217,8 +224,7 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="modalAddNew" tabindex="-1" role="dialog"
-		aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="modalAddNew" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -389,6 +395,34 @@
 		</div>
 		<!-- /.modal-dialog -->
 	</div>
+
+<div class="modal fade" id="modalPersonDeviceList" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Allocated Devices</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Type</th>
+							<th>Device Serial</th>
+							<th>Device Status</th>
+						</tr>
+					</thead>
+					<tbody id="person-device-tbody"></tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 	<script src="public/js/jquery-1.10.2.min.js"></script>
 	<script src="public/js/bootstrap.min.js"></script>
