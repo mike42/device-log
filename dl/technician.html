@@ -31,6 +31,17 @@
 	</tr>
 </script>
 
+<script type="text/template" id="device-history-div">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<%= date %> on <a href="#device/<%= device.id %>">Device #<%= device.id %> / <%= device.sn %></a> by <%= technician.name %>
+		</div>
+		<div class="panel-body">
+			<%= comment %>
+		</div>
+	</div>
+</script>
+
 <script type="text/template" id="person-device-template-tr">
 	<tr>
 		<td><a href="#device/<%= id %>">#<%= id %></a></td>

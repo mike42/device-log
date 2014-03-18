@@ -8,6 +8,11 @@ var PersonCollection = Backbone.Collection.extend({
 	model : person_model
 });
 
+var DeviceHistoryCollection = Backbone.Collection.extend({
+	url : '/dl/api/device_history/list_all/1/100',
+	model : device_history_model
+});
+
 var PersonDeviceRowView = Backbone.View.extend({
 	template : _.template($('#person-device-template-tr').html()),
 	tagName : 'tr',
@@ -41,6 +46,21 @@ var DeviceRowView = Backbone.View.extend({
 var PersonRowView = Backbone.View.extend({
 	template : _.template($('#person-template-tr').html()),
 	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+var PersonDeviceHistoryDivView = Backbone.View.extend({
+	template : _.template($('#device-history-div').html()),
+	tagName : 'div',
 
 	initialize : function(options) {
 		_.bindAll(this, 'render');
@@ -123,6 +143,31 @@ var PersonDeviceTableView = Backbone.View.extend({
 
 		this.collection.forEach(function(item) {
 			var itemView = new PersonDeviceRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var PersonDeviceHistoryView = Backbone.View.extend({
+	collection : null,
+	el : 'div#personDetailHistory',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new PersonDeviceHistoryDivView({
 				model : item
 			});
 			element.append(itemView.template(itemView.model.toJSON()));
@@ -366,6 +411,11 @@ app_router.on('route:loadPerson', function (id) {
 	    	var devicesView = new PersonDeviceTableView({collection: devices});
 	    	devicesView.render();
 	    	
+	    	/* Load history */
+	    	var deviceHistoryList = new DeviceHistoryCollection(results.get('device_history'));
+	    	var deviceHistoryListView = new PersonDeviceHistoryView({el: 'div#personDetailHistory',collection: deviceHistoryList});
+	    	deviceHistoryListView.render();
+	    	
 	    	$('#btnPersonDeviceList').click(function() {
 	    		$("#modalPersonDeviceList").modal();
 	    		return false;
@@ -394,6 +444,11 @@ app_router.on('route:loadDevice', function (id) {
 			});
 			itemView.render();
 	    	$('#deviceDetail').show();
+	    	
+	    	/* Load history */
+	    	var deviceHistoryList = new DeviceHistoryCollection(results.get('device_history'));
+	    	var deviceHistoryListView = new PersonDeviceHistoryView({el: 'div#deviceDetailHistory',collection: deviceHistoryList});
+	    	deviceHistoryListView.render();
 		},
 		error : function(model, response) {
 			handleFailedRequest(response);
