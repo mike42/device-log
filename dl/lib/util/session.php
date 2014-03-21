@@ -29,7 +29,7 @@ class session {
 		core::loadClass('technician_model');
 		$technician = technician_model::get_by_technician_login($login);
 		if(!$technician) {
-			throw new Exception("A");
+			throw new Exception("User is not technician");
 			return false;
 		}
 
