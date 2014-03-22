@@ -159,6 +159,7 @@ CREATE TABLE IF NOT EXISTS `device-log`.`technician` (
   `id` INT NOT NULL AUTO_INCREMENT COMMENT 'Internal technician ID',
   `login` VARCHAR(45) NOT NULL COMMENT 'Login to use for authentication',
   `name` VARCHAR(45) NOT NULL COMMENT 'Name for display purposes',
+  `is_active` INT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `technician_name` (`name` ASC),
   UNIQUE INDEX `technician_login` (`login` ASC))
