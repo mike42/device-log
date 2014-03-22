@@ -112,12 +112,16 @@ class software_type_controller {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 		if((int)$page < 1 || (int)$itemspp < 1) {
-			return array('error' => 'Invalid page number or item count', 'code' => '400');
+			$start = 0;
+			$limit = -1;
+		} else {
+			$start = ($page - 1) * $itemspp;
+			$limit = $itemspp;
 		}
 
 		/* Retrieve and filter rows */
 		try {
-			$software_type_list = software_type_model::list_all(($page - 1) * $itemspp, $itemspp);
+			$software_type_list = software_type_model::list_all($start, $limit);
 			$ret = array();
 			foreach($software_type_list as $software_type) {
 				$ret[] = $software_type -> to_array_filtered($role);

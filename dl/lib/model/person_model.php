@@ -41,6 +41,9 @@ class person_model {
 	public $list_key_history;
 	public $list_device_history;
 
+	/* Sort clause to add when listing rows from this table */
+	const SORT_CLAUSE = " ORDER BY `person`.`id`";
+
 	/**
 	 * Initialise and load related tables
 	 */
@@ -347,13 +350,13 @@ class person_model {
 		$everything = $this -> to_array();
 		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
-			$fieldset[] = "$col = :$col";
+			$fieldset[] = "`$col` = :$col";
 			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("UPDATE person SET $fields WHERE id = :id");
+		$sth = database::$dbh -> prepare("UPDATE `person` SET $fields WHERE `person`.`id` = :id");
 		$sth -> execute($data);
 	}
 
@@ -370,7 +373,7 @@ class person_model {
 		$data = array();
 		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
-			$fieldset[] = $col;
+			$fieldset[] = "`$col`";
 			$fieldset_colon[] = ":$col";
 			$data[$col] = $everything[$col];
 		}
@@ -378,7 +381,7 @@ class person_model {
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("INSERT INTO person ($fields) VALUES ($vals);");
+		$sth = database::$dbh -> prepare("INSERT INTO `person` ($fields) VALUES ($vals);");
 		$sth -> execute($data);
 		$this -> set_id(database::$dbh->lastInsertId());
 	}
@@ -387,7 +390,7 @@ class person_model {
 	 * Delete person
 	 */
 	public function delete() {
-		$sth = database::$dbh -> prepare("DELETE FROM person WHERE id = :id");
+		$sth = database::$dbh -> prepare("DELETE FROM `person` WHERE `person`.`id` = :id");
 		$data['id'] = $this -> get_id();
 		$sth -> execute($data);
 	}
@@ -462,7 +465,7 @@ class person_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM person  WHERE person.id = :id;");
+		$sth = database::$dbh -> prepare("SELECT `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM person  WHERE `person`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -476,7 +479,7 @@ class person_model {
 	 * Retrieve by person_code
 	 */
 	public static function get_by_person_code($code) {
-		$sth = database::$dbh -> prepare("SELECT person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM person  WHERE person.code = :code;");
+		$sth = database::$dbh -> prepare("SELECT `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM person  WHERE `person`.`code` = :code;");
 		$sth -> execute(array('code' => $code));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -499,7 +502,7 @@ class person_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM person " . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `person` " . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -523,7 +526,7 @@ class person_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM person  WHERE code LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `person`  WHERE code LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -547,7 +550,7 @@ class person_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM person  WHERE firstname LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `person`  WHERE firstname LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -571,7 +574,7 @@ class person_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM person  WHERE surname LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `person`  WHERE surname LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();

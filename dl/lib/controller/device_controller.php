@@ -37,29 +37,6 @@ class device_controller {
 		/* Insert new row */
 		try {
 			$device -> insert();
-			
-			// TODO
-			if(false && $technician = technician_model::get_by_technician_login(session::getUsername())) {
-				/* Insert new history entry */
-				try {
-					$device_history = new device_history_model();
-					$device_history -> set_date(date('Y-m-d H:i:s'));
-					$device_history -> set_comment('Device added to database');
-					$device_history -> set_is_spare($device -> get_is_spare());
-					$device_history -> set_is_damaged($device -> get_is_damaged());
-					$device_history -> set_has_photos(0);
-					$device_history -> set_is_bought($device -> get_is_bought());
-					$device_history -> set_change('owner');
-					$device_history -> set_technician_id($technician -> get_id());
-					$device_history -> set_device_id($device -> get_id());
-					$device_history -> set_device_status_id($device -> get_device_status_id());
-					$device_history -> set_person_id($device -> get_person_id());
-					$device_history -> insert();
-				} catch(Exception $e) {
-					// Not so worried about this if it fails
-				}
-			}
-			
 			return $device -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');
@@ -78,7 +55,7 @@ class device_controller {
 		if(!$device) {
 			return array('error' => 'device not found', 'code' => '404');
 		}
-		$device -> populate_list_device_history();
+		// $device -> populate_list_device_history();
 		return $device -> to_array_filtered($role);
 	}
 
@@ -181,39 +158,19 @@ class device_controller {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 		if((int)$page < 1 || (int)$itemspp < 1) {
-			return array('error' => 'Invalid page number or item count', 'code' => '400');
+			$start = 0;
+			$limit = -1;
+		} else {
+			$start = ($page - 1) * $itemspp;
+			$limit = $itemspp;
 		}
 
 		/* Retrieve and filter rows */
 		try {
-			$device_list = device_model::list_all(($page - 1) * $itemspp, $itemspp);
+			$device_list = device_model::list_all($start, $limit);
 			$ret = array();
 			foreach($device_list as $device) {
 				$ret[] = $device -> to_array_filtered($role);
-			}
-			return $ret;
-		} catch(Exception $e) {
-			return array('error' => 'Failed to list', 'code' => '500');
-		}
-	}
-	
-	public static function search($page = 1, $itemspp = 20) {
-		/* Check permission */
-		$role = session::getRole();
-		if(!isset(core::$permission[$role]['device']['read']) || count(core::$permission[$role]['device']['read']) == 0) {
-			return array('error' => 'You do not have permission to do that', 'code' => '403');
-		}
-		if(!isset($_GET['q'])) {
-			return array('error' => 'No search term specified', 'code' => '403');
-		}
-	
-		/* Retrieve and filter rows */
-		try {
-			$search = $_GET['q'];
-			$device_list = device_model::search_by_sn($search, ($page - 1) * $itemspp, $itemspp);
-			$ret = array();
-			foreach($device_list as $device) {
-				$ret[] = $device-> to_array_filtered($role);
 			}
 			return $ret;
 		} catch(Exception $e) {

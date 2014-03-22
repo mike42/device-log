@@ -13,7 +13,7 @@ class technician_controller {
 		}
 
 		/* Find fields to insert */
-		$fields = array('id', 'login', 'name');
+		$fields = array('id', 'login', 'name', 'is_active');
 		$init = array();
 		$received = json_decode(file_get_contents('php://input'), true, 2);
 		foreach($fields as $field) {
@@ -72,6 +72,9 @@ class technician_controller {
 		if(isset($received['name']) && in_array('name', core::$permission[$role]['technician']['update'])) {
 			$technician -> set_name($received['name']);
 		}
+		if(isset($received['is_active']) && in_array('is_active', core::$permission[$role]['technician']['update'])) {
+			$technician -> set_is_active($received['is_active']);
+		}
 
 		/* Update the row */
 		try {
@@ -125,12 +128,16 @@ class technician_controller {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 		if((int)$page < 1 || (int)$itemspp < 1) {
-			return array('error' => 'Invalid page number or item count', 'code' => '400');
+			$start = 0;
+			$limit = -1;
+		} else {
+			$start = ($page - 1) * $itemspp;
+			$limit = $itemspp;
 		}
 
 		/* Retrieve and filter rows */
 		try {
-			$technician_list = technician_model::list_all(($page - 1) * $itemspp, $itemspp);
+			$technician_list = technician_model::list_all($start, $limit);
 			$ret = array();
 			foreach($technician_list as $technician) {
 				$ret[] = $technician -> to_array_filtered($role);

@@ -170,12 +170,16 @@ class device_history_controller {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 		if((int)$page < 1 || (int)$itemspp < 1) {
-			return array('error' => 'Invalid page number or item count', 'code' => '400');
+			$start = 0;
+			$limit = -1;
+		} else {
+			$start = ($page - 1) * $itemspp;
+			$limit = $itemspp;
 		}
 
 		/* Retrieve and filter rows */
 		try {
-			$device_history_list = device_history_model::list_all(($page - 1) * $itemspp, $itemspp);
+			$device_history_list = device_history_model::list_all($start, $limit);
 			$ret = array();
 			foreach($device_history_list as $device_history) {
 				$ret[] = $device_history -> to_array_filtered($role);

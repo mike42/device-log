@@ -15,6 +15,11 @@ class technician_model {
 	 */
 	private $name;
 
+	/**
+	 * @var int is_active
+	 */
+	private $is_active;
+
 	private $model_variables_changed; // Only variables which have been changed
 	private $model_variables_set; // All variables which have been set (initially or with a setter)
 
@@ -22,6 +27,9 @@ class technician_model {
 	public $list_software_history;
 	public $list_key_history;
 	public $list_device_history;
+
+	/* Sort clause to add when listing rows from this table */
+	const SORT_CLAUSE = " ORDER BY `technician`.`id`";
 
 	/**
 	 * Initialise and load related tables
@@ -45,6 +53,7 @@ class technician_model {
 		$this -> id = '';
 		$this -> login = '';
 		$this -> name = '';
+		$this -> is_active = '';
 
 		if(isset($fields['technician.id'])) {
 			$this -> set_id($fields['technician.id']);
@@ -54,6 +63,9 @@ class technician_model {
 		}
 		if(isset($fields['technician.name'])) {
 			$this -> set_name($fields['technician.name']);
+		}
+		if(isset($fields['technician.is_active'])) {
+			$this -> set_is_active($fields['technician.is_active']);
 		}
 
 		$this -> model_variables_changed = array();
@@ -71,7 +83,8 @@ class technician_model {
 		$values = array(
 			'id' => $this -> id,
 			'login' => $this -> login,
-			'name' => $this -> name);
+			'name' => $this -> name,
+			'is_active' => $this -> is_active);
 		return $values;
 	}
 
@@ -120,7 +133,8 @@ class technician_model {
 		$values = array(
 			"technician.id" => $row[0],
 			"technician.login" => $row[1],
-			"technician.name" => $row[2]);
+			"technician.name" => $row[2],
+			"technician.is_active" => $row[3]);
 		return $values;
 	}
 
@@ -203,6 +217,32 @@ class technician_model {
 	}
 
 	/**
+	 * Get is_active
+	 * 
+	 * @return int
+	 */
+	public function get_is_active() {
+		if(!isset($this -> model_variables_set['is_active'])) {
+			throw new Exception("technician.is_active has not been initialised.");
+		}
+		return $this -> is_active;
+	}
+
+	/**
+	 * Set is_active
+	 * 
+	 * @param int $is_active
+	 */
+	public function set_is_active($is_active) {
+		if(!is_numeric($is_active)) {
+			throw new Exception("technician.is_active must be numeric");
+		}
+		$this -> is_active = $is_active;
+		$this -> model_variables_changed['is_active'] = true;
+		$this -> model_variables_set['is_active'] = true;
+	}
+
+	/**
 	 * Update technician
 	 */
 	public function update() {
@@ -215,13 +255,13 @@ class technician_model {
 		$everything = $this -> to_array();
 		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
-			$fieldset[] = "$col = :$col";
+			$fieldset[] = "`$col` = :$col";
 			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("UPDATE technician SET $fields WHERE id = :id");
+		$sth = database::$dbh -> prepare("UPDATE `technician` SET $fields WHERE `technician`.`id` = :id");
 		$sth -> execute($data);
 	}
 
@@ -238,7 +278,7 @@ class technician_model {
 		$data = array();
 		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
-			$fieldset[] = $col;
+			$fieldset[] = "`$col`";
 			$fieldset_colon[] = ":$col";
 			$data[$col] = $everything[$col];
 		}
@@ -246,7 +286,7 @@ class technician_model {
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("INSERT INTO technician ($fields) VALUES ($vals);");
+		$sth = database::$dbh -> prepare("INSERT INTO `technician` ($fields) VALUES ($vals);");
 		$sth -> execute($data);
 		$this -> set_id(database::$dbh->lastInsertId());
 	}
@@ -255,7 +295,7 @@ class technician_model {
 	 * Delete technician
 	 */
 	public function delete() {
-		$sth = database::$dbh -> prepare("DELETE FROM technician WHERE id = :id");
+		$sth = database::$dbh -> prepare("DELETE FROM `technician` WHERE `technician`.`id` = :id");
 		$data['id'] = $this -> get_id();
 		$sth -> execute($data);
 	}
@@ -297,7 +337,7 @@ class technician_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT technician.id, technician.login, technician.name FROM technician  WHERE technician.id = :id;");
+		$sth = database::$dbh -> prepare("SELECT `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active` FROM technician  WHERE `technician`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -311,7 +351,7 @@ class technician_model {
 	 * Retrieve by technician_name
 	 */
 	public static function get_by_technician_name($name) {
-		$sth = database::$dbh -> prepare("SELECT technician.id, technician.login, technician.name FROM technician  WHERE technician.name = :name;");
+		$sth = database::$dbh -> prepare("SELECT `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active` FROM technician  WHERE `technician`.`name` = :name;");
 		$sth -> execute(array('name' => $name));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -325,7 +365,7 @@ class technician_model {
 	 * Retrieve by technician_login
 	 */
 	public static function get_by_technician_login($login) {
-		$sth = database::$dbh -> prepare("SELECT technician.id, technician.login, technician.name FROM technician  WHERE technician.login = :login;");
+		$sth = database::$dbh -> prepare("SELECT `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active` FROM technician  WHERE `technician`.`login` = :login;");
 		$sth -> execute(array('login' => $login));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -348,7 +388,7 @@ class technician_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT technician.id, technician.login, technician.name FROM technician " . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active` FROM `technician` " . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -372,7 +412,7 @@ class technician_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT technician.id, technician.login, technician.name FROM technician  WHERE login LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active` FROM `technician`  WHERE login LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -396,7 +436,7 @@ class technician_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT technician.id, technician.login, technician.name FROM technician  WHERE name LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active` FROM `technician`  WHERE name LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();

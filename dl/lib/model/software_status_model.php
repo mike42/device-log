@@ -17,6 +17,9 @@ class software_status_model {
 	public $list_software;
 	public $list_software_history;
 
+	/* Sort clause to add when listing rows from this table */
+	const SORT_CLAUSE = " ORDER BY `software_status`.`id`";
+
 	/**
 	 * Initialise and load related tables
 	 */
@@ -171,13 +174,13 @@ class software_status_model {
 		$everything = $this -> to_array();
 		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
-			$fieldset[] = "$col = :$col";
+			$fieldset[] = "`$col` = :$col";
 			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("UPDATE software_status SET $fields WHERE id = :id");
+		$sth = database::$dbh -> prepare("UPDATE `software_status` SET $fields WHERE `software_status`.`id` = :id");
 		$sth -> execute($data);
 	}
 
@@ -194,7 +197,7 @@ class software_status_model {
 		$data = array();
 		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
-			$fieldset[] = $col;
+			$fieldset[] = "`$col`";
 			$fieldset_colon[] = ":$col";
 			$data[$col] = $everything[$col];
 		}
@@ -202,7 +205,7 @@ class software_status_model {
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("INSERT INTO software_status ($fields) VALUES ($vals);");
+		$sth = database::$dbh -> prepare("INSERT INTO `software_status` ($fields) VALUES ($vals);");
 		$sth -> execute($data);
 		$this -> set_id(database::$dbh->lastInsertId());
 	}
@@ -211,7 +214,7 @@ class software_status_model {
 	 * Delete software_status
 	 */
 	public function delete() {
-		$sth = database::$dbh -> prepare("DELETE FROM software_status WHERE id = :id");
+		$sth = database::$dbh -> prepare("DELETE FROM `software_status` WHERE `software_status`.`id` = :id");
 		$data['id'] = $this -> get_id();
 		$sth -> execute($data);
 	}
@@ -242,7 +245,7 @@ class software_status_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT software_status.id, software_status.tag FROM software_status  WHERE software_status.id = :id;");
+		$sth = database::$dbh -> prepare("SELECT `software_status`.`id`, `software_status`.`tag` FROM software_status  WHERE `software_status`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -256,7 +259,7 @@ class software_status_model {
 	 * Retrieve by tag
 	 */
 	public static function get_by_tag($tag) {
-		$sth = database::$dbh -> prepare("SELECT software_status.id, software_status.tag FROM software_status  WHERE software_status.tag = :tag;");
+		$sth = database::$dbh -> prepare("SELECT `software_status`.`id`, `software_status`.`tag` FROM software_status  WHERE `software_status`.`tag` = :tag;");
 		$sth -> execute(array('tag' => $tag));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -279,7 +282,7 @@ class software_status_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT software_status.id, software_status.tag FROM software_status " . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `software_status`.`id`, `software_status`.`tag` FROM `software_status` " . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -303,7 +306,7 @@ class software_status_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT software_status.id, software_status.tag FROM software_status  WHERE tag LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `software_status`.`id`, `software_status`.`tag` FROM `software_status`  WHERE tag LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();

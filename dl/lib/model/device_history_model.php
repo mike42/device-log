@@ -73,6 +73,9 @@ class device_history_model {
 	/* Child tables */
 	public $list_device_photo;
 
+	/* Sort clause to add when listing rows from this table */
+	const SORT_CLAUSE = " ORDER BY `device_history`.`id`";
+
 	/**
 	 * Initialise and load related tables
 	 */
@@ -228,27 +231,28 @@ class device_history_model {
 			"technician.id" => $row[12],
 			"technician.login" => $row[13],
 			"technician.name" => $row[14],
-			"device.id" => $row[15],
-			"device.is_spare" => $row[16],
-			"device.is_damaged" => $row[17],
-			"device.sn" => $row[18],
-			"device.mac_eth0" => $row[19],
-			"device.mac_wlan0" => $row[20],
-			"device.is_bought" => $row[21],
-			"device.person_id" => $row[22],
-			"device.device_status_id" => $row[23],
-			"device.device_type_id" => $row[24],
-			"device_status.id" => $row[25],
-			"device_status.tag" => $row[26],
-			"person.id" => $row[27],
-			"person.code" => $row[28],
-			"person.is_staff" => $row[29],
-			"person.is_active" => $row[30],
-			"person.firstname" => $row[31],
-			"person.surname" => $row[32],
-			"device_type.id" => $row[33],
-			"device_type.name" => $row[34],
-			"device_type.model_no" => $row[35]);
+			"technician.is_active" => $row[15],
+			"device.id" => $row[16],
+			"device.is_spare" => $row[17],
+			"device.is_damaged" => $row[18],
+			"device.sn" => $row[19],
+			"device.mac_eth0" => $row[20],
+			"device.mac_wlan0" => $row[21],
+			"device.is_bought" => $row[22],
+			"device.person_id" => $row[23],
+			"device.device_status_id" => $row[24],
+			"device.device_type_id" => $row[25],
+			"device_status.id" => $row[26],
+			"device_status.tag" => $row[27],
+			"person.id" => $row[28],
+			"person.code" => $row[29],
+			"person.is_staff" => $row[30],
+			"person.is_active" => $row[31],
+			"person.firstname" => $row[32],
+			"person.surname" => $row[33],
+			"device_type.id" => $row[34],
+			"device_type.name" => $row[35],
+			"device_type.model_no" => $row[36]);
 		return $values;
 	}
 
@@ -573,13 +577,13 @@ class device_history_model {
 		$everything = $this -> to_array();
 		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
-			$fieldset[] = "$col = :$col";
+			$fieldset[] = "`$col` = :$col";
 			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("UPDATE device_history SET $fields WHERE id = :id");
+		$sth = database::$dbh -> prepare("UPDATE `device_history` SET $fields WHERE `device_history`.`id` = :id");
 		$sth -> execute($data);
 	}
 
@@ -596,16 +600,15 @@ class device_history_model {
 		$data = array();
 		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
-			$fieldset[] = $col;
+			$fieldset[] = "`$col`";
 			$fieldset_colon[] = ":$col";
 			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 		$vals = implode(", ", $fieldset_colon);
 
-		echo "INSERT INTO device_history ($fields) VALUES ($vals);";
 		/* Execute query */
-		$sth = database::$dbh -> prepare("INSERT INTO device_history ($fields) VALUES ($vals);");
+		$sth = database::$dbh -> prepare("INSERT INTO `device_history` ($fields) VALUES ($vals);");
 		$sth -> execute($data);
 		$this -> set_id(database::$dbh->lastInsertId());
 	}
@@ -614,7 +617,7 @@ class device_history_model {
 	 * Delete device_history
 	 */
 	public function delete() {
-		$sth = database::$dbh -> prepare("DELETE FROM device_history WHERE id = :id");
+		$sth = database::$dbh -> prepare("DELETE FROM `device_history` WHERE `device_history`.`id` = :id");
 		$data['id'] = $this -> get_id();
 		$sth -> execute($data);
 	}
@@ -634,7 +637,7 @@ class device_history_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE device_history.id = :id;");
+		$sth = database::$dbh -> prepare("SELECT `device_history`.`id`, `device_history`.`date`, `device_history`.`comment`, `device_history`.`is_spare`, `device_history`.`is_damaged`, `device_history`.`has_photos`, `device_history`.`is_bought`, `device_history`.`change`, `device_history`.`technician_id`, `device_history`.`device_id`, `device_history`.`device_status_id`, `device_history`.`person_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `device_status`.`id`, `device_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM device_history JOIN `technician` ON `device_history`.`technician_id` = `technician`.`id` JOIN `device` ON `device_history`.`device_id` = `device`.`id` JOIN `device_status` ON `device_history`.`device_status_id` = `device_status`.`id` JOIN `person` ON `device_history`.`person_id` = `person`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE `device_history`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -657,7 +660,7 @@ class device_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_history`.`id`, `device_history`.`date`, `device_history`.`comment`, `device_history`.`is_spare`, `device_history`.`is_damaged`, `device_history`.`has_photos`, `device_history`.`is_bought`, `device_history`.`change`, `device_history`.`technician_id`, `device_history`.`device_id`, `device_history`.`device_status_id`, `device_history`.`person_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `device_status`.`id`, `device_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device_history` JOIN `technician` ON `device_history`.`technician_id` = `technician`.`id` JOIN `device` ON `device_history`.`device_id` = `device`.`id` JOIN `device_status` ON `device_history`.`device_status_id` = `device_status`.`id` JOIN `person` ON `device_history`.`person_id` = `person`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id`" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -681,7 +684,7 @@ class device_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE device_history.technician_id = :technician_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_history`.`id`, `device_history`.`date`, `device_history`.`comment`, `device_history`.`is_spare`, `device_history`.`is_damaged`, `device_history`.`has_photos`, `device_history`.`is_bought`, `device_history`.`change`, `device_history`.`technician_id`, `device_history`.`device_id`, `device_history`.`device_status_id`, `device_history`.`person_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `device_status`.`id`, `device_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device_history` JOIN `technician` ON `device_history`.`technician_id` = `technician`.`id` JOIN `device` ON `device_history`.`device_id` = `device`.`id` JOIN `device_status` ON `device_history`.`device_status_id` = `device_status`.`id` JOIN `person` ON `device_history`.`person_id` = `person`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device_history.technician_id = :technician_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('technician_id' => $technician_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -705,7 +708,7 @@ class device_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE device_history.device_id = :device_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_history`.`id`, `device_history`.`date`, `device_history`.`comment`, `device_history`.`is_spare`, `device_history`.`is_damaged`, `device_history`.`has_photos`, `device_history`.`is_bought`, `device_history`.`change`, `device_history`.`technician_id`, `device_history`.`device_id`, `device_history`.`device_status_id`, `device_history`.`person_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `device_status`.`id`, `device_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device_history` JOIN `technician` ON `device_history`.`technician_id` = `technician`.`id` JOIN `device` ON `device_history`.`device_id` = `device`.`id` JOIN `device_status` ON `device_history`.`device_status_id` = `device_status`.`id` JOIN `person` ON `device_history`.`person_id` = `person`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device_history.device_id = :device_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('device_id' => $device_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -729,7 +732,7 @@ class device_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE device_history.device_status_id = :device_status_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_history`.`id`, `device_history`.`date`, `device_history`.`comment`, `device_history`.`is_spare`, `device_history`.`is_damaged`, `device_history`.`has_photos`, `device_history`.`is_bought`, `device_history`.`change`, `device_history`.`technician_id`, `device_history`.`device_id`, `device_history`.`device_status_id`, `device_history`.`person_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `device_status`.`id`, `device_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device_history` JOIN `technician` ON `device_history`.`technician_id` = `technician`.`id` JOIN `device` ON `device_history`.`device_id` = `device`.`id` JOIN `device_status` ON `device_history`.`device_status_id` = `device_status`.`id` JOIN `person` ON `device_history`.`person_id` = `person`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device_history.device_status_id = :device_status_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('device_status_id' => $device_status_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -753,7 +756,7 @@ class device_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE device_history.person_id = :person_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_history`.`id`, `device_history`.`date`, `device_history`.`comment`, `device_history`.`is_spare`, `device_history`.`is_damaged`, `device_history`.`has_photos`, `device_history`.`is_bought`, `device_history`.`change`, `device_history`.`technician_id`, `device_history`.`device_id`, `device_history`.`device_status_id`, `device_history`.`person_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `device_status`.`id`, `device_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device_history` JOIN `technician` ON `device_history`.`technician_id` = `technician`.`id` JOIN `device` ON `device_history`.`device_id` = `device`.`id` JOIN `device_status` ON `device_history`.`device_status_id` = `device_status`.`id` JOIN `person` ON `device_history`.`person_id` = `person`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device_history.person_id = :person_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -777,7 +780,7 @@ class device_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE date LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_history`.`id`, `device_history`.`date`, `device_history`.`comment`, `device_history`.`is_spare`, `device_history`.`is_damaged`, `device_history`.`has_photos`, `device_history`.`is_bought`, `device_history`.`change`, `device_history`.`technician_id`, `device_history`.`device_id`, `device_history`.`device_status_id`, `device_history`.`person_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `device_status`.`id`, `device_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device_history` JOIN `technician` ON `device_history`.`technician_id` = `technician`.`id` JOIN `device` ON `device_history`.`device_id` = `device`.`id` JOIN `device_status` ON `device_history`.`device_status_id` = `device_status`.`id` JOIN `person` ON `device_history`.`person_id` = `person`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE date LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -801,7 +804,7 @@ class device_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE comment LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_history`.`id`, `device_history`.`date`, `device_history`.`comment`, `device_history`.`is_spare`, `device_history`.`is_damaged`, `device_history`.`has_photos`, `device_history`.`is_bought`, `device_history`.`change`, `device_history`.`technician_id`, `device_history`.`device_id`, `device_history`.`device_status_id`, `device_history`.`person_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `device_status`.`id`, `device_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device_history` JOIN `technician` ON `device_history`.`technician_id` = `technician`.`id` JOIN `device` ON `device_history`.`device_id` = `device`.`id` JOIN `device_status` ON `device_history`.`device_status_id` = `device_status`.`id` JOIN `person` ON `device_history`.`person_id` = `person`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE comment LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -825,7 +828,7 @@ class device_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT device_history.id, device_history.date, device_history.comment, device_history.is_spare, device_history.is_damaged, device_history.has_photos, device_history.is_bought, device_history.change, device_history.technician_id, device_history.device_id, device_history.device_status_id, device_history.person_id, technician.id, technician.login, technician.name, device.id, device.is_spare, device.is_damaged, device.sn, device.mac_eth0, device.mac_wlan0, device.is_bought, device.person_id, device.device_status_id, device.device_type_id, device_status.id, device_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, device_type.id, device_type.name, device_type.model_no FROM device_history JOIN technician ON device_history.technician_id = technician.id JOIN device ON device_history.device_id = device.id JOIN device_status ON device_history.device_status_id = device_status.id JOIN person ON device_history.person_id = person.id JOIN device_type ON device.device_type_id = device_type.id WHERE change LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_history`.`id`, `device_history`.`date`, `device_history`.`comment`, `device_history`.`is_spare`, `device_history`.`is_damaged`, `device_history`.`has_photos`, `device_history`.`is_bought`, `device_history`.`change`, `device_history`.`technician_id`, `device_history`.`device_id`, `device_history`.`device_status_id`, `device_history`.`person_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `device_status`.`id`, `device_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device_history` JOIN `technician` ON `device_history`.`technician_id` = `technician`.`id` JOIN `device` ON `device_history`.`device_id` = `device`.`id` JOIN `device_status` ON `device_history`.`device_status_id` = `device_status`.`id` JOIN `person` ON `device_history`.`person_id` = `person`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE change LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();

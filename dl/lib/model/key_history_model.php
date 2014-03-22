@@ -55,6 +55,9 @@ class key_history_model {
 	public $technician;
 	public $key_status;
 
+	/* Sort clause to add when listing rows from this table */
+	const SORT_CLAUSE = " ORDER BY `key_history`.`id`";
+
 	/**
 	 * Initialise and load related tables
 	 */
@@ -194,10 +197,11 @@ class key_history_model {
 			"technician.id" => $row[21],
 			"technician.login" => $row[22],
 			"technician.name" => $row[23],
-			"key_status.id" => $row[24],
-			"key_status.name" => $row[25],
-			"key_type.id" => $row[26],
-			"key_type.name" => $row[27]);
+			"technician.is_active" => $row[24],
+			"key_status.id" => $row[25],
+			"key_status.name" => $row[26],
+			"key_type.id" => $row[27],
+			"key_type.name" => $row[28]);
 		return $values;
 	}
 
@@ -446,13 +450,13 @@ class key_history_model {
 		$everything = $this -> to_array();
 		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
-			$fieldset[] = "$col = :$col";
+			$fieldset[] = "`$col` = :$col";
 			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("UPDATE key_history SET $fields WHERE id = :id");
+		$sth = database::$dbh -> prepare("UPDATE `key_history` SET $fields WHERE `key_history`.`id` = :id");
 		$sth -> execute($data);
 	}
 
@@ -469,7 +473,7 @@ class key_history_model {
 		$data = array();
 		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
-			$fieldset[] = $col;
+			$fieldset[] = "`$col`";
 			$fieldset_colon[] = ":$col";
 			$data[$col] = $everything[$col];
 		}
@@ -477,7 +481,7 @@ class key_history_model {
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("INSERT INTO key_history ($fields) VALUES ($vals);");
+		$sth = database::$dbh -> prepare("INSERT INTO `key_history` ($fields) VALUES ($vals);");
 		$sth -> execute($data);
 		$this -> set_id(database::$dbh->lastInsertId());
 	}
@@ -486,7 +490,7 @@ class key_history_model {
 	 * Delete key_history
 	 */
 	public function delete() {
-		$sth = database::$dbh -> prepare("DELETE FROM key_history WHERE id = :id");
+		$sth = database::$dbh -> prepare("DELETE FROM `key_history` WHERE `key_history`.`id` = :id");
 		$data['id'] = $this -> get_id();
 		$sth -> execute($data);
 	}
@@ -495,7 +499,7 @@ class key_history_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE key_history.id = :id;");
+		$sth = database::$dbh -> prepare("SELECT `key_history`.`id`, `key_history`.`date`, `key_history`.`person_id`, `key_history`.`key_id`, `key_history`.`technician_id`, `key_history`.`key_status_id`, `key_history`.`comment`, `key_history`.`change`, `key_history`.`is_spare`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `doorkey`.`id`, `doorkey`.`serial`, `doorkey`.`person_id`, `doorkey`.`is_spare`, `doorkey`.`key_type_id`, `doorkey`.`key_status_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `key_status`.`id`, `key_status`.`name`, `key_type`.`id`, `key_type`.`name` FROM key_history JOIN `person` ON `key_history`.`person_id` = `person`.`id` JOIN `doorkey` ON `key_history`.`key_id` = `doorkey`.`id` JOIN `technician` ON `key_history`.`technician_id` = `technician`.`id` JOIN `key_status` ON `key_history`.`key_status_id` = `key_status`.`id` JOIN `key_type` ON `doorkey`.`key_type_id` = `key_type`.`id` WHERE `key_history`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -518,7 +522,7 @@ class key_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_history`.`id`, `key_history`.`date`, `key_history`.`person_id`, `key_history`.`key_id`, `key_history`.`technician_id`, `key_history`.`key_status_id`, `key_history`.`comment`, `key_history`.`change`, `key_history`.`is_spare`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `doorkey`.`id`, `doorkey`.`serial`, `doorkey`.`person_id`, `doorkey`.`is_spare`, `doorkey`.`key_type_id`, `doorkey`.`key_status_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `key_status`.`id`, `key_status`.`name`, `key_type`.`id`, `key_type`.`name` FROM `key_history` JOIN `person` ON `key_history`.`person_id` = `person`.`id` JOIN `doorkey` ON `key_history`.`key_id` = `doorkey`.`id` JOIN `technician` ON `key_history`.`technician_id` = `technician`.`id` JOIN `key_status` ON `key_history`.`key_status_id` = `key_status`.`id` JOIN `key_type` ON `doorkey`.`key_type_id` = `key_type`.`id`" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -542,7 +546,7 @@ class key_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE key_history.person_id = :person_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_history`.`id`, `key_history`.`date`, `key_history`.`person_id`, `key_history`.`key_id`, `key_history`.`technician_id`, `key_history`.`key_status_id`, `key_history`.`comment`, `key_history`.`change`, `key_history`.`is_spare`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `doorkey`.`id`, `doorkey`.`serial`, `doorkey`.`person_id`, `doorkey`.`is_spare`, `doorkey`.`key_type_id`, `doorkey`.`key_status_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `key_status`.`id`, `key_status`.`name`, `key_type`.`id`, `key_type`.`name` FROM `key_history` JOIN `person` ON `key_history`.`person_id` = `person`.`id` JOIN `doorkey` ON `key_history`.`key_id` = `doorkey`.`id` JOIN `technician` ON `key_history`.`technician_id` = `technician`.`id` JOIN `key_status` ON `key_history`.`key_status_id` = `key_status`.`id` JOIN `key_type` ON `doorkey`.`key_type_id` = `key_type`.`id` WHERE key_history.person_id = :person_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -566,7 +570,7 @@ class key_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE key_history.key_id = :key_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_history`.`id`, `key_history`.`date`, `key_history`.`person_id`, `key_history`.`key_id`, `key_history`.`technician_id`, `key_history`.`key_status_id`, `key_history`.`comment`, `key_history`.`change`, `key_history`.`is_spare`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `doorkey`.`id`, `doorkey`.`serial`, `doorkey`.`person_id`, `doorkey`.`is_spare`, `doorkey`.`key_type_id`, `doorkey`.`key_status_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `key_status`.`id`, `key_status`.`name`, `key_type`.`id`, `key_type`.`name` FROM `key_history` JOIN `person` ON `key_history`.`person_id` = `person`.`id` JOIN `doorkey` ON `key_history`.`key_id` = `doorkey`.`id` JOIN `technician` ON `key_history`.`technician_id` = `technician`.`id` JOIN `key_status` ON `key_history`.`key_status_id` = `key_status`.`id` JOIN `key_type` ON `doorkey`.`key_type_id` = `key_type`.`id` WHERE key_history.key_id = :key_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('key_id' => $key_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -590,7 +594,7 @@ class key_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE key_history.technician_id = :technician_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_history`.`id`, `key_history`.`date`, `key_history`.`person_id`, `key_history`.`key_id`, `key_history`.`technician_id`, `key_history`.`key_status_id`, `key_history`.`comment`, `key_history`.`change`, `key_history`.`is_spare`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `doorkey`.`id`, `doorkey`.`serial`, `doorkey`.`person_id`, `doorkey`.`is_spare`, `doorkey`.`key_type_id`, `doorkey`.`key_status_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `key_status`.`id`, `key_status`.`name`, `key_type`.`id`, `key_type`.`name` FROM `key_history` JOIN `person` ON `key_history`.`person_id` = `person`.`id` JOIN `doorkey` ON `key_history`.`key_id` = `doorkey`.`id` JOIN `technician` ON `key_history`.`technician_id` = `technician`.`id` JOIN `key_status` ON `key_history`.`key_status_id` = `key_status`.`id` JOIN `key_type` ON `doorkey`.`key_type_id` = `key_type`.`id` WHERE key_history.technician_id = :technician_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('technician_id' => $technician_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -614,7 +618,7 @@ class key_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE key_history.key_status_id = :key_status_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_history`.`id`, `key_history`.`date`, `key_history`.`person_id`, `key_history`.`key_id`, `key_history`.`technician_id`, `key_history`.`key_status_id`, `key_history`.`comment`, `key_history`.`change`, `key_history`.`is_spare`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `doorkey`.`id`, `doorkey`.`serial`, `doorkey`.`person_id`, `doorkey`.`is_spare`, `doorkey`.`key_type_id`, `doorkey`.`key_status_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `key_status`.`id`, `key_status`.`name`, `key_type`.`id`, `key_type`.`name` FROM `key_history` JOIN `person` ON `key_history`.`person_id` = `person`.`id` JOIN `doorkey` ON `key_history`.`key_id` = `doorkey`.`id` JOIN `technician` ON `key_history`.`technician_id` = `technician`.`id` JOIN `key_status` ON `key_history`.`key_status_id` = `key_status`.`id` JOIN `key_type` ON `doorkey`.`key_type_id` = `key_type`.`id` WHERE key_history.key_status_id = :key_status_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('key_status_id' => $key_status_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -638,7 +642,7 @@ class key_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE date LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_history`.`id`, `key_history`.`date`, `key_history`.`person_id`, `key_history`.`key_id`, `key_history`.`technician_id`, `key_history`.`key_status_id`, `key_history`.`comment`, `key_history`.`change`, `key_history`.`is_spare`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `doorkey`.`id`, `doorkey`.`serial`, `doorkey`.`person_id`, `doorkey`.`is_spare`, `doorkey`.`key_type_id`, `doorkey`.`key_status_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `key_status`.`id`, `key_status`.`name`, `key_type`.`id`, `key_type`.`name` FROM `key_history` JOIN `person` ON `key_history`.`person_id` = `person`.`id` JOIN `doorkey` ON `key_history`.`key_id` = `doorkey`.`id` JOIN `technician` ON `key_history`.`technician_id` = `technician`.`id` JOIN `key_status` ON `key_history`.`key_status_id` = `key_status`.`id` JOIN `key_type` ON `doorkey`.`key_type_id` = `key_type`.`id` WHERE date LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -662,7 +666,7 @@ class key_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE comment LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_history`.`id`, `key_history`.`date`, `key_history`.`person_id`, `key_history`.`key_id`, `key_history`.`technician_id`, `key_history`.`key_status_id`, `key_history`.`comment`, `key_history`.`change`, `key_history`.`is_spare`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `doorkey`.`id`, `doorkey`.`serial`, `doorkey`.`person_id`, `doorkey`.`is_spare`, `doorkey`.`key_type_id`, `doorkey`.`key_status_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `key_status`.`id`, `key_status`.`name`, `key_type`.`id`, `key_type`.`name` FROM `key_history` JOIN `person` ON `key_history`.`person_id` = `person`.`id` JOIN `doorkey` ON `key_history`.`key_id` = `doorkey`.`id` JOIN `technician` ON `key_history`.`technician_id` = `technician`.`id` JOIN `key_status` ON `key_history`.`key_status_id` = `key_status`.`id` JOIN `key_type` ON `doorkey`.`key_type_id` = `key_type`.`id` WHERE comment LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -686,7 +690,7 @@ class key_history_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_history.id, key_history.date, key_history.person_id, key_history.key_id, key_history.technician_id, key_history.key_status_id, key_history.comment, key_history.change, key_history.is_spare, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname, doorkey.id, doorkey.serial, doorkey.person_id, doorkey.is_spare, doorkey.key_type_id, doorkey.key_status_id, technician.id, technician.login, technician.name, key_status.id, key_status.name, key_type.id, key_type.name FROM key_history JOIN person ON key_history.person_id = person.id JOIN doorkey ON key_history.key_id = doorkey.id JOIN technician ON key_history.technician_id = technician.id JOIN key_status ON key_history.key_status_id = key_status.id JOIN key_type ON doorkey.key_type_id = key_type.id WHERE change LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_history`.`id`, `key_history`.`date`, `key_history`.`person_id`, `key_history`.`key_id`, `key_history`.`technician_id`, `key_history`.`key_status_id`, `key_history`.`comment`, `key_history`.`change`, `key_history`.`is_spare`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `doorkey`.`id`, `doorkey`.`serial`, `doorkey`.`person_id`, `doorkey`.`is_spare`, `doorkey`.`key_type_id`, `doorkey`.`key_status_id`, `technician`.`id`, `technician`.`login`, `technician`.`name`, `technician`.`is_active`, `key_status`.`id`, `key_status`.`name`, `key_type`.`id`, `key_type`.`name` FROM `key_history` JOIN `person` ON `key_history`.`person_id` = `person`.`id` JOIN `doorkey` ON `key_history`.`key_id` = `doorkey`.`id` JOIN `technician` ON `key_history`.`technician_id` = `technician`.`id` JOIN `key_status` ON `key_history`.`key_status_id` = `key_status`.`id` JOIN `key_type` ON `doorkey`.`key_type_id` = `key_type`.`id` WHERE change LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();

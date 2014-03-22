@@ -155,12 +155,16 @@ class software_history_controller {
 			return array('error' => 'You do not have permission to do that', 'code' => '403');
 		}
 		if((int)$page < 1 || (int)$itemspp < 1) {
-			return array('error' => 'Invalid page number or item count', 'code' => '400');
+			$start = 0;
+			$limit = -1;
+		} else {
+			$start = ($page - 1) * $itemspp;
+			$limit = $itemspp;
 		}
 
 		/* Retrieve and filter rows */
 		try {
-			$software_history_list = software_history_model::list_all(($page - 1) * $itemspp, $itemspp);
+			$software_history_list = software_history_model::list_all($start, $limit);
 			$ret = array();
 			foreach($software_history_list as $software_history) {
 				$ret[] = $software_history -> to_array_filtered($role);

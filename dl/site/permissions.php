@@ -112,11 +112,13 @@ $permission['user'] = array(
 		'read' => array(
 			'id',
 			'login',
-			'name'),
+			'name',
+			'is_active'),
 		'update' => array(
 			'id',
 			'login',
-			'name'),
+			'name',
+			'is_active'),
 		'delete' => true),
 	'software_history' => array(
 		'create' => true,
@@ -344,11 +346,13 @@ $permission['admin'] = array(
 		'read' => array(
 			'id',
 			'login',
-			'name'),
+			'name',
+			'is_active'),
 		'update' => array(
 			'id',
 			'login',
-			'name'),
+			'name',
+			'is_active'),
 		'delete' => true),
 	'software_history' => array(
 		'create' => true,

@@ -41,6 +41,9 @@ class software_model {
 	/* Child tables */
 	public $list_software_history;
 
+	/* Sort clause to add when listing rows from this table */
+	const SORT_CLAUSE = " ORDER BY `software`.`id`";
+
 	/**
 	 * Initialise and load related tables
 	 */
@@ -336,13 +339,13 @@ class software_model {
 		$everything = $this -> to_array();
 		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
-			$fieldset[] = "$col = :$col";
+			$fieldset[] = "`$col` = :$col";
 			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("UPDATE software SET $fields WHERE id = :id");
+		$sth = database::$dbh -> prepare("UPDATE `software` SET $fields WHERE `software`.`id` = :id");
 		$sth -> execute($data);
 	}
 
@@ -359,7 +362,7 @@ class software_model {
 		$data = array();
 		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
-			$fieldset[] = $col;
+			$fieldset[] = "`$col`";
 			$fieldset_colon[] = ":$col";
 			$data[$col] = $everything[$col];
 		}
@@ -367,7 +370,7 @@ class software_model {
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("INSERT INTO software ($fields) VALUES ($vals);");
+		$sth = database::$dbh -> prepare("INSERT INTO `software` ($fields) VALUES ($vals);");
 		$sth -> execute($data);
 		$this -> set_id(database::$dbh->lastInsertId());
 	}
@@ -376,7 +379,7 @@ class software_model {
 	 * Delete software
 	 */
 	public function delete() {
-		$sth = database::$dbh -> prepare("DELETE FROM software WHERE id = :id");
+		$sth = database::$dbh -> prepare("DELETE FROM `software` WHERE `software`.`id` = :id");
 		$data['id'] = $this -> get_id();
 		$sth -> execute($data);
 	}
@@ -396,7 +399,7 @@ class software_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id WHERE software.id = :id;");
+		$sth = database::$dbh -> prepare("SELECT `software`.`id`, `software`.`code`, `software`.`software_type_id`, `software`.`software_status_id`, `software`.`person_id`, `software`.`is_bought`, `software_type`.`id`, `software_type`.`name`, `software_status`.`id`, `software_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM software JOIN `software_type` ON `software`.`software_type_id` = `software_type`.`id` JOIN `software_status` ON `software`.`software_status_id` = `software_status`.`id` JOIN `person` ON `software`.`person_id` = `person`.`id` WHERE `software`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -419,7 +422,7 @@ class software_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `software`.`id`, `software`.`code`, `software`.`software_type_id`, `software`.`software_status_id`, `software`.`person_id`, `software`.`is_bought`, `software_type`.`id`, `software_type`.`name`, `software_status`.`id`, `software_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `software` JOIN `software_type` ON `software`.`software_type_id` = `software_type`.`id` JOIN `software_status` ON `software`.`software_status_id` = `software_status`.`id` JOIN `person` ON `software`.`person_id` = `person`.`id`" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -443,7 +446,7 @@ class software_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id WHERE software.software_type_id = :software_type_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `software`.`id`, `software`.`code`, `software`.`software_type_id`, `software`.`software_status_id`, `software`.`person_id`, `software`.`is_bought`, `software_type`.`id`, `software_type`.`name`, `software_status`.`id`, `software_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `software` JOIN `software_type` ON `software`.`software_type_id` = `software_type`.`id` JOIN `software_status` ON `software`.`software_status_id` = `software_status`.`id` JOIN `person` ON `software`.`person_id` = `person`.`id` WHERE software.software_type_id = :software_type_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('software_type_id' => $software_type_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -467,7 +470,7 @@ class software_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id WHERE software.software_status_id = :software_status_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `software`.`id`, `software`.`code`, `software`.`software_type_id`, `software`.`software_status_id`, `software`.`person_id`, `software`.`is_bought`, `software_type`.`id`, `software_type`.`name`, `software_status`.`id`, `software_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `software` JOIN `software_type` ON `software`.`software_type_id` = `software_type`.`id` JOIN `software_status` ON `software`.`software_status_id` = `software_status`.`id` JOIN `person` ON `software`.`person_id` = `person`.`id` WHERE software.software_status_id = :software_status_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('software_status_id' => $software_status_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -491,7 +494,7 @@ class software_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id WHERE software.person_id = :person_id" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `software`.`id`, `software`.`code`, `software`.`software_type_id`, `software`.`software_status_id`, `software`.`person_id`, `software`.`is_bought`, `software_type`.`id`, `software_type`.`name`, `software_status`.`id`, `software_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `software` JOIN `software_type` ON `software`.`software_type_id` = `software_type`.`id` JOIN `software_status` ON `software`.`software_status_id` = `software_status`.`id` JOIN `person` ON `software`.`person_id` = `person`.`id` WHERE software.person_id = :person_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -515,7 +518,7 @@ class software_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT software.id, software.code, software.software_type_id, software.software_status_id, software.person_id, software.is_bought, software_type.id, software_type.name, software_status.id, software_status.tag, person.id, person.code, person.is_staff, person.is_active, person.firstname, person.surname FROM software JOIN software_type ON software.software_type_id = software_type.id JOIN software_status ON software.software_status_id = software_status.id JOIN person ON software.person_id = person.id WHERE code LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `software`.`id`, `software`.`code`, `software`.`software_type_id`, `software`.`software_status_id`, `software`.`person_id`, `software`.`is_bought`, `software_type`.`id`, `software_type`.`name`, `software_status`.`id`, `software_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `software` JOIN `software_type` ON `software`.`software_type_id` = `software_type`.`id` JOIN `software_status` ON `software`.`software_status_id` = `software_status`.`id` JOIN `person` ON `software`.`person_id` = `person`.`id` WHERE code LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();

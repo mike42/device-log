@@ -16,6 +16,9 @@ class key_type_model {
 	/* Child tables */
 	public $list_doorkey;
 
+	/* Sort clause to add when listing rows from this table */
+	const SORT_CLAUSE = " ORDER BY `key_type`.`id`";
+
 	/**
 	 * Initialise and load related tables
 	 */
@@ -164,13 +167,13 @@ class key_type_model {
 		$everything = $this -> to_array();
 		$data['id'] = $this -> get_id();
 		foreach($this -> model_variables_changed as $col => $changed) {
-			$fieldset[] = "$col = :$col";
+			$fieldset[] = "`$col` = :$col";
 			$data[$col] = $everything[$col];
 		}
 		$fields = implode(", ", $fieldset);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("UPDATE key_type SET $fields WHERE id = :id");
+		$sth = database::$dbh -> prepare("UPDATE `key_type` SET $fields WHERE `key_type`.`id` = :id");
 		$sth -> execute($data);
 	}
 
@@ -187,7 +190,7 @@ class key_type_model {
 		$data = array();
 		$everything = $this -> to_array();
 		foreach($this -> model_variables_set as $col => $changed) {
-			$fieldset[] = $col;
+			$fieldset[] = "`$col`";
 			$fieldset_colon[] = ":$col";
 			$data[$col] = $everything[$col];
 		}
@@ -195,7 +198,7 @@ class key_type_model {
 		$vals = implode(", ", $fieldset_colon);
 
 		/* Execute query */
-		$sth = database::$dbh -> prepare("INSERT INTO key_type ($fields) VALUES ($vals);");
+		$sth = database::$dbh -> prepare("INSERT INTO `key_type` ($fields) VALUES ($vals);");
 		$sth -> execute($data);
 		$this -> set_id(database::$dbh->lastInsertId());
 	}
@@ -204,7 +207,7 @@ class key_type_model {
 	 * Delete key_type
 	 */
 	public function delete() {
-		$sth = database::$dbh -> prepare("DELETE FROM key_type WHERE id = :id");
+		$sth = database::$dbh -> prepare("DELETE FROM `key_type` WHERE `key_type`.`id` = :id");
 		$data['id'] = $this -> get_id();
 		$sth -> execute($data);
 	}
@@ -224,7 +227,7 @@ class key_type_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT key_type.id, key_type.name FROM key_type  WHERE key_type.id = :id;");
+		$sth = database::$dbh -> prepare("SELECT `key_type`.`id`, `key_type`.`name` FROM key_type  WHERE `key_type`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -238,7 +241,7 @@ class key_type_model {
 	 * Retrieve by name
 	 */
 	public static function get_by_name($name) {
-		$sth = database::$dbh -> prepare("SELECT key_type.id, key_type.name FROM key_type  WHERE key_type.name = :name;");
+		$sth = database::$dbh -> prepare("SELECT `key_type`.`id`, `key_type`.`name` FROM key_type  WHERE `key_type`.`name` = :name;");
 		$sth -> execute(array('name' => $name));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -261,7 +264,7 @@ class key_type_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_type.id, key_type.name FROM key_type " . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_type`.`id`, `key_type`.`name` FROM `key_type` " . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -285,7 +288,7 @@ class key_type_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT key_type.id, key_type.name FROM key_type  WHERE name LIKE :search" . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `key_type`.`id`, `key_type`.`name` FROM `key_type`  WHERE name LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
