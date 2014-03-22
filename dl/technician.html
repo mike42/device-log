@@ -18,6 +18,21 @@
   </ul>
 </script>
 
+<script type="text/template" id="device-type-select">
+	<option value="">(select)</option>
+    <% _.each(device_types, function(device_type)  { %>
+      <option value="<%= device_type.id %>"><%= device_type.name %> <%= device_type.model_no != "" ? "(" + device_type.model_no + ")" : ""%> </option>
+    <% }); %>
+</script>
+
+
+<script type="text/template" id="device-status-select">
+	<option value="">(select)</option>
+    <% _.each(device_statuses, function(device_status)  { %>
+      <option value="<%= device_status.id %>"><%= device_status.tag %></option>
+    <% }); %>
+</script>
+
 <script type="text/template" id="device-template-tr">
 	<tr>
 		<td><a href="#device/<%= id %>">#<%= id %></a></td>
@@ -188,13 +203,13 @@
 
 			<div class="tab-pane" id="people">
 				<div id="personList">
-					<p style="padding-top: 10px">
-						Quick Search:
-					</p>
-					
+					<p style="padding-top: 10px">Quick Search:</p>
+
 					<form class="col-sm-6">
 						<div class="input-group">
-							<input id="personQuickSearch" type="text" class="form-control typeahead" placeholder="Person's Code" autocomplete="off">
+							<input id="personQuickSearch" type="text"
+								class="form-control typeahead" placeholder="Person's Code"
+								autocomplete="off">
 						</div>
 					</form>
 
@@ -217,19 +232,19 @@
 							<div id="personDetailTop"></div>
 							<div id="personDetailHistory"></div>
 						</div>
-					</div>	
+					</div>
 				</div>
 			</div>
 
 			<div class="tab-pane" id="devices">
 				<div id="deviceList">
-					<p style="padding-top: 10px">
-						Quick Search:
-					</p>
+					<p style="padding-top: 10px">Quick Search:</p>
 
 					<form class="col-sm-6">
 						<div class="input-group">
-							<input id="deviceQuickSearch" type="text" class="form-control typeahead" placeholder="Serial Number" autocomplete="off">
+							<input id="deviceQuickSearch" type="text"
+								class="form-control typeahead" placeholder="Serial Number"
+								autocomplete="off">
 						</div>
 					</form>
 
@@ -257,7 +272,7 @@
 							<div id="deviceDetailTop"></div>
 							<div id="deviceDetailHistory"></div>
 						</div>
-					</div>				
+					</div>
 				</div>
 			</div>
 
@@ -275,7 +290,8 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="modalAddNew" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal fade" id="modalAddNew" tabindex="-1" role="dialog"
+		aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -333,53 +349,51 @@
 						<div id="adddevice" class="show-hide" style="display: none">
 							<form role="form" style="padding-top: 40px">
 								<div id="addDeviceStatus" class="bs-callout bs-callout-warning">...</div>
-								
+
 								<div class="form-group" style="padding-left: 25px">
-									<label for="selectType">Model</label> <select id="selectType"
+									<label for="addDeviceSelectType">Model</label> <select
+										id="addDeviceSelectType"
 										class="btn btn-default dropdown-toggle form-control">
-										<option>Select</option>
-										<option value="addMacBook">MacBook</option>
-										<option value="addiPad">iPad</option>
+										<option value="">Loading..</option>
 									</select>
 								</div>
-								<!-- 	api/device_status/list_all/1/100
-										api/device_type/list_all/1/100 -->
 								<div class="form-group" style="padding-left: 25px">
-									<label for="inputSerial">Serial</label> <input type="text"
-										class="form-control" id="inputSerial" placeholder="Serial">
+									<label for="addDeviceSn">Serial</label> <input type="text"
+										class="form-control" id="addDeviceSn" placeholder="Serial">
+								</div>
+								<div class="form-group" id="addDeviceOwnerFrmGroup" style="padding-left: 25px">
+									<input type="hidden" id="addDevicePersonId" value="" />
+									<label for="addDeviceOwner">Allocated to</label><br /> <input
+										type="text" class="form-control typeahead" id="addDeviceOwner"
+										placeholder="Owner">
 								</div>
 								<div class="form-group" style="padding-left: 25px">
-									<label for="inputOwner">Allocated to</label><br/><input type="text"
-										class="form-control typeahead" id="inputOwner" placeholder="Owner">
-								</div>
-								<div class="form-group" style="padding-left: 25px">
-									<label for="inputMAC1">MAC Address Eth0</label> <input
-										type="text" class="form-control" id="inputMAC1"
+									<label for="addDeviceMacEth0">MAC Address Eth0</label> <input
+										type="text" class="form-control" id="addDeviceMacEth0"
 										placeholder="MAC Address 1">
 								</div>
 								<div class="form-group" style="padding-left: 25px">
-									<label for="inputMAC2">MAC Address Wlan0</label> <input
-										type="text" class="form-control" id="inputMAC2"
+									<label for="addDeviceMacWlan0">MAC Address Wlan0</label> <input
+										type="text" class="form-control" id="addDeviceMacWlan0"
 										placeholder="MAC Address 2">
 								</div>
 								<div class="form-group" style="padding-left: 25px">
-									<label for="selectStatus">Status</label> <select
-										id="selectStatus"
+									<label for="addDeviceSelectStatus">Status</label> <select
+										id="addDeviceSelectStatus"
 										class="btn btn-default dropdown-toggle form-control">
-										<option value="addIn">In</option>
-										<option value="addOut">Out</option>
+										<option value="">Loading..</option>
 									</select>
 								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox"> Spare
+									<label> <input type="checkbox" id="addDeviceIsSpare"> Spare
 									</label>
 								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox"> Damaged
+									<label> <input type="checkbox" id="addDeviceIsDamaged"> Damaged
 									</label>
 								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox"> Bought
+									<label> <input type="checkbox" id="addDeviceIsBought"> Bought
 									</label>
 								</div>
 								<div style="padding-left: 25px;"></div>
@@ -450,33 +464,34 @@
 		<!-- /.modal-dialog -->
 	</div>
 
-<div class="modal fade" id="modalPersonDeviceList" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Allocated Devices</h4>
-			</div>
-			<div class="modal-body">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Type</th>
-							<th>Device Serial</th>
-							<th>Device Status</th>
-						</tr>
-					</thead>
-					<tbody id="person-device-tbody"></tbody>
-				</table>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+	<div class="modal fade" id="modalPersonDeviceList" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Allocated Devices</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Type</th>
+								<th>Device Serial</th>
+								<th>Device Status</th>
+							</tr>
+						</thead>
+						<tbody id="person-device-tbody"></tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 	<script src="public/js/jquery-1.10.2.min.js"></script>
 	<script src="public/js/bootstrap.min.js"></script>
 	<script src="public/js/underscore-min.js"></script>

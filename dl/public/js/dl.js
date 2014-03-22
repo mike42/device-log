@@ -3,6 +3,11 @@ var DeviceCollection = Backbone.Collection.extend({
 	model : device_model
 });
 
+var DeviceTypeCollection = Backbone.Collection.extend({
+	url : '/dl/api/device_type/list_all/1/100',
+	model : device_model
+});
+
 var PersonCollection = Backbone.Collection.extend({
 	url : '/dl/api/person/list_all/1/100',
 	model : person_model
@@ -11,6 +16,11 @@ var PersonCollection = Backbone.Collection.extend({
 var DeviceHistoryCollection = Backbone.Collection.extend({
 	url : '/dl/api/device_history/list_all/1/100',
 	model : device_history_model
+});
+
+var DeviceStatusCollection = Backbone.Collection.extend({
+	url : '/dl/api/device_status/list_all/1/100',
+	model : device_status_model
 });
 
 var PersonDeviceRowView = Backbone.View.extend({
@@ -202,6 +212,28 @@ var PersonTableView = Backbone.View.extend({
 	}
 });
 
+var DeviceTypeSelectView = Backbone.View.extend({
+	collection : null,
+	el : '',
+	template : _.template($('#device-type-select').html()),
+
+	render : function() {
+		this.$el.html(this.template({device_types: this.collection.toJSON()}));
+		return this;
+	}
+});
+
+var DeviceStatusSelectView = Backbone.View.extend({
+	collection : null,
+	el : '',
+	template : _.template($('#device-status-select').html()),
+
+	render : function() {
+		this.$el.html(this.template({device_statuses: this.collection.toJSON()}));
+		return this;
+	}
+});
+
 function handleFailedRequest(response) {
 	if(response.status == '403') {
 		sessionExpired();
@@ -283,6 +315,36 @@ $('#btnAddNew').on('click', function(event) {
 	$("#cboAddNew").val('addselect');
 	$("#cboAddNew").change()
 	
+	/* Fill device type combo */
+	var device_types = new DeviceTypeCollection();
+	device_types.fetch({
+		success : function(results) {
+			var db = new DeviceTypeSelectView({
+				collection : device_types,
+				el: 'select#addDeviceSelectType'
+			});
+			db.render();
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+	
+	/* Fill device status combo */
+	var device_statuses = new DeviceStatusCollection();
+	device_statuses.fetch({
+		success : function(results) {
+			var db = new DeviceStatusSelectView({
+				collection : device_statuses,
+				el: 'select#addDeviceSelectStatus'
+			});
+			db.render();
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+	
 	$("#modalAddNew").modal();
 	return false;
 });
@@ -299,8 +361,8 @@ $('#submitAddNew').click(function () {
 			code: $('#addPersonUserCode').val(),
 			firstname: $('#addPersonFirstName').val(),
 			surname: $('#addPersonSurname').val(),
-			is_active: $('#addPersonIsStaff').attr('checked') ? '1' : 0,
-			is_staff: $('#addPersonIsActive').attr('checked') ? '1' : 0
+			is_active: ($('#addPersonIsStaff').prop('checked') ? '1' : 0),
+			is_staff: ($('#addPersonIsActive').prop('checked') ? '1' : 0)
 		});
 		
 		person.save(null, {
@@ -316,8 +378,29 @@ $('#submitAddNew').click(function () {
 		});
 		break;
 	case 'adddevice':
-		$('#addDeviceStatus').html("You cannot add a <b>Device</b> yet.");
-		$('#addDeviceStatus').show();
+		var device = new device_model({
+			sn: $('#addDeviceSn').val(),
+			mac_eth0: $('#addDeviceMacEth0').val(),
+			mac_wlan0: $('#addDeviceMacWlan0').val(),
+			person_id: $('#addDevicePersonId').val(),
+			device_status_id: $('#addDeviceSelectStatus').val(),
+			device_type_id: $('#addDeviceSelectType').val(),
+			is_bought: ($('#addDeviceIsBought').prop('checked') ? '1' : 0),
+			is_spare: ($('#addDeviceIsActive').prop('checked') ? '1' : 0),
+			is_damaged: ($('#addDeviceIsDamaged').prop('checked') ? '1' : 0)
+		});
+		
+		device.save(null, {
+			success: function(model, response) {
+				var id = model.get('id');
+				app_router.navigate('device/' + id, {trigger: true});
+				$("#modalAddNew").modal('hide');
+			},
+			error: function(model, response) {
+				$('#addDeviceStatus').html("Could not add device!");
+				$('#addDeviceStatus').show();
+			}
+		});
 		break;
 	case 'addsoftware':
 		$('#addSoftwareStatus').html("You cannot add <b>Software</b> yet.");
@@ -365,13 +448,26 @@ $('#deviceQuickSearch').typeahead({
 	source: deviceSearch.ttAdapter()
 });
 
-$('#inputOwner').typeahead({
+$('#addDeviceOwner').typeahead({
 	minLength: 2
 },
 {
 	name: 'person-search',
 	displayKey: function(item) { return item.code + ' - ' + item.firstname + ' ' + item.surname; },
 	source: personSearch.ttAdapter()
+});
+
+$('#addDeviceOwner').on('typeahead:selected', function(evt, item) {
+	$('#addDeviceOwnerFrmGroup').removeClass('has-error');
+	$('#addDeviceOwnerFrmGroup').addClass('has-success');
+	$('#addDevicePersonId').val(item.id);
+});
+
+$('#addDeviceOwner').on('change', function() {
+	// Visual cue that a person has not been selected
+	$('#addDeviceOwnerFrmGroup').addClass('has-error');
+	$('#addDeviceOwnerFrmGroup').removeClass('has-success');
+	$('#addDevicePersonId').val('');
 });
 
 $('#personQuickSearch').on('typeahead:selected', function(evt, item) {

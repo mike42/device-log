@@ -18,6 +18,16 @@ class session {
 		}
 		return "anon";
 	}
+	
+	/**
+	 * @return string Current username. Should really only be used after getRole() has been verified.
+	 */
+	public static function getUsername() {
+		if(isset($_SESSION['username'])) {
+			return $_SESSION['username'];
+		}
+		return "";
+	}
 
 	/**
 	 * Authenticate a user.
@@ -36,7 +46,7 @@ class session {
 		$config = core::getConfig('login');
 		$v = self::ldap_verify_credentials($config['url'], $config['domain'], $login, $password);
 		if($v['success']) {
-			$_SESSION['username'] = $username;
+			$_SESSION['username'] = $login;
 			$_SESSION['role'] = 'user';
 			return true;
 		}

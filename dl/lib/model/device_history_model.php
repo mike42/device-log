@@ -603,6 +603,7 @@ class device_history_model {
 		$fields = implode(", ", $fieldset);
 		$vals = implode(", ", $fieldset_colon);
 
+		echo "INSERT INTO device_history ($fields) VALUES ($vals);";
 		/* Execute query */
 		$sth = database::$dbh -> prepare("INSERT INTO device_history ($fields) VALUES ($vals);");
 		$sth -> execute($data);
