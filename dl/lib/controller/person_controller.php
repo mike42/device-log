@@ -44,12 +44,12 @@ class person_controller {
 		if(!$person) {
 			return array('error' => 'person not found', 'code' => '404');
 		}
-		// $person -> populate_list_device();
-		// $person -> populate_list_software();
-		// $person -> populate_list_software_history();
-		// $person -> populate_list_doorkey();
-		// $person -> populate_list_key_history();
-		// $person -> populate_list_device_history();
+		$person -> populate_list_device();
+		$person -> populate_list_software();
+		$person -> populate_list_software_history();
+		$person -> populate_list_doorkey();
+		$person -> populate_list_key_history();
+		$person -> populate_list_device_history();
 		return $person -> to_array_filtered($role);
 	}
 
@@ -159,6 +159,64 @@ class person_controller {
 		/* Retrieve and filter rows */
 		try {
 			$person_list = person_model::list_all($start, $limit);
+			$ret = array();
+			foreach($person_list as $person) {
+				$ret[] = $person -> to_array_filtered($role);
+			}
+			return $ret;
+		} catch(Exception $e) {
+			return array('error' => 'Failed to list', 'code' => '500');
+		}
+	}
+	
+	public static function photo($id) {
+		/* Check permission */
+		$role = session::getRole();
+		if(!isset(core::$permission[$role]['person']['read']) || count(core::$permission[$role]['person']['read']) == 0) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+	
+		/* Load person */
+		$person = person_model::get($id);
+		if(!$person) {
+			return array('error' => 'person not found', 'code' => '404');
+		}
+	
+		try {
+			$code = preg_replace("/[^a-zA-Z0-9]+/", "", $person -> get_code());
+			if(strlen($code) < 1 || strlen($code) > 5 || $code != $person -> get_code()) {
+				throw new Exception("Code contains invalid characters");
+			}
+	
+			$fn = dirname(__FILE__) . "/../../site/photos/$code.jpg";
+			if(!file_exists($fn)) {
+				throw new Exception("Photo does not exist");
+			}
+	
+		} catch(Exception $e) {
+			$fn = dirname(__FILE__) . "/../../public/profile-default.jpg";
+		}
+	
+		header("content-type: image/jpeg");
+		$a = fopen($fn, "r");
+		fpassthru($a);
+		exit(0);
+	}
+	
+	public static function search($page = 1, $itemspp = 20) {
+		/* Check permission */
+		$role = session::getRole();
+		if(!isset(core::$permission[$role]['person']['read']) || count(core::$permission[$role]['person']['read']) == 0) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+		if(!isset($_GET['q'])) {
+			return array('error' => 'No search term specified', 'code' => '403');
+		}
+	
+		/* Retrieve and filter rows */
+		try {
+			$search = $_GET['q'];
+			$person_list = person_model::search_by_code($search, ($page - 1) * $itemspp, $itemspp);
 			$ret = array();
 			foreach($person_list as $person) {
 				$ret[] = $person -> to_array_filtered($role);

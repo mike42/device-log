@@ -55,7 +55,7 @@ class device_controller {
 		if(!$device) {
 			return array('error' => 'device not found', 'code' => '404');
 		}
-		// $device -> populate_list_device_history();
+		$device -> populate_list_device_history();
 		return $device -> to_array_filtered($role);
 	}
 
@@ -171,6 +171,30 @@ class device_controller {
 			$ret = array();
 			foreach($device_list as $device) {
 				$ret[] = $device -> to_array_filtered($role);
+			}
+			return $ret;
+		} catch(Exception $e) {
+			return array('error' => 'Failed to list', 'code' => '500');
+		}
+	}
+	
+	public static function search($page = 1, $itemspp = 20) {
+		/* Check permission */
+		$role = session::getRole();
+		if(!isset(core::$permission[$role]['device']['read']) || count(core::$permission[$role]['device']['read']) == 0) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+		if(!isset($_GET['q'])) {
+			return array('error' => 'No search term specified', 'code' => '403');
+		}
+	
+		/* Retrieve and filter rows */
+		try {
+			$search = $_GET['q'];
+			$device_list = device_model::search_by_sn($search, ($page - 1) * $itemspp, $itemspp);
+			$ret = array();
+			foreach($device_list as $device) {
+				$ret[] = $device-> to_array_filtered($role);
 			}
 			return $ret;
 		} catch(Exception $e) {
