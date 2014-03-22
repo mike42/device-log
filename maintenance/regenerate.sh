@@ -11,7 +11,7 @@ rm ../dl.save/site/permissions.php
 cp ../dl/*.html ../dl.save/
 cp ../dl/public/bg.jpg  ../dl/public/loading.gif ../dl/public/tablet.png ../dl/public/profile-default.jpg ../dl.save/public
 cp ../dl/public/css/extra-global.css ../dl.save/public/css
-cp ../dl/public/js/dl.js ../dl/public/js/jquery.backstretch.min.js ../dl.save/public/js
+cp ../dl/public/js/dl.js ../dl/public/js/jquery.backstretch.min.js ../dl/public/js/typeahead.bundle.js ../dl.save/public/js
 cp ../dl/lib/util/session.php ../dl.save/lib/util/session.php
 rm -Rf ../dl
 
