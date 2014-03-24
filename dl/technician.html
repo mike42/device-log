@@ -140,9 +140,17 @@
 </script>
 
 <script type="text/template" id="device-template-detail">
-<a href="#" onClick="return logIncident();" class="btn btn-sm btn-danger" style="float: right"><span class="glyphicon glyphicon-fire"></span> Log Incident</a>
-<a href="#" onClick="return editDevice();" class="btn btn-sm btn-default" style="float: right"><span class="glyphicon glyphicon-edit"></span> Edit</a>
-
+<div class="btn-group" style="float: right">
+	<button type="button" onClick="return logIncident();" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Log Incident</button>
+	<button type="button"  onClick="return editDevice();" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
+	<div class="btn-group">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Lookup <span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a href="https://selfsolve.apple.com/wcResults.do?sn=<%= sn %>&Continue=Continue&num=0" target="_new">Apple Warranty</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
 <h2><%= device_type.name %> / <%= sn %></h2>
 <table class="table">
 	<tbody>

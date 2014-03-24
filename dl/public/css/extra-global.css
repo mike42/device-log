@@ -2,12 +2,8 @@ html {
 	overflow-y: scroll;
 }
 
-tr:hover {
+.table-striped tbody tr:hover {
 	opacity: 0.4;
-}
-
-tr:first-child:hover {
-	opacity: 1;
 }
 
 object {
