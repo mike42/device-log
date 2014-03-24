@@ -56,7 +56,7 @@ class software_history_model {
 	public $software_status;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `software_history`.`id`";
+	const SORT_CLAUSE = " ORDER BY `software_history`.`date` DESC";
 
 	/**
 	 * Initialise and load related tables

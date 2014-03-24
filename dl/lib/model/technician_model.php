@@ -29,7 +29,7 @@ class technician_model {
 	public $list_device_history;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `technician`.`id`";
+	const SORT_CLAUSE = " ORDER BY `technician`.`name`";
 
 	/**
 	 * Initialise and load related tables

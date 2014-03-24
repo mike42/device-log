@@ -62,7 +62,7 @@ class device_model {
 	public $list_device_history;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `device`.`id`";
+	const SORT_CLAUSE = " ORDER BY `device`.`sn`";
 
 	/**
 	 * Initialise and load related tables

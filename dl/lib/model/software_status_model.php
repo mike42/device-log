@@ -18,7 +18,7 @@ class software_status_model {
 	public $list_software_history;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `software_status`.`id`";
+	const SORT_CLAUSE = " ORDER BY `software_status`.`tag`";
 
 	/**
 	 * Initialise and load related tables

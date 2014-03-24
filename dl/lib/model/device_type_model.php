@@ -22,7 +22,7 @@ class device_type_model {
 	public $list_device;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `device_type`.`id`";
+	const SORT_CLAUSE = " ORDER BY `device_type`.`name`";
 
 	/**
 	 * Initialise and load related tables

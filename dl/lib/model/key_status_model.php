@@ -18,7 +18,7 @@ class key_status_model {
 	public $list_key_history;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `key_status`.`id`";
+	const SORT_CLAUSE = " ORDER BY `key_status`.`name`";
 
 	/**
 	 * Initialise and load related tables

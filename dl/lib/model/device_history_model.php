@@ -74,7 +74,7 @@ class device_history_model {
 	public $list_device_photo;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `device_history`.`id`";
+	const SORT_CLAUSE = " ORDER BY `device_history`.`date` DESC";
 
 	/**
 	 * Initialise and load related tables

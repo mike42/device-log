@@ -17,7 +17,7 @@ class software_type_model {
 	public $list_software;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `software_type`.`id`";
+	const SORT_CLAUSE = " ORDER BY `software_type`.`name`";
 
 	/**
 	 * Initialise and load related tables

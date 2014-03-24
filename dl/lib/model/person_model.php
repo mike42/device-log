@@ -42,7 +42,7 @@ class person_model {
 	public $list_device_history;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `person`.`id`";
+	const SORT_CLAUSE = " ORDER BY `person`.`surname`, `person`.`firstname`";
 
 	/**
 	 * Initialise and load related tables

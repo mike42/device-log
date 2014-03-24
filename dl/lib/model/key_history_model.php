@@ -56,7 +56,7 @@ class key_history_model {
 	public $key_status;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `key_history`.`id`";
+	const SORT_CLAUSE = " ORDER BY `key_history`.`date` DESC";
 
 	/**
 	 * Initialise and load related tables

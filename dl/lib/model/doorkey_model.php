@@ -42,7 +42,7 @@ class doorkey_model {
 	public $list_key_history;
 
 	/* Sort clause to add when listing rows from this table */
-	const SORT_CLAUSE = " ORDER BY `doorkey`.`id`";
+	const SORT_CLAUSE = " ORDER BY `doorkey`.`serial`";
 
 	/**
 	 * Initialise and load related tables
