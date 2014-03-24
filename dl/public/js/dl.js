@@ -297,6 +297,7 @@ function doLogout() {
 	});
 }
 
+/* Return 'Y' or 'N' for an integer value */
 function yn(val) {
 	if(val == 1) {
 		return 'Y';
@@ -304,6 +305,13 @@ function yn(val) {
 	return 'N';
 }
 
+/* Return ' checked="yes"' or "" for an integer value */
+function checked(val) {
+	if(val == 1) {
+		return ' checked="yes"';
+	}
+	return '';
+}
 
 // "Add new" dialog
 $('#btnAddNew').on('click', function(event) {
@@ -360,8 +368,8 @@ $('#submitAddNew').click(function () {
 			code: $('#addPersonUserCode').val(),
 			firstname: $('#addPersonFirstName').val(),
 			surname: $('#addPersonSurname').val(),
-			is_active: ($('#addPersonIsStaff').prop('checked') ? '1' : 0),
-			is_staff: ($('#addPersonIsActive').prop('checked') ? '1' : 0)
+			is_staff: ($('#addPersonIsStaff').prop('checked') ? '1' : 0),
+			is_active: ($('#addPersonIsActive').prop('checked') ? '1' : 0)
 		});
 		
 		person.save(null, {
@@ -385,7 +393,7 @@ $('#submitAddNew').click(function () {
 			device_status_id: $('#addDeviceSelectStatus').val(),
 			device_type_id: $('#addDeviceSelectType').val(),
 			is_bought: ($('#addDeviceIsBought').prop('checked') ? '1' : 0),
-			is_spare: ($('#addDeviceIsActive').prop('checked') ? '1' : 0),
+			is_spare: ($('#addDeviceIsSpare').prop('checked') ? '1' : 0),
 			is_damaged: ($('#addDeviceIsDamaged').prop('checked') ? '1' : 0)
 		});
 		
@@ -494,9 +502,29 @@ function editPerson() {
 }
 
 function editPersonSave() {
-	alert('not implemented');
-	$('#modalEditPerson').modal('hide');
+	var person = new person_model({
+		id: $('#editPersonId').val(),
+		code: $('#editPersonUserCode').val(),
+		firstname: $('#editPersonFirstName').val(),
+		surname: $('#editPersonSurname').val(),
+		is_staff: ($('#editPersonIsStaff').prop('checked') ? '1' : 0),
+		is_active: ($('#editPersonIsActive').prop('checked') ? '1' : 0)
+	});
+	
+	person.save(null, {
+		success: function(model, response) {
+			$('#modalEditPerson').on('hidden.bs.modal', function (e) {
+				showPersonDetail(model);
+			})
+			$('#modalEditPerson').modal('hide');
+		},
+		error: function(model, response) {
+			$('#editPersonStatus').html("Could not save changes!");
+			$('#editPersonStatus').show();
+		}
+	});
 }
+
 
 function editDeviceSave() {
 	alert('not implemented');
@@ -526,6 +554,35 @@ var AppRouter = Backbone.Router.extend({
     }
 });
 
+function showPersonDetail(results) {
+	tabTo('people');
+	$('#personList').hide();
+	var itemView = new PersonDetailView({
+		model : results
+	});
+	itemView.render();
+	$('#personDetail').show();
+
+	/* Load device list */
+	var devices = new DeviceCollection(results.get('device'));
+	var devicesView = new PersonDeviceTableView({collection: devices});
+	devicesView.render();
+	
+	/* Load history */
+	var deviceHistoryList = new DeviceHistoryCollection(results.get('device_history'));
+	var deviceHistoryListView = new PersonDeviceHistoryView({el: 'div#personDetailHistory',collection: deviceHistoryList});
+	deviceHistoryListView.render();
+	
+	$('#btnPersonDeviceList').click(function() {
+		$("#modalPersonDeviceList").modal();
+		return false;
+	});
+	
+	$('#person-device-tbody a').click(function() {
+		$("#modalPersonDeviceList").modal('hide');
+	});
+}
+
 var app_router = new AppRouter;
 app_router.on('route:loadPerson', function (id) {
 	var person = new person_model({
@@ -533,32 +590,7 @@ app_router.on('route:loadPerson', function (id) {
 	});
 	person.fetch({
 		success : function(results) {
-	    	tabTo('people');
-	    	$('#personList').hide();
-			var itemView = new PersonDetailView({
-				model : results
-			});
-			itemView.render();
-	    	$('#personDetail').show();
-
-	    	/* Load device list */
-	    	var devices = new DeviceCollection(results.get('device'));
-	    	var devicesView = new PersonDeviceTableView({collection: devices});
-	    	devicesView.render();
-	    	
-	    	/* Load history */
-	    	var deviceHistoryList = new DeviceHistoryCollection(results.get('device_history'));
-	    	var deviceHistoryListView = new PersonDeviceHistoryView({el: 'div#personDetailHistory',collection: deviceHistoryList});
-	    	deviceHistoryListView.render();
-	    	
-	    	$('#btnPersonDeviceList').click(function() {
-	    		$("#modalPersonDeviceList").modal();
-	    		return false;
-	    	});
-	    	
-	    	$('#person-device-tbody a').click(function() {
-	    		$("#modalPersonDeviceList").modal('hide');
-	    	});
+			showPersonDetail(results);
 		},
 		error : function(model, response) {
 			handleFailedRequest(response);
