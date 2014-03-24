@@ -186,7 +186,6 @@ var PersonDeviceHistoryView = Backbone.View.extend({
 	}
 });
 
-
 var PersonTableView = Backbone.View.extend({
 	collection : null,
 	el : 'tbody#person-tbody',
@@ -497,6 +496,16 @@ function editPerson() {
 function editPersonSave() {
 	alert('not implemented');
 	$('#modalEditPerson').modal('hide');
+}
+
+function editDeviceSave() {
+	alert('not implemented');
+	$('#modalEditDevice').modal('hide');
+}
+
+function logIncidentSave() {
+	alert('not implemented');
+	$('#modalLogIncident').modal('hide');
 }
 
 /* Navigation */

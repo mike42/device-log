@@ -77,6 +77,7 @@
 </script>
 
 <script type="text/template" id="person-template-detail">
+<!-- Edit person dialog -->
 <div class="modal fade" id="modalEditPerson" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -85,25 +86,24 @@
 				<h4 class="modal-title">Edit person</h4>
 			</div>
 			<div class="modal-body">
-					<div class="form-group" style="padding-left: 25px">
-					<label for="editPersonUserCode">Code</label> <input type="text" class="form-control" id="editPersonUserCode" placeholder="Enter Code"></div>
-					<div class="form-group" style="padding-left: 25px">
-						<label for="editPersonFirstName">First Name</label>
-						<input type="text" class="form-control" id="editPersonFirstName" placeholder="First Name">
-					</div>
-					<div class="form-group" style="padding-left: 25px">
-						<label for="editPersonSurname">Surname</label>
-						<input type="text" class="form-control" id="editPersonSurname" placeholder="Surname">
-					</div>
-					<div class="checkbox" style="padding-left: 45px">
-						<label> <input type="checkbox" id="editPersonIsStaff"> Staff
-						</label>
-					</div>
-					<div class="checkbox" style="padding-left: 45px">
-						<label> <input type="checkbox" id="editPersonIsActive"> Active
-						</label>
-					</div>
-				</form>
+				<div class="form-group" style="padding-left: 25px">
+				<label for="editPersonUserCode">Code</label> <input type="text" class="form-control" id="editPersonUserCode" placeholder="Enter Code"></div>
+				<div class="form-group" style="padding-left: 25px">
+					<label for="editPersonFirstName">First Name</label>
+					<input type="text" class="form-control" id="editPersonFirstName" placeholder="First Name">
+				</div>
+				<div class="form-group" style="padding-left: 25px">
+					<label for="editPersonSurname">Surname</label>
+					<input type="text" class="form-control" id="editPersonSurname" placeholder="Surname">
+				</div>
+				<div class="checkbox" style="padding-left: 45px">
+					<label> <input type="checkbox" id="editPersonIsStaff"> Staff
+					</label>
+				</div>
+				<div class="checkbox" style="padding-left: 45px">
+					<label> <input type="checkbox" id="editPersonIsActive"> Active
+					</label>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -113,6 +113,7 @@
 	</div>
 </div>
 
+<!-- Edit person form -->
 <a href="#" onClick="return editPerson();" class="btn btn-sm btn-default" style="float: right"><span class="glyphicon glyphicon-edit"></span> Edit</a>
 <h2><%= firstname %> <%= surname %></h2>
 <table class="table">
@@ -140,6 +141,46 @@
 </script>
 
 <script type="text/template" id="device-template-detail">
+<!-- Edit device dialog -->
+<div class="modal fade" id="modalEditDevice" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit device</h4>
+			</div>
+			<div class="modal-body">
+					..
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" onClick="editDeviceSave()">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Log incident dialog -->
+<div class="modal fade" id="modalLogIncident" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Log incident</h4>
+			</div>
+			<div class="modal-body">
+					..
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" onClick="logIncidentSave()">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="btn-group" style="float: right">
 	<button type="button" onClick="return logIncident();" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Log Incident</button>
 	<button type="button"  onClick="return editDevice();" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
