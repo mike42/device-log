@@ -159,7 +159,24 @@
 				<h4 class="modal-title">Edit device</h4>
 			</div>
 			<div class="modal-body">
-					..
+				<form role="form">
+					<div id="addDeviceStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
+					<input type="hidden" id="editDeviceId" value="<%= id %>">
+					<div class="form-group" style="padding-left: 25px">
+						<label for="editDeviceSelectType">Model</label>
+						<select id="editDeviceSelectType" class="btn btn-default dropdown-toggle form-control">
+							<option value="">Loading..</option>
+						</select>
+					</div>
+					<div class="form-group" style="padding-left: 25px">
+						<label for="editDeviceSn">Serial</label> <input type="text" class="form-control" id="editDeviceSn" placeholder="Serial" value="<%= sn %>">
+					</div>
+					<div class="form-group" style="padding-left: 25px">
+						<label for="editDeviceMacEth0">MAC Address Eth0</label> <input type="text" class="form-control" id="editDeviceMacEth0" placeholder="MAC Address 1" value="<%= mac_eth0 %>">
+					</div>
+					<div class="form-group" style="padding-left: 25px">
+						<label for="editDeviceMacWlan0">MAC Address Wlan0</label> <input type="text" class="form-control" id="editDeviceMacWlan0" placeholder="MAC Address 2" value="<%= mac_wlan0 %>">
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -180,7 +197,6 @@
 			</div>
 			<div class="modal-body">
 					..
-				</form>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -192,7 +208,7 @@
 
 <div class="btn-group" style="float: right">
 	<button type="button" onClick="return logIncident();" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Log Incident</button>
-	<button type="button"  onClick="return editDevice();" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
+	<button type="button"  onClick="return editDevice(<%= device_type_id %>);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
 	<div class="btn-group">
 		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Lookup <span class="caret"></span></button>
 			<ul class="dropdown-menu">

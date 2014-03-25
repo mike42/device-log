@@ -85,7 +85,7 @@ var PersonDeviceHistoryDivView = Backbone.View.extend({
 
 var PersonDetailView = Backbone.View.extend({
 	template : _.template($('#person-template-detail').html()),
-	el: 'div#personDetailTop',
+	el : 'div#personDetailTop',
 	initialize : function(options) {
 		_.bindAll(this, 'render');
 		this.model.bind('change', this.render);
@@ -99,7 +99,7 @@ var PersonDetailView = Backbone.View.extend({
 
 var DeviceDetailView = Backbone.View.extend({
 	template : _.template($('#device-template-detail').html()),
-	el: 'div#deviceDetailTop',
+	el : 'div#deviceDetailTop',
 	initialize : function(options) {
 		_.bindAll(this, 'render');
 		this.model.bind('change', this.render);
@@ -217,7 +217,9 @@ var DeviceTypeSelectView = Backbone.View.extend({
 	template : _.template($('#device-type-select').html()),
 
 	render : function() {
-		this.$el.html(this.template({device_types: this.collection.toJSON()}));
+		this.$el.html(this.template({
+			device_types : this.collection.toJSON()
+		}));
 		return this;
 	}
 });
@@ -228,13 +230,15 @@ var DeviceStatusSelectView = Backbone.View.extend({
 	template : _.template($('#device-status-select').html()),
 
 	render : function() {
-		this.$el.html(this.template({device_statuses: this.collection.toJSON()}));
+		this.$el.html(this.template({
+			device_statuses : this.collection.toJSON()
+		}));
 		return this;
 	}
 });
 
 function handleFailedRequest(response) {
-	if(response.status == '403') {
+	if (response.status == '403') {
 		sessionExpired();
 	} else {
 		var responseObj = $.parseJSON(response.responseText);
@@ -267,7 +271,7 @@ function doLoadDevices() {
 				collection : devices
 			});
 			db.render();
-	    	$('#deviceQuickSearch').focus();
+			$('#deviceQuickSearch').focus();
 		},
 		error : function(model, response) {
 			handleFailedRequest(response);
@@ -299,7 +303,7 @@ function doLogout() {
 
 /* Return 'Y' or 'N' for an integer value */
 function yn(val) {
-	if(val == 1) {
+	if (val == 1) {
 		return 'Y';
 	}
 	return 'N';
@@ -307,7 +311,7 @@ function yn(val) {
 
 /* Return ' checked="yes"' or "" for an integer value */
 function checked(val) {
-	if(val == 1) {
+	if (val == 1) {
 		return ' checked="yes"';
 	}
 	return '';
@@ -321,29 +325,17 @@ $('#btnAddNew').on('click', function(event) {
 	$("#modalAddNew input[type=checkbox]").removeAttr('checked');
 	$("#cboAddNew").val('addselect');
 	$("#cboAddNew").change()
-	
+
 	/* Fill device type combo */
-	var device_types = new DeviceTypeCollection();
-	device_types.fetch({
-		success : function(results) {
-			var db = new DeviceTypeSelectView({
-				collection : device_types,
-				el: 'select#addDeviceSelectType'
-			});
-			db.render();
-		},
-		error : function(model, response) {
-			handleFailedRequest(response);
-		}
-	});
-	
+	renderDeviceTypes('select#addDeviceSelectType', '');
+
 	/* Fill device status combo */
 	var device_statuses = new DeviceStatusCollection();
 	device_statuses.fetch({
 		success : function(results) {
 			var db = new DeviceStatusSelectView({
 				collection : device_statuses,
-				el: 'select#addDeviceSelectStatus'
+				el : 'select#addDeviceSelectStatus'
 			});
 			db.render();
 		},
@@ -351,34 +343,36 @@ $('#btnAddNew').on('click', function(event) {
 			handleFailedRequest(response);
 		}
 	});
-	
+
 	$("#modalAddNew").modal();
 	return false;
 });
 
-$('#cboAddNew').change(function () {
+$('#cboAddNew').change(function() {
 	$('.show-hide').hide()
 	$('#' + this.value).show();
 });
 
-$('#submitAddNew').click(function () {
-	switch($('#cboAddNew').val()) {
+$('#submitAddNew').click(function() {
+	switch ($('#cboAddNew').val()) {
 	case 'addperson':
 		var person = new person_model({
-			code: $('#addPersonUserCode').val(),
-			firstname: $('#addPersonFirstName').val(),
-			surname: $('#addPersonSurname').val(),
-			is_staff: ($('#addPersonIsStaff').prop('checked') ? '1' : 0),
-			is_active: ($('#addPersonIsActive').prop('checked') ? '1' : 0)
+			code : $('#addPersonUserCode').val(),
+			firstname : $('#addPersonFirstName').val(),
+			surname : $('#addPersonSurname').val(),
+			is_staff : ($('#addPersonIsStaff').prop('checked') ? '1' : 0),
+			is_active : ($('#addPersonIsActive').prop('checked') ? '1' : 0)
 		});
-		
+
 		person.save(null, {
-			success: function(model, response) {
+			success : function(model, response) {
 				var id = model.get('id');
-				app_router.navigate('person/' + id, {trigger: true});
+				app_router.navigate('person/' + id, {
+					trigger : true
+				});
 				$("#modalAddNew").modal('hide');
 			},
-			error: function(model, response) {
+			error : function(model, response) {
 				$('#addPersonStatus').html("Could not add person!");
 				$('#addPersonStatus').show();
 			}
@@ -386,24 +380,26 @@ $('#submitAddNew').click(function () {
 		break;
 	case 'adddevice':
 		var device = new device_model({
-			sn: $('#addDeviceSn').val(),
-			mac_eth0: $('#addDeviceMacEth0').val(),
-			mac_wlan0: $('#addDeviceMacWlan0').val(),
-			person_id: $('#addDevicePersonId').val(),
-			device_status_id: $('#addDeviceSelectStatus').val(),
-			device_type_id: $('#addDeviceSelectType').val(),
-			is_bought: ($('#addDeviceIsBought').prop('checked') ? '1' : 0),
-			is_spare: ($('#addDeviceIsSpare').prop('checked') ? '1' : 0),
-			is_damaged: ($('#addDeviceIsDamaged').prop('checked') ? '1' : 0)
+			sn : $('#addDeviceSn').val(),
+			mac_eth0 : $('#addDeviceMacEth0').val(),
+			mac_wlan0 : $('#addDeviceMacWlan0').val(),
+			person_id : $('#addDevicePersonId').val(),
+			device_status_id : $('#addDeviceSelectStatus').val(),
+			device_type_id : $('#addDeviceSelectType').val(),
+			is_bought : ($('#addDeviceIsBought').prop('checked') ? '1' : 0),
+			is_spare : ($('#addDeviceIsSpare').prop('checked') ? '1' : 0),
+			is_damaged : ($('#addDeviceIsDamaged').prop('checked') ? '1' : 0)
 		});
-		
+
 		device.save(null, {
-			success: function(model, response) {
+			success : function(model, response) {
 				var id = model.get('id');
-				app_router.navigate('device/' + id, {trigger: true});
+				app_router.navigate('device/' + id, {
+					trigger : true
+				});
 				$("#modalAddNew").modal('hide');
 			},
-			error: function(model, response) {
+			error : function(model, response) {
 				$('#addDeviceStatus').html("Could not add device!");
 				$('#addDeviceStatus').show();
 			}
@@ -412,56 +408,63 @@ $('#submitAddNew').click(function () {
 	case 'addsoftware':
 		$('#addSoftwareStatus').html("You cannot add <b>Software</b> yet.");
 		$('#addSoftwareStatus').show();
-		break;on
-	case 'addkey':
-		$('#addKeyStatus').html("You cannot add a <b>Key</b> yet.");
-		$('#addKeyStatus').show();
 		break;
-	default:
-		// Do nothing on the main page
-	}
+	on
+case 'addkey':
+	$('#addKeyStatus').html("You cannot add a <b>Key</b> yet.");
+	$('#addKeyStatus').show();
+	break;
+default:
+	// Do nothing on the main page
+}
 });
 
 // Switch on autocomplete
 var personSearch = new Bloodhound({
-	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-	  queryTokenizer: Bloodhound.tokenizers.whitespace,
-	  remote: '/dl/api/person/search/1/10?q=%QUERY'
+	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
+	queryTokenizer : Bloodhound.tokenizers.whitespace,
+	remote : '/dl/api/person/search/1/10?q=%QUERY'
 });
 personSearch.initialize();
 
 var deviceSearch = new Bloodhound({
-	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-	  queryTokenizer: Bloodhound.tokenizers.whitespace,
-	  remote: '/dl/api/device/search/1/10?q=%QUERY'
+	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
+	queryTokenizer : Bloodhound.tokenizers.whitespace,
+	remote : '/dl/api/device/search/1/10?q=%QUERY'
 });
 deviceSearch.initialize();
 
 $('#personQuickSearch').typeahead({
-	minLength: 2
-},
-{
-	name: 'person-search',
-	displayKey: function(item) { return item.code + ' - ' + item.firstname + ' ' + item.surname; },
-	source: personSearch.ttAdapter()
+	minLength : 2
+}, {
+	name : 'person-search',
+	displayKey : function(item) {
+		return item.code + ' - ' + item.firstname + ' ' + item.surname;
+	},
+	source : personSearch.ttAdapter()
 });
 
-$('#deviceQuickSearch').typeahead({
-	minLength: 2
-},
-{
-	name: 'device-search',
-	displayKey: function(item) { return item.sn + ' - ' + item.person.firstname + ' ' + item.person.surname; },
-	source: deviceSearch.ttAdapter()
-});
+$('#deviceQuickSearch').typeahead(
+		{
+			minLength : 2
+		},
+		{
+			name : 'device-search',
+			displayKey : function(item) {
+				return item.sn + ' - ' + item.person.firstname + ' '
+						+ item.person.surname;
+			},
+			source : deviceSearch.ttAdapter()
+		});
 
 $('#addDeviceOwner').typeahead({
-	minLength: 2
-},
-{
-	name: 'person-search',
-	displayKey: function(item) { return item.code + ' - ' + item.firstname + ' ' + item.surname; },
-	source: personSearch.ttAdapter()
+	minLength : 2
+}, {
+	name : 'person-search',
+	displayKey : function(item) {
+		return item.code + ' - ' + item.firstname + ' ' + item.surname;
+	},
+	source : personSearch.ttAdapter()
 });
 
 $('#addDeviceOwner').on('typeahead:selected', function(evt, item) {
@@ -478,11 +481,15 @@ $('#addDeviceOwner').on('change', function() {
 });
 
 $('#personQuickSearch').on('typeahead:selected', function(evt, item) {
-	app_router.navigate('person/' + item.id, {trigger: true});
+	app_router.navigate('person/' + item.id, {
+		trigger : true
+	});
 });
 
 $('#deviceQuickSearch').on('typeahead:selected', function(evt, item) {
-	app_router.navigate('device/' + item.id, {trigger: true});
+	app_router.navigate('device/' + item.id, {
+		trigger : true
+	});
 });
 
 /* Buttons to show dialogs */
@@ -491,9 +498,30 @@ function logIncident() {
 	return false;
 }
 
-function editDevice() {
+function editDevice(device_type_id) {
 	$('#modalEditDevice').modal();
+	renderDeviceTypes('select#editDeviceSelectType', device_type_id);
 	return false;
+}
+
+function renderDeviceTypes(dest, device_type_id) {
+	var device_types = new device_type_collection();
+	device_types.fetch({
+		success : function(results) {
+			var db = new DeviceTypeSelectView({
+				collection : device_types,
+				el : dest
+			});
+			db.render();
+			if (device_type_id != '') {
+				$(dest + " option[value='" + device_type_id + "']").attr(
+						"selected", "selected");
+			}
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
 }
 
 function editPerson() {
@@ -503,32 +531,65 @@ function editPerson() {
 
 function editPersonSave() {
 	var person = new person_model({
-		id: $('#editPersonId').val(),
-		code: $('#editPersonUserCode').val(),
-		firstname: $('#editPersonFirstName').val(),
-		surname: $('#editPersonSurname').val(),
-		is_staff: ($('#editPersonIsStaff').prop('checked') ? '1' : 0),
-		is_active: ($('#editPersonIsActive').prop('checked') ? '1' : 0)
+		id : $('#editPersonId').val()
 	});
-	
-	person.save(null, {
-		success: function(model, response) {
-			$('#modalEditPerson').on('hidden.bs.modal', function (e) {
-				showPersonDetail(model);
+	person.save({
+		code : $('#editPersonUserCode').val(),
+		firstname : $('#editPersonFirstName').val(),
+		surname : $('#editPersonSurname').val(),
+		is_staff : ($('#editPersonIsStaff').prop('checked') ? '1' : 0),
+		is_active : ($('#editPersonIsActive').prop('checked') ? '1' : 0)
+	}, {
+		patch : true,
+		success : function(model, response) {
+			$('#modalEditPerson').on('hidden.bs.modal', function(e) {
+				person.fetch({
+					success : function(results) {
+						showPersonDetail(model);
+					},
+					error : function(model, response) {
+						handleFailedRequest(response);
+					}
+				});
 			})
 			$('#modalEditPerson').modal('hide');
 		},
-		error: function(model, response) {
+		error : function(model, response) {
 			$('#editPersonStatus').html("Could not save changes!");
 			$('#editPersonStatus').show();
 		}
 	});
 }
 
-
 function editDeviceSave() {
-	alert('not implemented');
-	$('#modalEditDevice').modal('hide');
+	var device = new device_model({
+		id : $('#editDeviceId').val()
+	});
+	device.save({
+		sn : $('#editDeviceSn').val(),
+		mac_eth0 : $('#editDeviceMacEth0').val(),
+		mac_wlan0 : $('#editDeviceMacWlan0').val(),
+		device_type_id : $('#editDeviceSelectType').val()
+	}, {
+		patch : true,
+		success : function(model, response) {
+			$('#modalEditDevice').on('hidden.bs.modal', function(e) {
+				device.fetch({
+					success : function(results) {
+						showDeviceDetail(results);
+					},
+					error : function(model, response) {
+						handleFailedRequest(response);
+					}
+				});
+			})
+			$('#modalEditDevice').modal('hide');
+		},
+		error : function(model, response) {
+			$('#modalEditDevice').html("Could not add device!");
+			$('#modalEditDevice').show();
+		}
+	});
 }
 
 function logIncidentSave() {
@@ -546,13 +607,32 @@ function sessionExpired() {
 }
 
 var AppRouter = Backbone.Router.extend({
-    routes: {
-        "person/:id": "loadPerson",
-        "device/:id": "loadDevice",
-        "*actions": "defaultRoute" // Backbone will try match the route above
-									// first
-    }
+	routes : {
+		"person/:id" : "loadPerson",
+		"device/:id" : "loadDevice",
+		"*actions" : "defaultRoute" // Backbone will try match the route above
+	// first
+	}
 });
+
+function showDeviceDetail(results) {
+	tabTo('devices');
+	$('#deviceList').hide();
+	var itemView = new DeviceDetailView({
+		model : results
+	});
+	itemView.render();
+	$('#deviceDetail').show();
+
+	/* Load history */
+	var deviceHistoryList = new DeviceHistoryCollection(results
+			.get('device_history'));
+	var deviceHistoryListView = new PersonDeviceHistoryView({
+		el : 'div#deviceDetailHistory',
+		collection : deviceHistoryList
+	});
+	deviceHistoryListView.render();
+}
 
 function showPersonDetail(results) {
 	tabTo('people');
@@ -565,26 +645,32 @@ function showPersonDetail(results) {
 
 	/* Load device list */
 	var devices = new DeviceCollection(results.get('device'));
-	var devicesView = new PersonDeviceTableView({collection: devices});
+	var devicesView = new PersonDeviceTableView({
+		collection : devices
+	});
 	devicesView.render();
-	
+
 	/* Load history */
-	var deviceHistoryList = new DeviceHistoryCollection(results.get('device_history'));
-	var deviceHistoryListView = new PersonDeviceHistoryView({el: 'div#personDetailHistory',collection: deviceHistoryList});
+	var deviceHistoryList = new DeviceHistoryCollection(results
+			.get('device_history'));
+	var deviceHistoryListView = new PersonDeviceHistoryView({
+		el : 'div#personDetailHistory',
+		collection : deviceHistoryList
+	});
 	deviceHistoryListView.render();
-	
+
 	$('#btnPersonDeviceList').click(function() {
 		$("#modalPersonDeviceList").modal();
 		return false;
 	});
-	
+
 	$('#person-device-tbody a').click(function() {
 		$("#modalPersonDeviceList").modal('hide');
 	});
 }
 
 var app_router = new AppRouter;
-app_router.on('route:loadPerson', function (id) {
+app_router.on('route:loadPerson', function(id) {
 	var person = new person_model({
 		id : id
 	});
@@ -598,24 +684,13 @@ app_router.on('route:loadPerson', function (id) {
 	});
 });
 
-app_router.on('route:loadDevice', function (id) {
+app_router.on('route:loadDevice', function(id) {
 	var device = new device_model({
 		id : id
 	});
 	device.fetch({
 		success : function(results) {
-	    	tabTo('devices');
-	    	$('#deviceList').hide();
-			var itemView = new DeviceDetailView({
-				model : results
-			});
-			itemView.render();
-	    	$('#deviceDetail').show();
-	    	
-	    	/* Load history */
-	    	var deviceHistoryList = new DeviceHistoryCollection(results.get('device_history'));
-	    	var deviceHistoryListView = new PersonDeviceHistoryView({el: 'div#deviceDetailHistory',collection: deviceHistoryList});
-	    	deviceHistoryListView.render();
+			showDeviceDetail(results);
 		},
 		error : function(model, response) {
 			handleFailedRequest(response);
@@ -623,35 +698,35 @@ app_router.on('route:loadDevice', function (id) {
 	});
 });
 
-app_router.on('route:defaultRoute', function (actions) {
-    switch(actions) {
-    case 'logout':
+app_router.on('route:defaultRoute', function(actions) {
+	switch (actions) {
+	case 'logout':
 		doLogout();
 		break;
-    case 'people':
-    	tabTo('people');
-    	$('#personQuickSearch').val('');
-    	doLoadPeople();
-    	break;
-    case 'devices':
-    	$('#deviceQuickSearch').val('');
-    	tabTo('devices');
-    	doLoadDevices();
-    	break;
-    case 'software':
-    	tabTo('software');
-    	doLoadSoftware();
-    	break;
-    case 'keys':
-    	tabTo('keys');
-    	doLoadKeys();
-    	break;
-    default:
-    	
-    }
+	case 'people':
+		tabTo('people');
+		$('#personQuickSearch').val('');
+		doLoadPeople();
+		break;
+	case 'devices':
+		$('#deviceQuickSearch').val('');
+		tabTo('devices');
+		doLoadDevices();
+		break;
+	case 'software':
+		tabTo('software');
+		doLoadSoftware();
+		break;
+	case 'keys':
+		tabTo('keys');
+		doLoadKeys();
+		break;
+	default:
+
+	}
 });
 
-$('.nav-tabs a').click(function (e) {
+$('.nav-tabs a').click(function(e) {
 	window.location.hash = this.hash;
 });
 
