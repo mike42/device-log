@@ -13,7 +13,7 @@
 <script type="text/template" id="details">
   <ul> 
     <% _.each(devices, function(device)  { %>
-      <li><%= device.id %></li>
+      <li><%= _.escape(device.id) %></li>
     <% }); %>
   </ul>
 </script>
@@ -21,7 +21,7 @@
 <script type="text/template" id="device-type-select">
 	<option value="">(select)</option>
     <% _.each(device_types, function(device_type)  { %>
-      <option value="<%= device_type.id %>"><%= device_type.name %> <%= device_type.model_no != "" ? "(" + device_type.model_no + ")" : ""%> </option>
+      <option value="<%= _.escape(device_type.id) %>"><%= _.escape(device_type.name) %> <%= _.escape(device_type.model_no != "" ? "(" + device_type.model_no + ")" : "")%> </option>
     <% }); %>
 </script>
 
@@ -29,17 +29,17 @@
 <script type="text/template" id="device-status-select">
 	<option value="">(select)</option>
     <% _.each(device_statuses, function(device_status)  { %>
-      <option value="<%= device_status.id %>"><%= device_status.tag %></option>
+      <option value="<%= _.escape(device_status.id) %>"><%= _.escape(device_status.tag) %></option>
     <% }); %>
 </script>
 
 <script type="text/template" id="device-template-tr">
 	<tr>
-		<td><a href="#device/<%= id %>">#<%= id %></a></td>
-		<td><%= device_type.name %></td>
-		<td><a href="#device/<%= id %>"><%= sn %></a></td>
-		<td><a href="#person/<%= person.id %>"><%= person.code %></a></td>
-		<td><%= device_status.tag %></td>
+		<td><a href="#device/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
+		<td><%= _.escape(device_type.name) %></td>
+		<td><a href="#device/<%= _.escape(id) %>"><%= _.escape(sn) %></a></td>
+		<td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.code) %></a></td>
+		<td><%= _.escape(device_status.tag) %></td>
 		<td><%= yn(is_spare) %></td>
 		<td><%= yn(is_damaged) %></td>
 		<td><%= yn(is_bought) %></td>
@@ -49,28 +49,28 @@
 <script type="text/template" id="device-history-div">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<%= date %> on <a href="#device/<%= device.id %>"><%= device.device_type.name%> / <%= device.sn %></a> by <%= technician.name %>
+			<%= _.escape(date) %> on <a href="#device/<%= _.escape(device.id) %>"><%= _.escape(device.device_type.name) %> / <%= _.escape(device.sn) %></a> by <%= _.escape(technician.name) %>
 		</div>
 		<div class="panel-body">
-			<%= comment %>
+			<%= _.escape(comment) %>
 		</div>
 	</div>
 </script>
 
 <script type="text/template" id="person-device-template-tr">
 	<tr>
-		<td><a href="#device/<%= id %>">#<%= id %></a></td>
-		<td><%= device_type.name %></td>
-		<td><a href="#device/<%= id %>"><%= sn %></a></td>
-		<td><%= device_status.tag %></td>
+		<td><a href="#device/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
+		<td><%= _.escape(device_type.name) %></td>
+		<td><a href="#device/<%= _.escape(id) %>"><%= _.escape(sn) %></a></td>
+		<td><%= _.escape(device_status.tag) %></td>
 	</tr>
 </script>
 
 <script type="text/template" id="person-template-tr">
 	<tr>
-		<td><a href="#person/<%= id %>"><%= code %></a></td>
-		<td><%= firstname %></td>
-		<td><%= surname %></td>
+		<td><a href="#person/<%= _.escape(id) %>"><%= _.escape(code) %></a></td>
+		<td><%= _.escape(firstname) %></td>
+		<td><%= _.escape(surname) %></td>
 		<td><%= yn(is_staff) %></td>
 		<td><%= yn(is_active) %></td>
 	</tr>
@@ -89,17 +89,17 @@
 				<form role="form">
 					<div id="editPersonStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
 					<div class="form-group" style="padding-left: 25px">
-						<input type="hidden" id="editPersonId" value="<%= id %>">
+						<input type="hidden" id="editPersonId" value="<%= _.escape(id) %>">
 						<label for="editPersonUserCode">Code</label>
-						<input type="text" class="form-control" id="editPersonUserCode" placeholder="Enter Code" value="<%= code %>">
+						<input type="text" class="form-control" id="editPersonUserCode" placeholder="Enter Code" value="<%= _.escape(code) %>">
 					</div>
 					<div class="form-group" style="padding-left: 25px">
 						<label for="editPersonFirstName">First Name</label>
-						<input type="text" class="form-control" id="editPersonFirstName" placeholder="First Name" value="<%= firstname %>">
+						<input type="text" class="form-control" id="editPersonFirstName" placeholder="First Name" value="<%= _.escape(firstname) %>">
 					</div>
 					<div class="form-group" style="padding-left: 25px">
 						<label for="editPersonSurname">Surname</label>
-						<input type="text" class="form-control" id="editPersonSurname" placeholder="Surname" value="<%= surname %>">
+						<input type="text" class="form-control" id="editPersonSurname" placeholder="Surname" value="<%= _.escape(surname) %>">
 					</div>
 					<div class="checkbox" style="padding-left: 45px">
 						<label> <input type="checkbox" id="editPersonIsStaff"<%= checked(is_staff) %>> Staff
@@ -130,7 +130,7 @@
 		<tr>
 			<th>Code</th><td><a href="#person/<%= id %>"><%= code %></a></td>
 			<th>Devices</th><td><a href="#" id="btnPersonDeviceList"><%= device.length %></a></td>
-			<td rowspan=4" style="width: 12em;"><img class="img-thumbnail" src="/dl/api/person/photo/<%= id %>" alt="<%= code %>" /></td>
+			<td rowspan=4" style="width: 12em;"><img class="img-thumbnail" src="/dl/api/person/photo/<%= _.escape(id) %>" alt="<%= _.escape(code) %>" /></td>
 		</tr>
 		<tr>
 			<th>Staff</th><td><%= yn(is_staff) %></td>
@@ -161,7 +161,7 @@
 			<div class="modal-body">
 				<form role="form">
 					<div id="addDeviceStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
-					<input type="hidden" id="editDeviceId" value="<%= id %>">
+					<input type="hidden" id="editDeviceId" value="<%= _.escape(id) %>">
 					<div class="form-group" style="padding-left: 25px">
 						<label for="editDeviceSelectType">Model</label>
 						<select id="editDeviceSelectType" class="btn btn-default dropdown-toggle form-control">
@@ -169,13 +169,13 @@
 						</select>
 					</div>
 					<div class="form-group" style="padding-left: 25px">
-						<label for="editDeviceSn">Serial</label> <input type="text" class="form-control" id="editDeviceSn" placeholder="Serial" value="<%= sn %>">
+						<label for="editDeviceSn">Serial</label> <input type="text" class="form-control" id="editDeviceSn" placeholder="Serial" value="<%= _.escape(sn) %>">
 					</div>
 					<div class="form-group" style="padding-left: 25px">
-						<label for="editDeviceMacEth0">MAC Address Eth0</label> <input type="text" class="form-control" id="editDeviceMacEth0" placeholder="MAC Address 1" value="<%= mac_eth0 %>">
+						<label for="editDeviceMacEth0">MAC Address Eth0</label> <input type="text" class="form-control" id="editDeviceMacEth0" placeholder="MAC Address 1" value="<%= _.escape(mac_eth0) %>">
 					</div>
 					<div class="form-group" style="padding-left: 25px">
-						<label for="editDeviceMacWlan0">MAC Address Wlan0</label> <input type="text" class="form-control" id="editDeviceMacWlan0" placeholder="MAC Address 2" value="<%= mac_wlan0 %>">
+						<label for="editDeviceMacWlan0">MAC Address Wlan0</label> <input type="text" class="form-control" id="editDeviceMacWlan0" placeholder="MAC Address 2" value="<%= _.escape(mac_wlan0) %>">
 					</div>
 				</form>
 			</div>
@@ -208,29 +208,29 @@
 
 <div class="btn-group" style="float: right">
 	<button type="button" onClick="return logIncident();" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Log Incident</button>
-	<button type="button"  onClick="return editDevice(<%= device_type_id %>);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
+	<button type="button"  onClick="return editDevice(<%= _.escape(device_type_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
 	<div class="btn-group">
 		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Lookup <span class="caret"></span></button>
 			<ul class="dropdown-menu">
-				<li><a href="https://selfsolve.apple.com/wcResults.do?sn=<%= sn %>&Continue=Continue&num=0" target="_new">Apple Warranty</a></li>
+				<li><a href="https://selfsolve.apple.com/wcResults.do?sn=<%= _.escape(sn) %>&Continue=Continue&num=0" target="_new">Apple Warranty</a></li>
 			</ul>
 		</div>
 	</div>
 </div>
-<h2><%= device_type.name %> / <%= sn %></h2>
+<h2><%= _.escape(device_type.name) %> / <%= _.escape(sn) %></h2>
 <table class="table">
 	<tbody>
 		<tr>
-			<th>Allocation</th><td><a href="#person/<%= person.id %>"><%= person.firstname + ' ' + person.surname%> (<%= person.code %>)</a></td><th>Status</th><td><%= device_status.tag %></td>
+			<th>Allocation</th><td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname + ' ' + person.surname) %> (<%= _.escape(person.code) %>)</a></td><th>Status</th><td><%= _.escape(device_status.tag) %></td>
 		</tr>
 		<tr>
-			<th>Serial</th><td><a href="#device/<%= id %>"><%= sn %></a></td><th>Spare</th><td><%= yn(is_spare) %></td>
+			<th>Serial</th><td><a href="#device/<%= _.escape(id) %>"><%= _.escape(sn) %></a></td><th>Spare</th><td><%= yn(is_spare) %></td>
 		</tr>
 		<tr>
-			<th>Model name</th><td><%= device_type.name %></a></td><th>Damaged</th><td><%= yn(is_damaged) %></td>
+			<th>Model name</th><td><%= _.escape(device_type.name) %></a></td><th>Damaged</th><td><%= yn(is_damaged) %></td>
 		</tr>
 		<tr>
-			<th>Model number</th><td><%= device_type.model_no %></a></td><th>Bought</th><td><%= yn(is_bought) %></td>
+			<th>Model number</th><td><%= _.escape(device_type.model_no) %></a></td><th>Bought</th><td><%= yn(is_bought) %></td>
 		</tr>
 	</tbody>
 </table>
