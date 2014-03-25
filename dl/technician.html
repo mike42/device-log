@@ -83,7 +83,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Edit person</h4>
+				<h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Edit person</h4>
 			</div>
 			<div class="modal-body">
 				<form role="form">
@@ -156,7 +156,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Edit device</h4>
+				<h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Edit device</h4>
 			</div>
 			<div class="modal-body">
 				<form role="form">
@@ -193,10 +193,60 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Log incident</h4>
+				<h4 class="modal-title"><span class="glyphicon glyphicon-fire"></span> Log incident</h4>
 			</div>
 			<div class="modal-body">
-					..
+				<form role="form">
+					<div class="row">
+						<input type="hidden" id="dhDeviceId" value="<%= _.escape(id) %>">
+						<input type="hidden" id="dhChange" value="comment" /> 
+						<div class="col-sm-4">
+							<ul class="nav nav-pills nav-stacked" id="dh-changeselect">
+								<li id="dh-select-comment" class="active"><a href="#" onClick="return dhChangeSelect('comment');">Comment Only</a></li>
+								<li id="dh-select-owner"><a href="#" onClick="return dhChangeSelect('owner');">Re-allocate</a></li>
+								<li id="dh-select-status"><a href="#" onClick="return dhChangeSelect('status');">Status change</a></li>
+								<li id="dh-select-damaged"><a href="#" onClick="return dhChangeSelect('damaged');">Set 'Damaged'</a></li>
+								<li id="dh-select-spare"><a href="#" onClick="return dhChangeSelect('spare');">Set 'Spare'</a></li>
+								<li id="dh-select-bought"><a href="#" onClick="return dhChangeSelect('bought');">Set 'Bought'</a></li>
+							</ul>
+						</div>
+						<div class="col-sm-8" id="sh-changeboxes">
+							<div class="formgroup" id="dh-comment">
+								<label>Comment</label>
+								<textarea placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
+								<div style="padding-top: 20px;"></div>
+							</div>
+							<div class="formgroup dh-changebox" style="display: none" id="dh-owner">
+								<input type="hidden" id="dhPersonId" value="" />
+								<label>Allocate to</label>
+								<input id="dhPersonSelect" type="text" class="form-control typeahead" placeholder="Person's Code" autocomplete="off" value="" />
+							</div>
+							<div class="formgroup dh-changebox" style="display: none" id="dh-status">
+								<label>Status</label>
+								<label for="dhSelectStatus">New Status</label>
+								<select id="dhSelectStatus" class="btn btn-default dropdown-toggle form-control">
+									<option value="">Loading..</option>
+								</select>
+							</div>
+							<div class="formgroup dh-changebox" style="display: none" id="dh-damaged">
+								<div class="checkbox">
+									<label><input type="checkbox" id="dhIsDamaged"<%= checked(is_damaged) %>> Damaged</label>
+								</div>
+							</div>
+							<div class="formgroup dh-changebox" style="display: none" id="dh-spare">
+								<div class="checkbox">
+									<label><input type="checkbox" id="dhIsSpare"<%= checked(is_spare) %>> Spare</label>
+								</div>
+							</div>
+							<div class="formgroup dh-changebox" style="display: none" id="dh-bought">
+								<div class="checkbox">
+									<label><input type="checkbox" id="dhIsBought"<%= checked(is_bought) %>> Bought</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 'comment','photo','owner','status','damaged','spare','bought' -->
+				</form>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -207,7 +257,7 @@
 </div>
 
 <div class="btn-group" style="float: right">
-	<button type="button" onClick="return logIncident();" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Log Incident</button>
+	<button type="button" onClick="return logIncident(<%= _.escape(device_status_id) %>);" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Log Incident</button>
 	<button type="button"  onClick="return editDevice(<%= _.escape(device_type_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
 	<div class="btn-group">
 		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Lookup <span class="caret"></span></button>
@@ -371,7 +421,7 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"
 						aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Add New</h4>
+					<h4 class="modal-title"><span class="glyphicon glyphicon-plus"></span> Add New</h4>
 				</div>
 				<div class="modal-body">
 					<div class="btn-group">

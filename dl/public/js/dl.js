@@ -330,19 +330,7 @@ $('#btnAddNew').on('click', function(event) {
 	renderDeviceTypes('select#addDeviceSelectType', '');
 
 	/* Fill device status combo */
-	var device_statuses = new DeviceStatusCollection();
-	device_statuses.fetch({
-		success : function(results) {
-			var db = new DeviceStatusSelectView({
-				collection : device_statuses,
-				el : 'select#addDeviceSelectStatus'
-			});
-			db.render();
-		},
-		error : function(model, response) {
-			handleFailedRequest(response);
-		}
-	});
+	renderDeviceStatuses('select#addDeviceSelectStatus', '');
 
 	$("#modalAddNew").modal();
 	return false;
@@ -409,13 +397,12 @@ $('#submitAddNew').click(function() {
 		$('#addSoftwareStatus').html("You cannot add <b>Software</b> yet.");
 		$('#addSoftwareStatus').show();
 		break;
-	on
-case 'addkey':
-	$('#addKeyStatus').html("You cannot add a <b>Key</b> yet.");
-	$('#addKeyStatus').show();
-	break;
-default:
-	// Do nothing on the main page
+	case 'addkey':
+		$('#addKeyStatus').html("You cannot add a <b>Key</b> yet.");
+		$('#addKeyStatus').show();
+		break;
+	default:
+		// Do nothing on the main page
 }
 });
 
@@ -480,6 +467,7 @@ $('#addDeviceOwner').on('change', function() {
 	$('#addDevicePersonId').val('');
 });
 
+
 $('#personQuickSearch').on('typeahead:selected', function(evt, item) {
 	app_router.navigate('person/' + item.id, {
 		trigger : true
@@ -493,8 +481,10 @@ $('#deviceQuickSearch').on('typeahead:selected', function(evt, item) {
 });
 
 /* Buttons to show dialogs */
-function logIncident() {
+function logIncident(device_status_id) {
 	$('#modalLogIncident').modal();
+	dhChangeSelect('comment');
+	renderDeviceStatuses("select#dhSelectStatus", device_status_id);
 	return false;
 }
 
@@ -524,6 +514,22 @@ function renderDeviceTypes(dest, device_type_id) {
 	});
 }
 
+function renderDeviceStatuses(dest, device_status_id) {
+	var device_statuses = new DeviceStatusCollection();
+	device_statuses.fetch({
+		success : function(results) {
+			var db = new DeviceStatusSelectView({
+				collection : device_statuses,
+				el : dest
+			});
+			db.render();
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+}
+
 function editPerson() {
 	$('#modalEditPerson').modal();
 	return false;
@@ -537,8 +543,8 @@ function editPersonSave() {
 		code : $('#editPersonUserCode').val(),
 		firstname : $('#editPersonFirstName').val(),
 		surname : $('#editPersonSurname').val(),
-		is_staff : ($('#editPersonIsStaff').prop('checked') ? '1' : 0),
-		is_active : ($('#editPersonIsActive').prop('checked') ? '1' : 0)
+		is_staff : ($('#editPersonIsStaff').prop('checked') ? '1' : '0'),
+		is_active : ($('#editPersonIsActive').prop('checked') ? '1' : '0')
 	}, {
 		patch : true,
 		success : function(model, response) {
@@ -592,9 +598,88 @@ function editDeviceSave() {
 	});
 }
 
+function dhChangeSelect(select) {
+	$('#dh-changeselect li').removeClass('active');
+	$('#dh-select-' + select).addClass('active');
+	$('#dhChange').val(select);
+	$('.dh-changebox').hide();
+	$('#dh-' + select).show();	
+	return false;
+}
+
 function logIncidentSave() {
-	alert('not implemented');
-	$('#modalLogIncident').modal('hide');
+	var change = $('#dhChange').val();
+	var device_history = new device_history_model({
+		device_id : $('#dhDeviceId').val(),
+	});
+
+	switch(change) {
+	case 'comment':
+		var att = {
+			change: change,
+			comment: $('#dhComment').val()
+		};
+		break;
+	case 'owner':
+		var att = {
+			change: change,
+			comment: $('#dhComment').val(),
+			person_id: $('#dhPersonId').val()
+		};
+		break;
+	case 'status':
+		var att = {
+			change: change,
+			comment: $('#dhComment').val(),
+			status_id: $('#dhSelectStatus').val()
+		};
+		break;
+	case 'damaged':
+		var att = {
+			change: change,
+			comment: $('#dhComment').val(),
+			is_damaged : ($('#dhIsDamaged').prop('checked') ? '1' : '0')
+		};
+		break;
+	case 'spare':
+		var att = {
+			change: change,
+			comment: $('#dhComment').val(),
+			is_spare: ($('#dhIsSpare').prop('checked') ? '1' : '0')
+		};
+		break;
+	case 'bought':
+		var att = {
+			change: change,
+			comment: $('#dhComment').val(),
+			is_bought: ($('#dhIsBought').prop('checked') ? '1' : '0')
+		};
+		break;
+	default:
+		$('#modalLogIncident').modal('hide');
+		return false;
+	}
+	
+	device_history.save(att, {
+		patch : true,
+		success : function(model, response) {
+			$('#modalEditDevice').on('hidden.bs.modal', function(e) {
+				device.fetch({
+					success : function(results) {
+						showDeviceDetail(results);
+					},
+					error : function(model, response) {
+						handleFailedRequest(response);
+					}
+				});
+			})
+			$('#modalEditDevice').modal('hide');
+		},
+		error : function(model, response) {
+			$('#modalEditDevice').html("Could not add device!");
+			$('#modalEditDevice').show();
+		}
+	});
 }
 
 /* Navigation */
@@ -632,6 +717,30 @@ function showDeviceDetail(results) {
 		collection : deviceHistoryList
 	});
 	deviceHistoryListView.render();
+	
+	/* Set type-ahead */
+	$('#dhPersonSelect').typeahead({
+		minLength : 2
+	}, {
+		name : 'person-search',
+		displayKey : function(item) {
+			return item.code + ' - ' + item.firstname + ' ' + item.surname;
+		},
+		source : personSearch.ttAdapter()
+	});
+
+	$('#dhPersonSelect').on('typeahead:selected', function(evt, item) {
+		$('#dh-owner').removeClass('has-error');
+		$('#dh-owner').addClass('has-success');
+		$('#dhPersonId').val(item.id);
+	});
+
+	$('#dhPersonSelect').on('change', function() {
+		// Visual cue that a person has not been selected
+		$('#dh-owner').addClass('has-error');
+		$('#dh-owner').removeClass('has-success');
+		$('#dhPersonId').val('');
+	});
 }
 
 function showPersonDetail(results) {

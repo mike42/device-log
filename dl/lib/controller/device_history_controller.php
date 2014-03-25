@@ -6,6 +6,7 @@ class device_history_controller {
 	}
 
 	public static function create() {
+		// TODO
 		/* Check permission */
 		$role = session::getRole();
 		if(!isset(core::$permission[$role]['device_history']['create']) || core::$permission[$role]['device_history']['create'] != true) {
@@ -16,19 +17,38 @@ class device_history_controller {
 		$fields = array('id', 'date', 'comment', 'is_spare', 'is_damaged', 'has_photos', 'is_bought', 'change', 'technician_id', 'device_id', 'device_status_id', 'person_id');
 		$init = array();
 		$received = json_decode(file_get_contents('php://input'), true, 2);
+		if(!isset($received['change'])) {
+			return array('error' => 'Not enough information', 'code' => '400');
+		}
 		foreach($fields as $field) {
 			if(isset($received[$field])) {
 				$init["device_history.$field"] = $received[$field];
 			}
 		}
-			$device_history = new device_history_model($init);
-
+		
+		/* Fill in some basics */
+		$device_history = new device_history_model($init);
+		if(!$technician = technician_model::get_by_technician_login(session::getUsername())) {
+			return array('error' => 'Failed to find out the technician submitting this.', 'code' => '400');
+		}
+		if(!$device = device_model::get($device_history -> get_device_id())) {
+			return array('error' => 'device_history is invalid because related device does not exist', 'code' => '400');
+		}
+		
+		/* Fill everything else with defaults */
+		$device_history -> set_date(date('Y-m-d H:i:s'));
+		
+		// TODO
+		if($device_history -> change != 'owner') {
+			$device_history -> set_person_id($device -> person_id);
+		}
+		if($device_history -> change != 'status') {
+			$device_history -> set_status_id($device -> status_id);
+		}
+		
 		/* Check parent tables */
 		if(!technician_model::get($device_history -> get_technician_id())) {
 			return array('error' => 'device_history is invalid because related technician does not exist', 'code' => '400');
-		}
-		if(!device_model::get($device_history -> get_device_id())) {
-			return array('error' => 'device_history is invalid because related device does not exist', 'code' => '400');
 		}
 		if(!device_status_model::get($device_history -> get_device_status_id())) {
 			return array('error' => 'device_history is invalid because related device_status does not exist', 'code' => '400');
