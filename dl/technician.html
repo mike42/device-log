@@ -124,7 +124,7 @@
 </div>
 
 <!-- Person details -->
-<h2><%= firstname %> <%= surname %></h2>
+<h2><%= _.escape(firstname + ' ' + surname) %></h2>
 <table class="table">
 	<tbody>
 		<tr>
