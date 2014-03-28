@@ -63,6 +63,9 @@
 		<td><%= _.escape(device_type.name) %></td>
 		<td><a href="#device/<%= _.escape(id) %>"><%= _.escape(sn) %></a></td>
 		<td><%= _.escape(device_status.tag) %></td>
+		<td><%= yn(is_spare) %></td>
+		<td><%= yn(is_damaged) %></td>
+		<td><%= yn(is_bought) %></td>
 	</tr>
 </script>
 
@@ -213,7 +216,7 @@
 						<div class="col-sm-8" id="sh-changeboxes">
 							<div class="formgroup" id="dh-comment">
 								<label>Comment</label>
-								<textarea placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
+								<textarea id="dhComment" placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
 								<div style="padding-top: 20px;"></div>
 							</div>
 							<div class="formgroup dh-changebox" style="display: none" id="dh-owner">
@@ -605,6 +608,9 @@
 								<th>Type</th>
 								<th>Device Serial</th>
 								<th>Device Status</th>
+								<th><abbr title="Spare">S</abbr></th>
+								<th><abbr title="Damaged">D</abbr></th>
+								<th><abbr title="Bought">B</abbr></th>
 							</tr>
 						</thead>
 						<tbody id="person-device-tbody"></tbody>

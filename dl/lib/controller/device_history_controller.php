@@ -38,12 +38,12 @@ class device_history_controller {
 		/* Fill everything else with defaults */
 		$device_history -> set_date(date('Y-m-d H:i:s'));
 		
-		// TODO
-		if($device_history -> change != 'owner') {
-			$device_history -> set_person_id($device -> person_id);
+		$device_history -> set_technician_id($technician -> get_id());
+		if($device_history -> get_change() != 'owner') {
+			$device_history -> set_person_id($device -> get_person_id());
 		}
-		if($device_history -> change != 'status') {
-			$device_history -> set_status_id($device -> status_id);
+		if($device_history -> get_change() != 'status') {
+			$device_history -> set_device_status_id($device -> get_device_status_id());
 		}
 		
 		/* Check parent tables */
@@ -60,6 +60,14 @@ class device_history_controller {
 		/* Insert new row */
 		try {
 			$device_history -> insert();
+			// Update device
+			switch($device_history -> get_change()) {
+				case 'owner':
+					$device -> set_person_id($device_history -> get_person_id());
+					$device -> update();
+					break;
+				
+			}
 			return $device_history -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');
