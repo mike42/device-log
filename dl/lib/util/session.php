@@ -38,7 +38,7 @@ class session {
 	public static function authenticate($login, $password) {
 		core::loadClass('technician_model');
 		$technician = technician_model::get_by_technician_login($login);
-		if(!$technician) {
+		if(!$technician || $technician -> get_is_active() != '1') {
 			throw new Exception("User is not technician");
 			return false;
 		}
