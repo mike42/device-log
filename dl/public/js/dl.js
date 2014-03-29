@@ -592,8 +592,9 @@ function editDeviceSave() {
 			$('#modalEditDevice').modal('hide');
 		},
 		error : function(model, response) {
-			$('#modalEditDevice').html("Could not add device!");
-			$('#modalEditDevice').show();
+			// TODO Edit device status box??
+			//$('#modalEditDevice').html("Could not add device!");
+			//$('#modalEditDevice').show();
 		}
 	});
 }
@@ -631,7 +632,7 @@ function logIncidentSave() {
 		var att = {
 			change: change,
 			comment: $('#dhComment').val(),
-			status_id: $('#dhSelectStatus').val()
+			device_status_id: $('#dhSelectStatus').val()
 		};
 		break;
 	case 'damaged':
@@ -659,11 +660,11 @@ function logIncidentSave() {
 		$('#modalLogIncident').modal('hide');
 		return false;
 	}
-	
 	device_history.save(att, {
 		patch : true,
 		success : function(model, response) {
-			$('#modalEditDevice').on('hidden.bs.modal', function(e) {
+			$('#modalLogIncident').on('hidden.bs.modal', function(e) {
+				device = new device_model({id: device_history.get('device_id')});
 				device.fetch({
 					success : function(results) {
 						showDeviceDetail(results);
@@ -673,11 +674,12 @@ function logIncidentSave() {
 					}
 				});
 			})
-			$('#modalEditDevice').modal('hide');
+			$('#modalLogIncident').modal('hide');
 		},
 		error : function(model, response) {
-			$('#modalEditDevice').html("Could not add device!");
-			$('#modalEditDevice').show();
+			// Log incident status box?
+			//$('#modalEditDevice').html("Could not add device!");
+			//$('#modalEditDevice').show();
 		}
 	});
 }

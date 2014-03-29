@@ -38,12 +38,21 @@ class device_history_controller {
 		/* Fill everything else with defaults */
 		$device_history -> set_date(date('Y-m-d H:i:s'));
 		
-		// TODO
-		if($device_history -> change != 'owner') {
-			$device_history -> set_person_id($device -> person_id);
+		$device_history -> set_technician_id($technician -> get_id());
+		if($device_history -> get_change() != 'owner') {
+			$device_history -> set_person_id($device -> get_person_id());
 		}
-		if($device_history -> change != 'status') {
-			$device_history -> set_status_id($device -> status_id);
+		if($device_history -> get_change() != 'status') {
+			$device_history -> set_device_status_id($device -> get_device_status_id());
+		}
+		if($device_history -> get_change() != 'damaged') {
+			$device_history -> set_is_damaged($device -> get_is_damaged());
+		}
+		if($device_history -> get_change() != 'spare') {
+			$device_history -> set_is_spare($device -> get_is_spare());
+		}
+		if($device_history -> get_change() != 'bought') {
+			$device_history -> set_is_bought($device -> get_is_bought());
 		}
 		
 		/* Check parent tables */
@@ -60,6 +69,29 @@ class device_history_controller {
 		/* Insert new row */
 		try {
 			$device_history -> insert();
+			// Update device
+			switch($device_history -> get_change()) {
+				case 'owner':
+					$device -> set_person_id($device_history -> get_person_id());
+					$device -> update();
+					break;
+				case 'status':
+					$device -> set_device_status_id($device_history -> get_device_status_id());
+					$device -> update();
+					break;
+				case 'damaged':
+					$device -> set_is_damaged($device_history -> get_is_damaged());
+					$device -> update();
+					break;
+				case 'spare':
+					$device -> set_is_spare($device_history -> get_is_spare());
+					$device -> update();
+					break;
+				case 'bought':
+					$device -> set_is_bought($device_history -> get_is_bought());
+					$device -> update();
+					break;
+			}
 			return $device_history -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');

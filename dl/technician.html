@@ -52,7 +52,22 @@
 			<%= _.escape(date) %> on <a href="#device/<%= _.escape(device.id) %>"><%= _.escape(device.device_type.name) %> / <%= _.escape(device.sn) %></a> by <%= _.escape(technician.name) %>
 		</div>
 		<div class="panel-body">
-			<%= _.escape(comment) %>
+<div style="float:right">
+			<% if(change == 'comment' || change == 'photo') {  %>
+&nbsp;
+			<% } else if(change == 'owner') {  %>
+Allocated &rarr; <td><%= _.escape(person.code) %></td>
+			<% } else if(change == 'status') {  %>
+Status &rarr; <td><%= _.escape(device_status.tag) %></td>
+			<% } else if(change == 'damaged') {  %>
+Damaged &rarr; <td><%= yn(is_damaged) %></td>
+			<% } else if(change == 'spare') {  %>
+Spare &rarr; <td><%= yn(is_spare) %></td>
+			<% } else if(change == 'bought') {  %>
+Bought &rarr; <td><%= yn(is_bought) %></td>
+			<% } %>
+</div>
+			<%= (comment == "" ? '(no comment)' : _.escape(comment)) %>
 		</div>
 	</div>
 </script>
@@ -63,6 +78,9 @@
 		<td><%= _.escape(device_type.name) %></td>
 		<td><a href="#device/<%= _.escape(id) %>"><%= _.escape(sn) %></a></td>
 		<td><%= _.escape(device_status.tag) %></td>
+		<td><%= yn(is_spare) %></td>
+		<td><%= yn(is_damaged) %></td>
+		<td><%= yn(is_bought) %></td>
 	</tr>
 </script>
 
@@ -213,7 +231,7 @@
 						<div class="col-sm-8" id="sh-changeboxes">
 							<div class="formgroup" id="dh-comment">
 								<label>Comment</label>
-								<textarea placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
+								<textarea id="dhComment" placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
 								<div style="padding-top: 20px;"></div>
 							</div>
 							<div class="formgroup dh-changebox" style="display: none" id="dh-owner">
@@ -605,6 +623,9 @@
 								<th>Type</th>
 								<th>Device Serial</th>
 								<th>Device Status</th>
+								<th><abbr title="Spare">S</abbr></th>
+								<th><abbr title="Damaged">D</abbr></th>
+								<th><abbr title="Bought">B</abbr></th>
 							</tr>
 						</thead>
 						<tbody id="person-device-tbody"></tbody>
