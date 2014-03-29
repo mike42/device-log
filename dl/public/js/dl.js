@@ -632,7 +632,7 @@ function logIncidentSave() {
 		var att = {
 			change: change,
 			comment: $('#dhComment').val(),
-			status_id: $('#dhSelectStatus').val()
+			device_status_id: $('#dhSelectStatus').val()
 		};
 		break;
 	case 'damaged':
@@ -660,7 +660,6 @@ function logIncidentSave() {
 		$('#modalLogIncident').modal('hide');
 		return false;
 	}
-	
 	device_history.save(att, {
 		patch : true,
 		success : function(model, response) {

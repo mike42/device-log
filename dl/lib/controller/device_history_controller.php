@@ -45,6 +45,15 @@ class device_history_controller {
 		if($device_history -> get_change() != 'status') {
 			$device_history -> set_device_status_id($device -> get_device_status_id());
 		}
+		if($device_history -> get_change() != 'damaged') {
+			$device_history -> set_is_damaged($device -> get_is_damaged());
+		}
+		if($device_history -> get_change() != 'spare') {
+			$device_history -> set_is_spare($device -> get_is_spare());
+		}
+		if($device_history -> get_change() != 'bought') {
+			$device_history -> set_is_bought($device -> get_is_bought());
+		}
 		
 		/* Check parent tables */
 		if(!technician_model::get($device_history -> get_technician_id())) {
@@ -66,7 +75,22 @@ class device_history_controller {
 					$device -> set_person_id($device_history -> get_person_id());
 					$device -> update();
 					break;
-				
+				case 'status':
+					$device -> set_device_status_id($device_history -> get_device_status_id());
+					$device -> update();
+					break;
+				case 'damaged':
+					$device -> set_is_damaged($device_history -> get_is_damaged());
+					$device -> update();
+					break;
+				case 'spare':
+					$device -> set_is_spare($device_history -> get_is_spare());
+					$device -> update();
+					break;
+				case 'bought':
+					$device -> set_is_bought($device_history -> get_is_bought());
+					$device -> update();
+					break;
 			}
 			return $device_history -> to_array_filtered($role);
 		} catch(Exception $e) {
