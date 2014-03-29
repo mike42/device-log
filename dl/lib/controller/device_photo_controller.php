@@ -141,5 +141,9 @@ class device_photo_controller {
 			return array('error' => 'Failed to list', 'code' => '500');
 		}
 	}
+	
+	public static function upload() {
+		// TODO
+	}
 }
 ?>

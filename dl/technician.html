@@ -222,6 +222,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 						<div class="col-sm-4">
 							<ul class="nav nav-pills nav-stacked" id="dh-changeselect">
 								<li id="dh-select-comment" class="active"><a href="#" onClick="return dhChangeSelect('comment');">Comment Only</a></li>
+								<li id="dh-select-photos" class="active"><a href="#" onClick="return dhChangeSelect('photos');">Include photos</a></li>
 								<li id="dh-select-owner"><a href="#" onClick="return dhChangeSelect('owner');">Re-allocate</a></li>
 								<li id="dh-select-status"><a href="#" onClick="return dhChangeSelect('status');">Status change</a></li>
 								<li id="dh-select-damaged"><a href="#" onClick="return dhChangeSelect('damaged');">Set 'Damaged'</a></li>
@@ -234,6 +235,9 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 								<label>Comment</label>
 								<textarea id="dhComment" placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
 								<div style="padding-top: 20px;"></div>
+							</div>
+							<div class="formgroup dh-changebox" style="display: none" id="dh-photos">
+								 <div id="incident-photo-dropzone" class="dropzone"></div>
 							</div>
 							<div class="formgroup dh-changebox" style="display: none" id="dh-owner">
 								<input type="hidden" id="dhPersonId" value="" />
@@ -264,7 +268,6 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 							</div>
 						</div>
 					</div>
-					<!-- 'comment','photo','owner','status','damaged','spare','bought' -->
 				</form>
 			</div>
 			<div class="modal-footer">

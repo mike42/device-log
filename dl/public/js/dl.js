@@ -743,6 +743,8 @@ function showDeviceDetail(results) {
 		$('#dh-owner').removeClass('has-success');
 		$('#dhPersonId').val('');
 	});
+	
+	$('div#incident-photo-dropzone').dropzone({ url: "/dl/api/device_photo/upload/" });
 }
 
 function showPersonDetail(results) {
