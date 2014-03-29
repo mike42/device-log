@@ -52,7 +52,22 @@
 			<%= _.escape(date) %> on <a href="#device/<%= _.escape(device.id) %>"><%= _.escape(device.device_type.name) %> / <%= _.escape(device.sn) %></a> by <%= _.escape(technician.name) %>
 		</div>
 		<div class="panel-body">
-			<%= _.escape(comment) %>
+<div style="float:right">
+			<% if(change == 'comment' || change == 'photo') {  %>
+&nbsp;
+			<% } else if(change == 'owner') {  %>
+Allocated &rarr; <td><%= _.escape(person.code) %></td>
+			<% } else if(change == 'status') {  %>
+Status &rarr; <td><%= _.escape(device_status.tag) %></td>
+			<% } else if(change == 'damaged') {  %>
+Damaged &rarr; <td><%= yn(is_damaged) %></td>
+			<% } else if(change == 'spare') {  %>
+Spare &rarr; <td><%= yn(is_spare) %></td>
+			<% } else if(change == 'bought') {  %>
+Bought &rarr; <td><%= yn(is_bought) %></td>
+			<% } %>
+</div>
+			<%= (comment == "" ? '(no comment)' : _.escape(comment)) %>
 		</div>
 	</div>
 </script>
