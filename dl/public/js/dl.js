@@ -460,7 +460,7 @@ $('#addDeviceOwner').on('typeahead:selected', function(evt, item) {
 	$('#addDevicePersonId').val(item.id);
 });
 
-$('#addDeviceOwner').on('change', function() {
+$('#addDeviceOwner').on('input', function() {
 	// Visual cue that a person has not been selected
 	$('#addDeviceOwnerFrmGroup').addClass('has-error');
 	$('#addDeviceOwnerFrmGroup').removeClass('has-success');
@@ -592,9 +592,8 @@ function editDeviceSave() {
 			$('#modalEditDevice').modal('hide');
 		},
 		error : function(model, response) {
-			// TODO Edit device status box??
-			//$('#modalEditDevice').html("Could not add device!");
-			//$('#modalEditDevice').show();
+			$('#editDeviceStatus').html("Could not add device!");
+			$('#editDeviceStatus').show();
 		}
 	});
 }
@@ -677,9 +676,8 @@ function logIncidentSave() {
 			$('#modalLogIncident').modal('hide');
 		},
 		error : function(model, response) {
-			// Log incident status box?
-			//$('#modalEditDevice').html("Could not add device!");
-			//$('#modalEditDevice').show();
+			$('#logIncidentStatus').html("Could not submit incident! Check the details and try again.");
+			$('#logIncidentStatus').show();
 		}
 	});
 }
@@ -737,7 +735,7 @@ function showDeviceDetail(results) {
 		$('#dhPersonId').val(item.id);
 	});
 
-	$('#dhPersonSelect').on('change', function() {
+	$('#dhPersonSelect').on('input', function() {
 		// Visual cue that a person has not been selected
 		$('#dh-owner').addClass('has-error');
 		$('#dh-owner').removeClass('has-success');
