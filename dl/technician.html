@@ -178,7 +178,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 			</div>
 			<div class="modal-body">
 				<form role="form">
-					<div id="addDeviceStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
+					<div id="editDeviceStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
 					<input type="hidden" id="editDeviceId" value="<%= _.escape(id) %>">
 					<div class="form-group" style="padding-left: 25px">
 						<label for="editDeviceSelectType">Model</label>
@@ -215,6 +215,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 			</div>
 			<div class="modal-body">
 				<form role="form">
+					<div id="logIncidentStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
 					<div class="row">
 						<input type="hidden" id="dhDeviceId" value="<%= _.escape(id) %>">
 						<input type="hidden" id="dhChange" value="comment" /> 
@@ -263,7 +264,6 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 							</div>
 						</div>
 					</div>
-					<!-- 'comment','photo','owner','status','damaged','spare','bought' -->
 				</form>
 			</div>
 			<div class="modal-footer">
