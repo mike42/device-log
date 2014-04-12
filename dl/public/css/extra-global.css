@@ -104,3 +104,7 @@ td,th {
 	border-radius: 4px !important;
 	width: 300px;
 }
+
+select {
+	text-align: left !important; /* Firefox applies centre-alignment to the boxes */
+}
