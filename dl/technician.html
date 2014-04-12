@@ -54,8 +54,10 @@
 		</div>
 		<div class="panel-body">
 <div style="float:right">
-			<% if(change == 'comment' || change == 'photo') {  %>
+			<% if(change == 'comment') {  %>
 &nbsp;
+			<% } else if(change == 'photo') {  %>
+<span class="glyphicon glyphicon-camera"></span>
 			<% } else if(change == 'owner') {  %>
 Allocated &rarr; <td><%= _.escape(person.code) %></td>
 			<% } else if(change == 'status') {  %>
@@ -69,6 +71,13 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 			<% } %>
 </div>
 			<%= (comment == "" ? '(no comment)' : _.escape(comment)) %>
+<% if(change == 'photo') {  %>
+	<div class="device-photo-thumb">
+    <% _.each(device_photo, function(photo)  { %>
+      <a href="/dl/api/device_photo/original/<%= _.escape(photo.id) %>"><img src="/dl/api/device_photo/small/<%= _.escape(photo.id) %>"/></a>
+    <% }); %>
+	</div>
+<% } %>
 		</div>
 	</div>
 </script>
@@ -222,7 +231,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 						<div class="col-sm-4">
 							<ul class="nav nav-pills nav-stacked" id="dh-changeselect">
 								<li id="dh-select-comment" class="active"><a href="#" onClick="return dhChangeSelect('comment');">Comment Only</a></li>
-								<li id="dh-select-photos" class="active"><a href="#" onClick="return dhChangeSelect('photos');">Include photos</a></li>
+								<li id="dh-select-photo" class="active"><a href="#" onClick="return dhChangeSelect('photo');">Include photos</a></li>
 								<li id="dh-select-owner"><a href="#" onClick="return dhChangeSelect('owner');">Re-allocate</a></li>
 								<li id="dh-select-status"><a href="#" onClick="return dhChangeSelect('status');">Status change</a></li>
 								<li id="dh-select-damaged"><a href="#" onClick="return dhChangeSelect('damaged');">Set 'Damaged'</a></li>
@@ -231,12 +240,13 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 							</ul>
 						</div>
 						<div class="col-sm-8" id="sh-changeboxes">
+							<div id="logIncidentStatus" class="bs-callout bs-callout-warning" style="display: none">...</div>
 							<div class="formgroup" id="dh-comment">
 								<label>Comment</label>
 								<textarea id="dhComment" placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
 								<div style="padding-top: 20px;"></div>
 							</div>
-							<div class="formgroup dh-changebox" style="display: none" id="dh-photos">
+							<div class="formgroup dh-changebox" style="display: none" id="dh-photo">
 								 <div id="incident-photo-dropzone" class="dropzone"></div>
 							</div>
 							<div class="formgroup dh-changebox" style="display: none" id="dh-owner">

@@ -616,6 +616,7 @@ function logIncidentSave() {
 
 	switch(change) {
 	case 'comment':
+	case 'photo':
 		var att = {
 			change: change,
 			comment: $('#dhComment').val()
@@ -677,9 +678,9 @@ function logIncidentSave() {
 			$('#modalLogIncident').modal('hide');
 		},
 		error : function(model, response) {
-			// Log incident status box?
-			//$('#modalEditDevice').html("Could not add device!");
-			//$('#modalEditDevice').show();
+			console.log(response);
+			$('#logIncidentStatus').html(response.responseJSON.error);
+			$('#logIncidentStatus').show();
 		}
 	});
 }

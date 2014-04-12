@@ -77,6 +77,12 @@ class device_controller {
 			return array('error' => 'device not found', 'code' => '404');
 		}
 		$device -> populate_list_device_history();
+		foreach($device -> list_device_history as $i => $dh) {
+			if($device -> list_device_history[$i] -> get_has_photos() == 1) {
+				$device -> list_device_history[$i] -> populate_list_device_photo();
+			}
+		}
+		
 		return $device -> to_array_filtered($role);
 	}
 

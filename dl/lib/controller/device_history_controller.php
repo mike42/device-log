@@ -34,6 +34,9 @@ class device_history_controller {
 		if(!$device = device_model::get($device_history -> get_device_id())) {
 			return array('error' => 'device_history is invalid because related device does not exist', 'code' => '400');
 		}
+		if($device_history -> get_comment() == "") {
+			return array('error' => 'Comment is required.', 'code' => '400');
+		}
 		
 		/* Fill everything else with defaults */
 		$device_history -> set_date(date('Y-m-d H:i:s'));
@@ -68,31 +71,49 @@ class device_history_controller {
 
 		/* Insert new row */
 		try {
-			$device_history -> insert();
-			// Update device
-			switch($device_history -> get_change()) {
-				case 'owner':
-					$device -> set_person_id($device_history -> get_person_id());
-					$device -> update();
-					break;
-				case 'status':
-					$device -> set_device_status_id($device_history -> get_device_status_id());
-					$device -> update();
-					break;
-				case 'damaged':
-					$device -> set_is_damaged($device_history -> get_is_damaged());
-					$device -> update();
-					break;
-				case 'spare':
-					$device -> set_is_spare($device_history -> get_is_spare());
-					$device -> update();
-					break;
-				case 'bought':
-					$device -> set_is_bought($device_history -> get_is_bought());
-					$device -> update();
-					break;
+			if($device_history -> get_change() == 'photo') {
+				$ok = false;
+				$device -> populate_list_device_history(0, 1);
+				foreach($device -> list_device_history as $dh) {
+					/* Find the earliest matching device_history entry */
+					if($dh -> get_change() == 'photo' && $dh -> get_comment() == '') {
+						$ok = true;
+						break;
+					}
+				}
+				if(!$ok) {
+					return array('error' => 'No images found to include', 'code' => '400');
+				}
+				$dh -> set_comment($device_history -> get_comment());
+				$dh -> update();
+				return $dh -> to_array_filtered($role);
+			} else {
+				$device_history -> insert();
+				// Update related device
+				switch($device_history -> get_change()) {
+					case 'owner':
+						$device -> set_person_id($device_history -> get_person_id());
+						$device -> update();
+						break;
+					case 'status':
+						$device -> set_device_status_id($device_history -> get_device_status_id());
+						$device -> update();
+						break;
+					case 'damaged':
+						$device -> set_is_damaged($device_history -> get_is_damaged());
+						$device -> update();
+						break;
+					case 'spare':
+						$device -> set_is_spare($device_history -> get_is_spare());
+						$device -> update();
+						break;
+					case 'bought':
+						$device -> set_is_bought($device_history -> get_is_bought());
+						$device -> update();
+						break;
+				}
+				return $device_history -> to_array_filtered($role);
 			}
-			return $device_history -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');
 		}
