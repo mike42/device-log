@@ -743,8 +743,8 @@ function showDeviceDetail(results) {
 		$('#dh-owner').removeClass('has-success');
 		$('#dhPersonId').val('');
 	});
-	
-	$('div#incident-photo-dropzone').dropzone({ url: "/dl/api/device_photo/upload/" });
+	console.log(results);
+	$('div#incident-photo-dropzone').dropzone({ url: "/dl/api/device_photo/upload/" + results.get('id'), addRemoveLinks: true, uploadMultiple: true, acceptedFiles: "image/*" });
 }
 
 function showPersonDetail(results) {
