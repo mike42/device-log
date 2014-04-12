@@ -142,8 +142,51 @@ class device_photo_controller {
 		}
 	}
 	
-	public static function upload() {
-		// TODO
+	public static function upload($device_id) {
+		/* Need permission to upload and to read device info, and to edit device hitory */
+		$role = session::getRole();
+		if(!isset(core::$permission[$role]['device_photo']['create']) || core::$permission[$role]['device_photo']['create'] != true) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+		if(!isset(core::$permission[$role]['device']['read']) || count(core::$permission[$role]['device']['read']) == 0) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+		if(!isset(core::$permission[$role]['device_history']['create']) || core::$permission[$role]['device_history']['create'] != true) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+		
+		/* Load up related device */
+		$device = device_model::get($device_id);
+		if(!$device) {
+			return array('error' => 'device not found', 'code' => '404');
+		}
+		if(!$technician = technician_model::get_by_technician_login(session::getUsername())) {
+			return array('error' => 'Failed to find out the technician submitting this.', 'code' => '400');
+		}
+		
+		/* Get most recent history entry */
+		$device -> populate_list_device_history(0, 1);
+		if(count($device -> list_device_history) == 0 || $device -> list_device_history[0] -> get_change() != 'photo' || $device -> list_device_history[0] -> get_comment() != '') {
+			/* Make a new dummy history entry */
+			$device_history = new device_history_model();
+			$device_history -> set_change('photo');
+			$device_history -> set_date(date('Y-m-d H:i:s'));
+			$device_history -> set_technician_id($technician -> get_id());
+			$device_history -> set_device_id($device -> get_id());
+			$device_history -> set_person_id($device -> get_person_id());
+			$device_history -> set_device_status_id($device -> get_device_status_id());
+			$device_history -> set_is_damaged($device -> get_is_damaged());
+			$device_history -> set_is_spare($device -> get_is_spare());
+			$device_history -> set_is_bought($device -> get_is_bought());
+			$device_history -> set_comment('');
+			$device_history -> set_has_photos(1);
+			$device_history -> insert();
+		} else {
+			$device_history = $device -> list_device_history[0];
+		}
+		
+		$device_history -> populate_list_device_photo();
+		print_r($_FILES);
 	}
 }
 ?>

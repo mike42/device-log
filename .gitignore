@@ -8,3 +8,4 @@ config.php
 .project
 .buildpath
 
+dl/upload/*
