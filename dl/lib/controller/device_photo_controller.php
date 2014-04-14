@@ -267,7 +267,7 @@ class device_photo_controller {
 	
 	private static function make_thumb($source, $dest, $size) {
 		$thumb = new Imagick($source);
-		$thumb->resizeImage($size,$size,Imagick::FILTER_LANCZOS,1);
+		$thumb->resizeImage($size, $size, Imagick::FILTER_LANCZOS, 1, true);
 		$thumb->writeImage($dest);
 		$thumb->destroy();
 	}
