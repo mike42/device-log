@@ -164,9 +164,15 @@ class device_controller {
 		}
 
 		/* Check for child rows */
-		$device -> populate_list_device_history(0, 1);
+		$device -> populate_list_device_history();
 		if(count($device -> list_device_history) > 0) {
-			return array('error' => 'Cannot delete device because of a related device_history entry', 'code' => '400');
+			try {
+				foreach($device -> list_device_history as $device_history) {
+					$device_history -> delete();
+				}
+			} catch(Exception $e) {
+				return array('error' => 'Cannot delete device because a related device_history entry could not be deleted', 'code' => '400');
+			}
 		}
 
 		/* Delete it */

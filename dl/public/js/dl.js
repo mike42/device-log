@@ -579,7 +579,8 @@ function editPersonDelete() {
 			});
 		},
 		error : function(model, response) {
-			$('#editPersonStatus').html("Could not delete person! If they have history entries, simply change them to 'inactive' to hide them from most lists, or delete all of the devices first.");
+			console.log(model);
+			$('#editPersonStatus').html(response.responseJSON.error);
 			$('#editPersonStatus').show();
 		}
 	});
@@ -610,7 +611,26 @@ function editDeviceSave() {
 			$('#modalEditDevice').modal('hide');
 		},
 		error : function(model, response) {
-			$('#editDeviceStatus').html("Could not add device!");
+			$('#editDeviceStatus').html(response.responseJSON.error);
+			$('#editDeviceStatus').show();
+		}
+	});
+}
+
+function editDeviceDelete() {
+	var device = new device_model({
+		id : $('#editDeviceId').val()
+	});
+	device.destroy({
+		success: function(model, response) {
+			$('#modalEditDevice').modal('hide');
+			app_router.navigate('devices', {
+				trigger : true
+			});
+		},
+		error : function(model, response) {
+			console.log(response);
+			$('#editDeviceStatus').html(response.responseJSON.error);
 			$('#editDeviceStatus').show();
 		}
 	});

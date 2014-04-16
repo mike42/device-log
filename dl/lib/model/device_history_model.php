@@ -617,6 +617,14 @@ class device_history_model {
 	 * Delete device_history
 	 */
 	public function delete() {
+		$this -> populate_list_device_photo();		
+		if(count($this -> list_device_photo) != 0) {
+			foreach($this -> list_device_photo as $device_photo) {
+				$checksum = $device_photo -> get_checksum();
+				$device_photo -> delete();
+			}
+		}
+		
 		$sth = database::$dbh -> prepare("DELETE FROM `device_history` WHERE `device_history`.`id` = :id");
 		$data['id'] = $this -> get_id();
 		$sth -> execute($data);
