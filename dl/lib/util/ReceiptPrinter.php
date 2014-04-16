@@ -25,6 +25,23 @@ class ReceiptPrinter {
 		$printer -> set_emphasis(false);
 		$printer -> feed();
 		
+		$printer -> text($device_history -> get_comment() . "\n");
+		
+		/* Footer */
+		$printer -> text(self::$conf['footer']  . "\n");
+		$printer -> feed();
+
+		
+		/* Barcode */
+		if(is_numeric($device_history -> person -> get_code()) != "") {
+			$printer -> set_justification(escpos::JUSTIFY_CENTER);
+			$printer -> barcode($device_history -> person -> get_code(), escpos::BARCODE_CODE39);
+			$printer -> feed();
+			$printer -> text($device_history -> person -> get_code());
+			$printer -> feed(1);
+			$printer -> set_justification(escpos::JUSTIFY_LEFT);
+		}
+		
 		$printer -> cut();
 		
 		fclose($fp);

@@ -59,13 +59,13 @@ class device_history_controller {
 		}
 		
 		/* Check parent tables */
-		if(!technician_model::get($device_history -> get_technician_id())) {
+		if(!$technician = technician_model::get($device_history -> get_technician_id())) {
 			return array('error' => 'device_history is invalid because related technician does not exist', 'code' => '400');
 		}
-		if(!device_status_model::get($device_history -> get_device_status_id())) {
+		if(!$device_status = device_status_model::get($device_history -> get_device_status_id())) {
 			return array('error' => 'device_history is invalid because related device_status does not exist', 'code' => '400');
 		}
-		if(!person_model::get($device_history -> get_person_id())) {
+		if(!$person = person_model::get($device_history -> get_person_id())) {
 			return array('error' => 'device_history is invalid because related person does not exist', 'code' => '400');
 		}
 
@@ -112,6 +112,9 @@ class device_history_controller {
 						$device -> update();
 						break;
 				}
+				$device_history -> person = $person;
+				$device_history -> device_status = $device_status;
+				$device_history -> technician = $technician;
 			}
 			
 			if(isset($received['receipt']) && $received['receipt'] == 'true') {

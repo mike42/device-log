@@ -671,6 +671,7 @@ function dhChangeSelect(select) {
 	$('#dhChange').val(select);
 	$('.dh-changebox').hide();
 	$('#dh-' + select).show();
+	$('#logIncidentStatus').hide();
 	return false;
 }
 
@@ -748,8 +749,9 @@ function logIncidentSave(receipt) {
 		},
 		error : function(model, response) {
 			console.log(response);
+			$('#logIncidentStatus').hide();
 			$('#logIncidentStatus').html(response.responseJSON.error);
-			$('#logIncidentStatus').show();
+			$('#logIncidentStatus').show(300);
 		}
 	});
 }
