@@ -674,12 +674,13 @@ function dhChangeSelect(select) {
 	return false;
 }
 
-function logIncidentSave() {
+function logIncidentSave(receipt) {
 	var change = $('#dhChange').val();
 	var device_history = new device_history_model({
-		device_id : $('#dhDeviceId').val(),
+		device_id: $('#dhDeviceId').val(),
+		receipt: receipt
 	});
-
+	
 	switch (change) {
 	case 'comment':
 	case 'photo':

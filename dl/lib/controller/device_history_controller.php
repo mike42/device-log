@@ -86,7 +86,7 @@ class device_history_controller {
 				}
 				$dh -> set_comment($device_history -> get_comment());
 				$dh -> update();
-				return $dh -> to_array_filtered($role);
+				$device_history = $dh;
 			} else {
 				$device_history -> insert();
 				// Update related device
@@ -112,8 +112,20 @@ class device_history_controller {
 						$device -> update();
 						break;
 				}
-				return $device_history -> to_array_filtered($role);
 			}
+			
+			if(isset($received['receipt']) && $received['receipt'] == 'true') {
+				/* Print receipt */
+				core::loadClass("ReceiptPrinter");
+				
+				try {
+					ReceiptPrinter::dhReceipt($device_history);
+				} catch(Exception $e) {
+					// Ignore receipt printing issues
+				}
+			}
+			
+			return $device_history -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');
 		}

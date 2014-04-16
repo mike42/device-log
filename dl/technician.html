@@ -287,8 +287,8 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 				<div class="btn-group">
 					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Save <span class="caret"></span></button>
 					<ul class="dropdown-menu" style="text-align: left">
-						<li><a href="#" onClick="logIncidentSave()"><span class="glyphicon glyphicon-barcode"></span> Receipt</a></li>
-						<li><a href="#" onClick="logIncidentSave()"><span class="glyphicon glyphicon-tree-conifer"></span> No receipt</a></li>
+						<li><a href="#" onClick="return logIncidentSave(true);"><span class="glyphicon glyphicon-barcode"></span> Receipt</a></li>
+						<li><a href="#" onClick="return logIncidentSave(false);"><span class="glyphicon glyphicon-tree-conifer"></span> No receipt</a></li>
 					</ul>
 				</div>
 			</div>
