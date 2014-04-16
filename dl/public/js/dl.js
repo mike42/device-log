@@ -567,6 +567,24 @@ function editPersonSave() {
 	});
 }
 
+function editPersonDelete() {
+	var person = new person_model({
+		id : $('#editPersonId').val()
+	});
+	person.destroy({
+		success: function(model, response) {
+			$('#modalEditPerson').modal('hide');
+			app_router.navigate('people', {
+				trigger : true
+			});
+		},
+		error : function(model, response) {
+			$('#editPersonStatus').html("Could not delete person! If they have history entries, simply change them to 'inactive' to hide them from most lists, or delete all of the devices first.");
+			$('#editPersonStatus').show();
+		}
+	});
+}
+
 function editDeviceSave() {
 	var device = new device_model({
 		id : $('#editDeviceId').val()
@@ -697,8 +715,7 @@ var AppRouter = Backbone.Router.extend({
 	routes : {
 		"person/:id" : "loadPerson",
 		"device/:id" : "loadDevice",
-		"*actions" : "defaultRoute" // Backbone will try match the route above
-	// first
+		"*actions" : "defaultRoute"
 	}
 });
 
