@@ -284,7 +284,13 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary" onClick="logIncidentSave()">Save</button>
+				<div class="btn-group">
+					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Save <span class="caret"></span></button>
+					<ul class="dropdown-menu" style="text-align: left">
+						<li><a href="#" onClick="logIncidentSave()"><span class="glyphicon glyphicon-barcode"></span> Receipt</a></li>
+						<li><a href="#" onClick="logIncidentSave()"><span class="glyphicon glyphicon-tree-conifer"></span> No receipt</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -296,7 +302,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 	<div class="btn-group">
 		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Lookup <span class="caret"></span></button>
 			<ul class="dropdown-menu">
-				<li><a href="https://selfsolve.apple.com/wcResults.do?sn=<%= _.escape(sn) %>&Continue=Continue&num=0" target="_new">Apple Warranty</a></li>
+				<li><a href="https://selfsolve.apple.com/wcResults.do?sn=<%= _.escape(sn) %>&Continue=Continue&num=0" target="_new"><span class="glyphicon glyphicon-certificate"></span> Apple Warranty</a></li>
 			</ul>
 		</div>
 	</div>
