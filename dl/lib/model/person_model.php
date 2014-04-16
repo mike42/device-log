@@ -228,6 +228,9 @@ class person_model {
 		if(strlen($code) > 64) {
 			throw new Exception("person.code cannot be longer than 64 characters");
 		}
+		if(strlen($code) < 1) {
+			throw new Exception("person.code cannot be empty");
+		}
 		$this -> code = $code;
 		$this -> model_variables_changed['code'] = true;
 		$this -> model_variables_set['code'] = true;
@@ -306,6 +309,9 @@ class person_model {
 		if(strlen($firstname) > 64) {
 			throw new Exception("person.firstname cannot be longer than 64 characters");
 		}
+		if(strlen($firstname) < 1) {
+			throw new Exception("person.firstname cannot be empty");
+		}
 		$this -> firstname = $firstname;
 		$this -> model_variables_changed['firstname'] = true;
 		$this -> model_variables_set['firstname'] = true;
@@ -331,6 +337,9 @@ class person_model {
 	public function set_surname($surname) {
 		if(strlen($surname) > 64) {
 			throw new Exception("person.surname cannot be longer than 64 characters");
+		}
+		if(strlen($surname) < 1) {
+			throw new Exception("person.surname cannot be empty");
 		}
 		$this -> surname = $surname;
 		$this -> model_variables_changed['surname'] = true;

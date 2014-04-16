@@ -361,7 +361,7 @@ $('#submitAddNew').click(function() {
 				$("#modalAddNew").modal('hide');
 			},
 			error : function(model, response) {
-				$('#addPersonStatus').html("Could not add person!");
+				$('#addPersonStatus').html("Could not add person! Check that you have included all of the information.");
 				$('#addPersonStatus').show();
 			}
 		});
@@ -388,7 +388,7 @@ $('#submitAddNew').click(function() {
 				$("#modalAddNew").modal('hide');
 			},
 			error : function(model, response) {
-				$('#addDeviceStatus').html("Could not add device!");
+				$('#addDeviceStatus').html("Could not add device! Check that you have included all of the information.");
 				$('#addDeviceStatus').show();
 			}
 		});
@@ -561,7 +561,7 @@ function editPersonSave() {
 			$('#modalEditPerson').modal('hide');
 		},
 		error : function(model, response) {
-			$('#editPersonStatus').html("Could not save changes!");
+			$('#editPersonStatus').html(response.responseJSON.error);
 			$('#editPersonStatus').show();
 		}
 	});
