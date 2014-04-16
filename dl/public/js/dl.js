@@ -325,6 +325,11 @@ $('#btnAddNew').on('click', function(event) {
 	$("#modalAddNew input[type=checkbox]").removeAttr('checked');
 	$("#cboAddNew").val('addselect');
 	$("#cboAddNew").change()
+	
+	/* Recorded person ID */
+	$('#addDeviceOwnerFrmGroup').removeClass('has-error');
+	$('#addDeviceOwnerFrmGroup').removeClass('has-success');
+	$('#addDevicePersonId').val('');
 
 	/* Fill device type combo */
 	renderDeviceTypes('select#addDeviceSelectType', '');
