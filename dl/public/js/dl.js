@@ -325,7 +325,7 @@ $('#btnAddNew').on('click', function(event) {
 	$("#modalAddNew input[type=checkbox]").removeAttr('checked');
 	$("#cboAddNew").val('addselect');
 	$("#cboAddNew").change()
-	
+
 	/* Recorded person ID */
 	$('#addDeviceOwnerFrmGroup').removeClass('has-error');
 	$('#addDeviceOwnerFrmGroup').removeClass('has-success');
@@ -346,70 +346,95 @@ $('#cboAddNew').change(function() {
 	$('#' + this.value).show();
 });
 
-$('#submitAddNew').click(function() {
-	switch ($('#cboAddNew').val()) {
-	case 'addperson':
-		var person = new person_model({
-			code : $('#addPersonUserCode').val(),
-			firstname : $('#addPersonFirstName').val(),
-			surname : $('#addPersonSurname').val(),
-			is_staff : ($('#addPersonIsStaff').prop('checked') ? '1' : 0),
-			is_active : ($('#addPersonIsActive').prop('checked') ? '1' : 0)
-		});
+$('#submitAddNew')
+		.click(
+				function() {
+					switch ($('#cboAddNew').val()) {
+					case 'addperson':
+						var person = new person_model(
+								{
+									code : $('#addPersonUserCode').val(),
+									firstname : $('#addPersonFirstName').val(),
+									surname : $('#addPersonSurname').val(),
+									is_staff : ($('#addPersonIsStaff').prop(
+											'checked') ? '1' : 0),
+									is_active : ($('#addPersonIsActive').prop(
+											'checked') ? '1' : 0)
+								});
 
-		person.save(null, {
-			success : function(model, response) {
-				var id = model.get('id');
-				app_router.navigate('person/' + id, {
-					trigger : true
-				});
-				$("#modalAddNew").modal('hide');
-			},
-			error : function(model, response) {
-				$('#addPersonStatus').html("Could not add person! Check that you have included all of the information.");
-				$('#addPersonStatus').show();
-			}
-		});
-		break;
-	case 'adddevice':
-		var device = new device_model({
-			sn : $('#addDeviceSn').val(),
-			mac_eth0 : $('#addDeviceMacEth0').val(),
-			mac_wlan0 : $('#addDeviceMacWlan0').val(),
-			person_id : $('#addDevicePersonId').val(),
-			device_status_id : $('#addDeviceSelectStatus').val(),
-			device_type_id : $('#addDeviceSelectType').val(),
-			is_bought : ($('#addDeviceIsBought').prop('checked') ? '1' : 0),
-			is_spare : ($('#addDeviceIsSpare').prop('checked') ? '1' : 0),
-			is_damaged : ($('#addDeviceIsDamaged').prop('checked') ? '1' : 0)
-		});
+						person
+								.save(
+										null,
+										{
+											success : function(model, response) {
+												var id = model.get('id');
+												app_router.navigate('person/'
+														+ id, {
+													trigger : true
+												});
+												$("#modalAddNew").modal('hide');
+											},
+											error : function(model, response) {
+												$('#addPersonStatus')
+														.html(
+																"Could not add person! Check that you have included all of the information.");
+												$('#addPersonStatus').show();
+											}
+										});
+						break;
+					case 'adddevice':
+						var device = new device_model(
+								{
+									sn : $('#addDeviceSn').val(),
+									mac_eth0 : $('#addDeviceMacEth0').val(),
+									mac_wlan0 : $('#addDeviceMacWlan0').val(),
+									person_id : $('#addDevicePersonId').val(),
+									device_status_id : $(
+											'#addDeviceSelectStatus').val(),
+									device_type_id : $('#addDeviceSelectType')
+											.val(),
+									is_bought : ($('#addDeviceIsBought').prop(
+											'checked') ? '1' : 0),
+									is_spare : ($('#addDeviceIsSpare').prop(
+											'checked') ? '1' : 0),
+									is_damaged : ($('#addDeviceIsDamaged')
+											.prop('checked') ? '1' : 0)
+								});
 
-		device.save(null, {
-			success : function(model, response) {
-				var id = model.get('id');
-				app_router.navigate('device/' + id, {
-					trigger : true
+						device
+								.save(
+										null,
+										{
+											success : function(model, response) {
+												var id = model.get('id');
+												app_router.navigate('device/'
+														+ id, {
+													trigger : true
+												});
+												$("#modalAddNew").modal('hide');
+											},
+											error : function(model, response) {
+												$('#addDeviceStatus')
+														.html(
+																"Could not add device! Check that you have included all of the information.");
+												$('#addDeviceStatus').show();
+											}
+										});
+						break;
+					case 'addsoftware':
+						$('#addSoftwareStatus').html(
+								"You cannot add <b>Software</b> yet.");
+						$('#addSoftwareStatus').show();
+						break;
+					case 'addkey':
+						$('#addKeyStatus').html(
+								"You cannot add a <b>Key</b> yet.");
+						$('#addKeyStatus').show();
+						break;
+					default:
+						// Do nothing on the main page
+					}
 				});
-				$("#modalAddNew").modal('hide');
-			},
-			error : function(model, response) {
-				$('#addDeviceStatus').html("Could not add device! Check that you have included all of the information.");
-				$('#addDeviceStatus').show();
-			}
-		});
-		break;
-	case 'addsoftware':
-		$('#addSoftwareStatus').html("You cannot add <b>Software</b> yet.");
-		$('#addSoftwareStatus').show();
-		break;
-	case 'addkey':
-		$('#addKeyStatus').html("You cannot add a <b>Key</b> yet.");
-		$('#addKeyStatus').show();
-		break;
-	default:
-		// Do nothing on the main page
-}
-});
 
 // Switch on autocomplete
 var personSearch = new Bloodhound({
@@ -471,7 +496,6 @@ $('#addDeviceOwner').on('input', function() {
 	$('#addDeviceOwnerFrmGroup').removeClass('has-success');
 	$('#addDevicePersonId').val('');
 });
-
 
 $('#personQuickSearch').on('typeahead:selected', function(evt, item) {
 	app_router.navigate('person/' + item.id, {
@@ -577,7 +601,7 @@ function editPersonDelete() {
 		id : $('#editPersonId').val()
 	});
 	person.destroy({
-		success: function(model, response) {
+		success : function(model, response) {
 			$('#modalEditPerson').modal('hide');
 			app_router.navigate('people', {
 				trigger : true
@@ -627,7 +651,7 @@ function editDeviceDelete() {
 		id : $('#editDeviceId').val()
 	});
 	device.destroy({
-		success: function(model, response) {
+		success : function(model, response) {
 			$('#modalEditDevice').modal('hide');
 			app_router.navigate('devices', {
 				trigger : true
@@ -646,57 +670,59 @@ function dhChangeSelect(select) {
 	$('#dh-select-' + select).addClass('active');
 	$('#dhChange').val(select);
 	$('.dh-changebox').hide();
-	$('#dh-' + select).show();	
+	$('#dh-' + select).show();
+	$('#logIncidentStatus').hide();
 	return false;
 }
 
-function logIncidentSave() {
+function logIncidentSave(receipt) {
 	var change = $('#dhChange').val();
 	var device_history = new device_history_model({
-		device_id : $('#dhDeviceId').val(),
+		device_id: $('#dhDeviceId').val(),
+		receipt: receipt
 	});
-
-	switch(change) {
+	
+	switch (change) {
 	case 'comment':
 	case 'photo':
 		var att = {
-			change: change,
-			comment: $('#dhComment').val()
+			change : change,
+			comment : $('#dhComment').val()
 		};
 		break;
 	case 'owner':
 		var att = {
-			change: change,
-			comment: $('#dhComment').val(),
-			person_id: $('#dhPersonId').val()
+			change : change,
+			comment : $('#dhComment').val(),
+			person_id : $('#dhPersonId').val()
 		};
 		break;
 	case 'status':
 		var att = {
-			change: change,
-			comment: $('#dhComment').val(),
-			device_status_id: $('#dhSelectStatus').val()
+			change : change,
+			comment : $('#dhComment').val(),
+			device_status_id : $('#dhSelectStatus').val()
 		};
 		break;
 	case 'damaged':
 		var att = {
-			change: change,
-			comment: $('#dhComment').val(),
+			change : change,
+			comment : $('#dhComment').val(),
 			is_damaged : ($('#dhIsDamaged').prop('checked') ? '1' : '0')
 		};
 		break;
 	case 'spare':
 		var att = {
-			change: change,
-			comment: $('#dhComment').val(),
-			is_spare: ($('#dhIsSpare').prop('checked') ? '1' : '0')
+			change : change,
+			comment : $('#dhComment').val(),
+			is_spare : ($('#dhIsSpare').prop('checked') ? '1' : '0')
 		};
 		break;
 	case 'bought':
 		var att = {
-			change: change,
-			comment: $('#dhComment').val(),
-			is_bought: ($('#dhIsBought').prop('checked') ? '1' : '0')
+			change : change,
+			comment : $('#dhComment').val(),
+			is_bought : ($('#dhIsBought').prop('checked') ? '1' : '0')
 		};
 		break;
 	default:
@@ -707,7 +733,9 @@ function logIncidentSave() {
 		patch : true,
 		success : function(model, response) {
 			$('#modalLogIncident').on('hidden.bs.modal', function(e) {
-				device = new device_model({id: device_history.get('device_id')});
+				device = new device_model({
+					id : device_history.get('device_id')
+				});
 				device.fetch({
 					success : function(results) {
 						showDeviceDetail(results);
@@ -721,8 +749,9 @@ function logIncidentSave() {
 		},
 		error : function(model, response) {
 			console.log(response);
+			$('#logIncidentStatus').hide();
 			$('#logIncidentStatus').html(response.responseJSON.error);
-			$('#logIncidentStatus').show();
+			$('#logIncidentStatus').show(300);
 		}
 	});
 }
@@ -761,7 +790,7 @@ function showDeviceDetail(results) {
 		collection : deviceHistoryList
 	});
 	deviceHistoryListView.render();
-	
+
 	/* Set type-ahead */
 	$('#dhPersonSelect').typeahead({
 		minLength : 2
@@ -787,9 +816,9 @@ function showDeviceDetail(results) {
 	});
 
 	$('div#incident-photo-dropzone').dropzone({
-		url: "/dl/api/device_photo/upload/" + results.get('id'),
-		uploadMultiple: true,
-		acceptedFiles: "image/*",
+		url : "/dl/api/device_photo/upload/" + results.get('id'),
+		uploadMultiple : true,
+		acceptedFiles : "image/*",
 	});
 }
 

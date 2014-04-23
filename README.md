@@ -8,15 +8,19 @@ A full history of each device is kept, so that technicians can troubleshoot prob
 Setup
 -----
 
-Install PHP's LDAP functions:
+Install PHP's LDAP and Imagick functions:
 
-        sudo apt-get install php5-ldap
+        sudo apt-get install php5-ldap php5-imagick
         sudo service apache2 restart
 
 Clone the repo, then:
 * Add a symbolic link to the 'dl' folder from your webroot.
 * Install the database
 * Open site/config.example.php, add options and save to site/config.php
+
+Post-setup
+----------
+Test receipt printing and file uploads. File permissions and protocol issues can make these a bit tricky.
 
 Credits
 -------
@@ -26,5 +30,6 @@ Client-side libraries used:
 * [bootstrap](http://getbootstrap.com/‎)
 * [backbone.js](http://backbonejs.org/‎)
 * [jQuery](http://jquery.com/‎)
+* [Dropzone.js](http://www.dropzonejs.com/‎)
 * [Bootstrap 3 Typeahead](https://github.com/bassjobsen/Bootstrap-3-Typeahead)
 

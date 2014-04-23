@@ -1,0 +1,3 @@
+[submodule "dl/lib/vendor/escpos-php"]
+	path = dl/lib/vendor/escpos-php
+	url = https://github.com/mike42/escpos-php

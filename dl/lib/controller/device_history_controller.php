@@ -59,13 +59,13 @@ class device_history_controller {
 		}
 		
 		/* Check parent tables */
-		if(!technician_model::get($device_history -> get_technician_id())) {
+		if(!$technician = technician_model::get($device_history -> get_technician_id())) {
 			return array('error' => 'device_history is invalid because related technician does not exist', 'code' => '400');
 		}
-		if(!device_status_model::get($device_history -> get_device_status_id())) {
+		if(!$device_status = device_status_model::get($device_history -> get_device_status_id())) {
 			return array('error' => 'device_history is invalid because related device_status does not exist', 'code' => '400');
 		}
-		if(!person_model::get($device_history -> get_person_id())) {
+		if(!$person = person_model::get($device_history -> get_person_id())) {
 			return array('error' => 'device_history is invalid because related person does not exist', 'code' => '400');
 		}
 
@@ -86,7 +86,7 @@ class device_history_controller {
 				}
 				$dh -> set_comment($device_history -> get_comment());
 				$dh -> update();
-				return $dh -> to_array_filtered($role);
+				$device_history = $dh;
 			} else {
 				$device_history -> insert();
 				// Update related device
@@ -111,9 +111,27 @@ class device_history_controller {
 						$device -> set_is_bought($device_history -> get_is_bought());
 						$device -> update();
 						break;
+					default:
+						// Nothing to do.
 				}
-				return $device_history -> to_array_filtered($role);
+				$device_history -> device = $device;
+				$device_history -> person = $person;
+				$device_history -> device_status = $device_status;
+				$device_history -> technician = $technician;
 			}
+			
+			if(isset($received['receipt']) && $received['receipt'] == 'true') {
+				/* Print receipt */
+				core::loadClass("ReceiptPrinter");
+				
+				try {
+					ReceiptPrinter::dhReceipt($device_history);
+				} catch(Exception $e) {
+					// Ignore receipt printing issues
+				}
+			}
+			
+			return $device_history -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');
 		}
