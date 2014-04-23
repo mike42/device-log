@@ -112,6 +112,7 @@ class device_history_controller {
 						$device -> update();
 						break;
 				}
+				$device_history -> device = $device;
 				$device_history -> person = $person;
 				$device_history -> device_status = $device_status;
 				$device_history -> technician = $technician;

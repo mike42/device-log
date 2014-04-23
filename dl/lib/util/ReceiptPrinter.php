@@ -22,18 +22,59 @@ class ReceiptPrinter {
 		$printer -> set_justification(escpos::JUSTIFY_CENTER);
 		$printer -> set_emphasis(true);
 		$printer -> text(self::$conf['header'] . "\n");
+		$printer -> text($device_history -> get_date() . "\n");
 		$printer -> set_emphasis(false);
+		$printer -> set_justification(escpos::JUSTIFY_LEFT);
 		$printer -> feed();
+
+		/* Person details */
+		$printer -> set_emphasis(true);
+		$printer -> text(($device_history -> person -> get_is_staff() == '1' ? "Staff member" : "Student") . " details:\n");
+		$printer -> set_emphasis(false);
+		$printer -> text(" - " . $device_history -> person -> get_firstname() . " " . $device_history -> person -> get_surname() . " (" . $device_history -> person -> get_code() . ")\n\n");
+
+		/* Device details */
+		$printer -> set_emphasis(true);
+		$printer -> text("Device details:\n");
+		$printer -> set_emphasis(false);
+		$model = trim($device_history -> device -> device_type -> get_name() . " " . $device_history -> device -> device_type -> get_model_no());
+		if($model == "") {
+			$model = "Not recorded";
+		}
+		$printer -> text(" - Model: " . $model . "\n");
+		$sn = trim($device_history -> device -> get_sn());
+		if($sn == "") {
+			$sn = "Not recorded";
+		}
+		$printer -> text(" - Serial #: " . $sn . "\n");
+		if($device_history -> device -> get_mac_eth0() != "") {
+			$printer -> text(" - Wired MAC: " . $device_history -> device -> get_mac_eth0() . "\n");
+		}
+		if($device_history -> device -> get_mac_wlan0() != "") {
+			$printer -> text(" - Wireless MAC: " . $device_history -> device -> get_mac_wlan0() . "\n");
+		}
+		$printer -> text(" - Spare: " . ($device_history -> device -> get_is_spare() == '1' ? "N" : "Y") . "   Damaged: " . ($device_history -> device -> get_is_damaged() == '1' ? "N" : "Y") . "   Bought: " . ($device_history -> device -> get_is_bought() == '1' ? "N" : "Y") . "\n");
+		$printer -> text(" - Status: " . $device_history -> device_status -> get_tag() . "\n\n");
 		
-		$printer -> text($device_history -> get_comment() . "\n");
+		/* Change details */
+		$printer -> set_emphasis(true);
+		$printer -> text("Notes:\n");
+		$printer -> set_emphasis(false);
+		$printer -> text("01234567890123456789012345678901234567890123456789\n"); // 47
+		$printer -> text(wordwrap($device_history -> get_comment()) . "\n");
+		
+
+		$printer -> text("Technician: " . $device_history -> technician -> get_name() . "\n\n");
+
 		
 		/* Footer */
+		$printer -> set_emphasis(false);
+		
 		$printer -> text(self::$conf['footer']  . "\n");
 		$printer -> feed();
 
-		
 		/* Barcode */
-		if(is_numeric($device_history -> person -> get_code()) != "") {
+		if(is_numeric($device_history -> person -> get_code())) {
 			$printer -> set_justification(escpos::JUSTIFY_CENTER);
 			$printer -> barcode($device_history -> person -> get_code(), escpos::BARCODE_CODE39);
 			$printer -> feed();
@@ -46,7 +87,6 @@ class ReceiptPrinter {
 		
 		fclose($fp);
 	}
-	
 	
 	public static function pwresetReceipt(AccountOwner_model $owner, $password) {
 		if(!isset(self::$conf['ip']) || self::$conf['ip'] == "0.0.0.0") {
