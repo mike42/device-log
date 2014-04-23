@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('UTC');
 
 /* Database connection options */
 $config['database']['user'] = "device-log";
