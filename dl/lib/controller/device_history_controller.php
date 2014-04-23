@@ -111,6 +111,8 @@ class device_history_controller {
 						$device -> set_is_bought($device_history -> get_is_bought());
 						$device -> update();
 						break;
+					default:
+						// Nothing to do.
 				}
 				$device_history -> device = $device;
 				$device_history -> person = $person;
