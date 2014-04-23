@@ -216,14 +216,14 @@ class person_controller {
 		/* Retrieve and filter rows */
 		try {
 			$search = $_GET['q'];
-			$person_list = person_model::search_by_code($search, ($page - 1) * $itemspp, $itemspp);
+			$person_list = person_model::search_general($search, ($page - 1) * $itemspp, $itemspp);
 			$ret = array();
 			foreach($person_list as $person) {
 				$ret[] = $person -> to_array_filtered($role);
 			}
 			return $ret;
 		} catch(Exception $e) {
-			return array('error' => 'Failed to list', 'code' => '500');
+			return array('error' => 'Failed to list'.$e->getMessage(), 'code' => '500');
 		}
 	}
 }

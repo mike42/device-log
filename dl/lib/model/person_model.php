@@ -593,5 +593,29 @@ class person_model {
 		}
 		return $ret;
 	}
+	
+	/**
+	 * Search for matches within firstname, surname or code
+	 *
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function search_general($search, $start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `person`  WHERE code LIKE :search1 OR surname LIKE :search2 OR firstname LIKE :search3" . self::SORT_CLAUSE . $ls . ";");
+		$sth -> execute(array('search1' => "%".$search."%", 'search2' => "%".$search."%", 'search3' => "%".$search."%"));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new person_model($assoc);
+		}
+		return $ret;
+	}
 }
 ?>

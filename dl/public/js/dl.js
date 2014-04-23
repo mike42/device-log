@@ -246,32 +246,104 @@ function handleFailedRequest(response) {
 	}
 }
 
-function doLoadPeople() {
+function doLoadPeople(page) {
+	var count = 100;
+	if(typeof page == "undefined") {
+		page = 1;
+	}
+	$('tbody#person-tbody').empty();
 	$('#personDetail').hide();
 	$('#personList').show();
 	var people = new PersonCollection();
 	people.fetch({
+		url: '/dl/api/person/list_all/' + page + '/' + count,
 		success : function(results) {
 			var db = new PersonTableView({
 				collection : people
 			});
 			db.render();
 			$('#personQuickSearch').focus();
+			
+			// Only include the prev link if page > 1
+			$('#peoplePrevLink').off('click');
+			if(page > 1) {
+				$('#peoplePrevLink').on('click', function(e) {
+					e.preventDefault();
+					doLoadPeople(page - 1);
+				});
+				$('#peoplePrevLi').removeClass('disabled');
+			} else {
+				$('#peoplePrevLink').on('click', function(e) {
+					e.preventDefault();
+				});
+				$('#peoplePrevLi').addClass('disabled');
+			}
+
+			// If this page is full, we need the 'Next link'
+			$('#peopleNextLink').off('click');
+			if(db.collection.length == count) {
+				$('#peopleNextLink').on('click', function(e) {
+					e.preventDefault();
+					doLoadPeople(page + 1);
+				});
+				$('#peopleNextLi').removeClass('disabled');
+			} else {
+				$('#peopleNextLink').on('click', function(e) {
+					e.preventDefault();
+				});
+				$('#peopleNextLi').addClass('disabled');
+			}
 		},
 	});
 }
 
-function doLoadDevices() {
+function doLoadDevices(page) {
+	var count = 100;
+	if(typeof page == "undefined") {
+		page = 1;
+	}
+	$('tbody#device-tbody').empty();
 	$('#deviceDetail').hide();
 	$('#deviceList').show();
 	var devices = new DeviceCollection();
 	devices.fetch({
+		url: '/dl/api/device/list_all/' + page + '/' + count,
 		success : function(results) {
 			var db = new DeviceTableView({
 				collection : devices
 			});
 			db.render();
 			$('#deviceQuickSearch').focus();
+			
+			// Only include the prev link if page > 1
+			$('#devicesPrevLink').off('click');
+			if(page > 1) {
+				$('#devicesPrevLink').on('click', function(e) {
+					e.preventDefault();
+					doLoadDevices(page - 1);
+				});
+				$('#devicesPrevLi').removeClass('disabled');
+			} else {
+				$('#devicesPrevLink').on('click', function(e) {
+					e.preventDefault();
+				});
+				$('#devicesPrevLi').addClass('disabled');
+			}
+
+			// If this page is full, we need the 'Next link'
+			$('#devicesNextLink').off('click');
+			if(db.collection.length == count) {
+				$('#devicesNextLink').on('click', function(e) {
+					e.preventDefault();
+					doLoadDevices(page + 1);
+				});
+				$('#devicesNextLi').removeClass('disabled');
+			} else {
+				$('#devicesNextLink').on('click', function(e) {
+					e.preventDefault();
+				});
+				$('#devicesNextLi').addClass('disabled');
+			}
 		},
 		error : function(model, response) {
 			handleFailedRequest(response);

@@ -39,7 +39,7 @@
 		<td><a href="#device/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
 		<td><%= _.escape(device_type.name) %></td>
 		<td><a href="#device/<%= _.escape(id) %>"><%= _.escape(sn) %></a></td>
-		<td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.code) %></a></td>
+		<td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname) %> <%= _.escape(person.surname) %> (<%= _.escape(person.code) %>)</a></td>
 		<td><%= _.escape(device_status.tag) %></td>
 		<td><%= yn(is_spare) %></td>
 		<td><%= yn(is_damaged) %></td>
@@ -367,6 +367,12 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 
 			<div class="tab-pane" id="people">
 				<div id="personList">
+					<div class="btn-group" style="float: right; padding-top: 10px;">
+						<button onClick="doLoadPeople()" type="button"
+							class="btn btn-default">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</div>
 					<p style="padding-top: 10px">Quick Search:</p>
 
 					<form class="col-sm-6">
@@ -389,6 +395,15 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 						</thead>
 						<tbody id="person-tbody"></tbody>
 					</table>
+
+					<div style="text-align: center">
+						<ul class="pager">
+							<li id="peoplePrevLi" class="disabled"><a href="#"
+								onClick="return false;" id="peoplePrevLink">&larr; Previous</a></li>
+							<li id="peopleNextLi" class="disabled"><a href="#"
+								onClick="return false;" id="peopleNextLink">Next &rarr;</a></li>
+						</ul>
+					</div>
 				</div>
 				<div id="personDetail">
 					<div class="row">
@@ -402,6 +417,23 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 
 			<div class="tab-pane" id="devices">
 				<div id="deviceList">
+					<div class="btn-group" style="float: right; padding-top: 10px;">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default dropdown-toggle"
+								data-toggle="dropdown">
+								<span class="glyphicon glyphicon-cog"></span> <span
+									class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Status codes</a></li>
+								<li><a href="#">Device types</a></li>
+							</ul>
+						</div>
+						<button onClick="doLoadDevices()" type="button"
+							class="btn btn-default">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</div>
 					<p style="padding-top: 10px">Quick Search:</p>
 
 					<form class="col-sm-6">
@@ -412,14 +444,13 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 						</div>
 					</form>
 
-
 					<table class="table table-striped">
 						<thead>
 							<tr>
 								<th>ID</th>
 								<th>Type</th>
 								<th>Device Serial</th>
-								<th>Owner Code</th>
+								<th>Owner</th>
 								<th>Device Status</th>
 								<th>Spare</th>
 								<th>Damaged</th>
@@ -428,6 +459,15 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 						</thead>
 						<tbody id="device-tbody"></tbody>
 					</table>
+
+					<div style="text-align: center">
+						<ul class="pager">
+							<li id="devicesPrevLi" class="disabled"><a href="#"
+								onClick="return false;" id="devicesPrevLink">&larr; Previous</a></li>
+							<li id="devicesNextLi" class="disabled"><a href="#"
+								onClick="return false;" id="devicesNextLink">Next &rarr;</a></li>
+						</ul>
+					</div>
 				</div>
 
 				<div id="deviceDetail">
@@ -461,7 +501,9 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"
 						aria-hidden="true">&times;</button>
-					<h4 class="modal-title"><span class="glyphicon glyphicon-plus"></span> Add New</h4>
+					<h4 class="modal-title">
+						<span class="glyphicon glyphicon-plus"></span> Add New
+					</h4>
 				</div>
 				<div class="modal-body">
 					<div class="btn-group">
@@ -525,9 +567,10 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 									<label for="addDeviceSn">Serial</label> <input type="text"
 										class="form-control" id="addDeviceSn" placeholder="Serial">
 								</div>
-								<div class="form-group" id="addDeviceOwnerFrmGroup" style="padding-left: 25px">
-									<input type="hidden" id="addDevicePersonId" value="" />
-									<label for="addDeviceOwner">Allocated to</label><br /> <input
+								<div class="form-group" id="addDeviceOwnerFrmGroup"
+									style="padding-left: 25px">
+									<input type="hidden" id="addDevicePersonId" value="" /> <label
+										for="addDeviceOwner">Allocated to</label><br /> <input
 										type="text" class="form-control typeahead" id="addDeviceOwner"
 										placeholder="Owner">
 								</div>
@@ -549,15 +592,18 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 									</select>
 								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox" id="addDeviceIsSpare"> Spare
+									<label> <input type="checkbox" id="addDeviceIsSpare">
+										Spare
 									</label>
 								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox" id="addDeviceIsDamaged"> Damaged
+									<label> <input type="checkbox" id="addDeviceIsDamaged">
+										Damaged
 									</label>
 								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox" id="addDeviceIsBought"> Bought
+									<label> <input type="checkbox" id="addDeviceIsBought">
+										Bought
 									</label>
 								</div>
 								<div style="padding-left: 25px;"></div>
