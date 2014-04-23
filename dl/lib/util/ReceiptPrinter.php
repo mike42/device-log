@@ -53,7 +53,7 @@ class ReceiptPrinter {
 		if($device_history -> device -> get_mac_wlan0() != "") {
 			$printer -> text(" - Wireless MAC: " . $device_history -> device -> get_mac_wlan0() . "\n");
 		}
-		$printer -> text(" - Spare: " . ($device_history -> device -> get_is_spare() == '1' ? "N" : "Y") . "   Damaged: " . ($device_history -> device -> get_is_damaged() == '1' ? "N" : "Y") . "   Bought: " . ($device_history -> device -> get_is_bought() == '1' ? "N" : "Y") . "\n");
+		$printer -> text(" - Spare: " . ($device_history -> device -> get_is_spare() == '1' ? "Y" : "N") . "   Damaged: " . ($device_history -> device -> get_is_damaged() == '1' ? "Y" : "N") . "   Bought: " . ($device_history -> device -> get_is_bought() == '1' ? "Y" : "N") . "\n");
 		$printer -> text(" - Status: " . $device_history -> device_status -> get_tag() . "\n\n");
 		
 		/* Change details */
