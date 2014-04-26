@@ -34,6 +34,36 @@
     <% }); %>
 </script>
 
+<script type="text/template" id="software-type-select">
+	<option value="">(select)</option>
+    <% _.each(software_types, function(software_type)  { %>
+      <option value="<%= _.escape(software_type.id) %>"><%= _.escape(software_type.name) %></option>
+    <% }); %>
+</script>
+
+
+<script type="text/template" id="software-status-select">
+	<option value="">(select)</option>
+    <% _.each(software_statuses, function(software_status)  { %>
+      <option value="<%= _.escape(software_status.id) %>"><%= _.escape(software_status.tag) %></option>
+    <% }); %>
+</script>
+
+<script type="text/template" id="key-type-select">
+	<option value="">(select)</option>
+    <% _.each(key_types, function(key_type)  { %>
+      <option value="<%= _.escape(key_type.id) %>"><%= _.escape(key_type.name) %></option>
+    <% }); %>
+</script>
+
+
+<script type="text/template" id="key-status-select">
+	<option value="">(select)</option>
+    <% _.each(key_statuses, function(key_status)  { %>
+      <option value="<%= _.escape(key_status.id) %>"><%= _.escape(key_status.name) %></option>
+    <% }); %>
+</script>
+
 <script type="text/template" id="device-template-tr">
 	<tr>
 		<td><a href="#device/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
@@ -615,28 +645,29 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 								<div id="addSoftwareStatus"
 									class="bs-callout bs-callout-warning">...</div>
 								<div class="form-group" style="padding-left: 25px">
-									<label for="inputAppID">App ID</label> <input type="text"
-										class="form-control" id="inputAppID" placeholder="Enter ID">
-								</div>
-								<div class="form-group" style="padding-left: 25px">
-									<label for="inputSFCode">Code</label> <input type="text"
-										class="form-control" id="inputSFCode" placeholder="Code">
-								</div>
-								<div class="form-group" style="padding-left: 25px">
-									<label for="inputOwner">Person</label> <input type="text"
-										class="form-control" id="inputOwner" placeholder="Person">
-								</div>
-								<div class="form-group" style="padding-left: 25px">
-									<label for="selectSFType">Type</label> <select
-										id="selectSFType"
+									<label for="addSoftwareSelectType">Type</label> <select
+										id="addSoftwareSelectType"
 										class="btn btn-default dropdown-toggle form-control">
-										<option>Select</option>
-										<option value="addMedia">Media</option>
-										<option value="addEdu">Educational</option>
+										<option value="">Loading...</option>
+									</select>
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="addSoftwareCode">Product Code (if applicable)</label> <input type="text"
+										class="form-control" id="addSoftwareCode" placeholder="Code">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="addSoftwareOwner">Allocated to</label> <input type="text"
+										class="form-control" id="addSoftwareOwner" placeholder="Person">
+								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="addSoftwareSelectStatus">Status</label> <select
+										id="addSoftwareSelectStatus"
+										class="btn btn-default dropdown-toggle form-control">
+										<option value="">Loading...</option>
 									</select>
 								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox">Bought
+									<label> <input type="checkbox" id="addSoftwareIsBought">Bought
 									</label>
 								</div>
 								<div style="padding-left: 25px;"></div>
@@ -647,6 +678,13 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 							<form role="form" style="padding-top: 40px">
 								<div id="addKeyStatus" class="bs-callout bs-callout-warning">...</div>
 								<div class="form-group" style="padding-left: 25px">
+									<label for="addKeySelectType">Type</label> <select
+										id="addKeySelectType"
+										class="btn btn-default dropdown-toggle form-control">
+										<option value="">Loading...</option>
+									</select>
+								</div>
+								<div class="form-group" style="padding-left: 25px">
 									<label for="inputKeySerial">Serial</label> <input type="text"
 										class="form-control" id="inputKeySerial" placeholder="Serial">
 								</div>
@@ -655,8 +693,15 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 										class="form-control" id="inputPersonCode"
 										placeholder="Staff Code">
 								</div>
+								<div class="form-group" style="padding-left: 25px">
+									<label for="addKeySelectStatus">Status</label> <select
+										id="addKeySelectStatus"
+										class="btn btn-default dropdown-toggle form-control">
+										<option value="">Loading...</option>
+									</select>
+								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox"> Spare
+									<label> <input type="checkbox" id="addSoftwareIsSpare"> Spare
 									</label>
 								</div>
 								<div style="padding-left: 25px;"></div>

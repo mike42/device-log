@@ -237,6 +237,58 @@ var DeviceStatusSelectView = Backbone.View.extend({
 	}
 });
 
+var SoftwareTypeSelectView = Backbone.View.extend({
+	collection : null,
+	el : '',
+	template : _.template($('#software-type-select').html()),
+
+	render : function() {
+		this.$el.html(this.template({
+			software_types : this.collection.toJSON()
+		}));
+		return this;
+	}
+});
+
+var SoftwareStatusSelectView = Backbone.View.extend({
+	collection : null,
+	el : '',
+	template : _.template($('#software-status-select').html()),
+
+	render : function() {
+		this.$el.html(this.template({
+			software_statuses : this.collection.toJSON()
+		}));
+		return this;
+	}
+});
+
+var KeyTypeSelectView = Backbone.View.extend({
+	collection : null,
+	el : '',
+	template : _.template($('#key-type-select').html()),
+
+	render : function() {
+		this.$el.html(this.template({
+			key_types : this.collection.toJSON()
+		}));
+		return this;
+	}
+});
+
+var KeyStatusSelectView = Backbone.View.extend({
+	collection : null,
+	el : '',
+	template : _.template($('#key-status-select').html()),
+
+	render : function() {
+		this.$el.html(this.template({
+			key_statuses : this.collection.toJSON()
+		}));
+		return this;
+	}
+});
+
 function handleFailedRequest(response) {
 	if (response.status == '403') {
 		sessionExpired();
@@ -248,7 +300,7 @@ function handleFailedRequest(response) {
 
 function doLoadPeople(page) {
 	var count = 100;
-	if(typeof page == "undefined") {
+	if (typeof page == "undefined") {
 		page = 1;
 	}
 	$('tbody#person-tbody').empty();
@@ -256,17 +308,17 @@ function doLoadPeople(page) {
 	$('#personList').show();
 	var people = new PersonCollection();
 	people.fetch({
-		url: '/dl/api/person/list_all/' + page + '/' + count,
+		url : '/dl/api/person/list_all/' + page + '/' + count,
 		success : function(results) {
 			var db = new PersonTableView({
 				collection : people
 			});
 			db.render();
 			$('#personQuickSearch').focus();
-			
+
 			// Only include the prev link if page > 1
 			$('#peoplePrevLink').off('click');
-			if(page > 1) {
+			if (page > 1) {
 				$('#peoplePrevLink').on('click', function(e) {
 					e.preventDefault();
 					doLoadPeople(page - 1);
@@ -281,7 +333,7 @@ function doLoadPeople(page) {
 
 			// If this page is full, we need the 'Next link'
 			$('#peopleNextLink').off('click');
-			if(db.collection.length == count) {
+			if (db.collection.length == count) {
 				$('#peopleNextLink').on('click', function(e) {
 					e.preventDefault();
 					doLoadPeople(page + 1);
@@ -299,7 +351,7 @@ function doLoadPeople(page) {
 
 function doLoadDevices(page) {
 	var count = 100;
-	if(typeof page == "undefined") {
+	if (typeof page == "undefined") {
 		page = 1;
 	}
 	$('tbody#device-tbody').empty();
@@ -307,17 +359,17 @@ function doLoadDevices(page) {
 	$('#deviceList').show();
 	var devices = new DeviceCollection();
 	devices.fetch({
-		url: '/dl/api/device/list_all/' + page + '/' + count,
+		url : '/dl/api/device/list_all/' + page + '/' + count,
 		success : function(results) {
 			var db = new DeviceTableView({
 				collection : devices
 			});
 			db.render();
 			$('#deviceQuickSearch').focus();
-			
+
 			// Only include the prev link if page > 1
 			$('#devicesPrevLink').off('click');
-			if(page > 1) {
+			if (page > 1) {
 				$('#devicesPrevLink').on('click', function(e) {
 					e.preventDefault();
 					doLoadDevices(page - 1);
@@ -332,7 +384,7 @@ function doLoadDevices(page) {
 
 			// If this page is full, we need the 'Next link'
 			$('#devicesNextLink').off('click');
-			if(db.collection.length == count) {
+			if (db.collection.length == count) {
 				$('#devicesNextLink').on('click', function(e) {
 					e.preventDefault();
 					doLoadDevices(page + 1);
@@ -403,11 +455,14 @@ $('#btnAddNew').on('click', function(event) {
 	$('#addDeviceOwnerFrmGroup').removeClass('has-success');
 	$('#addDevicePersonId').val('');
 
-	/* Fill device type combo */
+	/* Fill combo boxes */
 	renderDeviceTypes('select#addDeviceSelectType', '');
-
-	/* Fill device status combo */
 	renderDeviceStatuses('select#addDeviceSelectStatus', '');
+	renderSoftwareTypes('select#addSoftwareSelectType', '');
+	renderSoftwareStatuses('select#addSoftwareSelectStatus', '');
+	renderKeyTypes('select#addKeySelectType', '');
+	renderKeyStatuses('select#addKeySelectStatus', '');
+		
 
 	$("#modalAddNew").modal();
 	return false;
@@ -616,7 +671,7 @@ function renderDeviceTypes(dest, device_type_id) {
 }
 
 function renderDeviceStatuses(dest, device_status_id) {
-	var device_statuses = new DeviceStatusCollection();
+	var device_statuses = new device_status_collection();
 	device_statuses.fetch({
 		success : function(results) {
 			var db = new DeviceStatusSelectView({
@@ -624,6 +679,90 @@ function renderDeviceStatuses(dest, device_status_id) {
 				el : dest
 			});
 			db.render();
+			if (device_status_id != '') {
+				$(dest + " option[value='" + device_status_id + "']").attr(
+						"selected", "selected");
+			}
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+}
+
+function renderSoftwareTypes(dest, software_type_id) {
+	var software_types = new software_type_collection();
+	software_types.fetch({
+		success : function(results) {
+			var db = new SoftwareTypeSelectView({
+				collection : software_types,
+				el : dest
+			});
+			db.render();
+			if (software_type_id != '') {
+				$(dest + " option[value='" + software_type_id + "']").attr(
+						"selected", "selected");
+			}
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+}
+
+function renderSoftwareStatuses(dest, software_status_id) {
+	var software_statuses = new software_status_collection();
+	software_statuses.fetch({
+		success : function(results) {
+			var db = new SoftwareStatusSelectView({
+				collection : software_statuses,
+				el : dest
+			});
+			db.render();
+			if (software_status_id != '') {
+				$(dest + " option[value='" + software_status_id + "']").attr(
+						"selected", "selected");
+			}
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+}
+
+function renderKeyTypes(dest, key_type_id) {
+	var key_types = new key_type_collection();
+	key_types.fetch({
+		success : function(results) {
+			var db = new KeyTypeSelectView({
+				collection : key_types,
+				el : dest
+			});
+			db.render();
+			if (key_type_id != '') {
+				$(dest + " option[value='" + key_type_id + "']").attr(
+						"selected", "selected");
+			}
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+}
+
+function renderKeyStatuses(dest, key_status_id) {
+	var key_statuses = new key_status_collection();
+	key_statuses.fetch({
+		success : function(results) {
+			var db = new KeyStatusSelectView({
+				collection : key_statuses,
+				el : dest
+			});
+			db.render();
+			if (key_status_id != '') {
+				$(dest + " option[value='" + key_status_id + "']").attr(
+						"selected", "selected");
+			}
 		},
 		error : function(model, response) {
 			handleFailedRequest(response);
@@ -750,10 +889,10 @@ function dhChangeSelect(select) {
 function logIncidentSave(receipt) {
 	var change = $('#dhChange').val();
 	var device_history = new device_history_model({
-		device_id: $('#dhDeviceId').val(),
-		receipt: receipt
+		device_id : $('#dhDeviceId').val(),
+		receipt : receipt
 	});
-	
+
 	switch (change) {
 	case 'comment':
 	case 'photo':
