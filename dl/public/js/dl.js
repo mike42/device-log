@@ -1185,7 +1185,7 @@ function showSoftwareDetail(results) {
 function showKeyDetail(results) {
 	tabTo('keys');
 	$('#keyList').hide();
-	$('keyDetail').show();
+	$('#keyDetail').show();
 }
 
 var app_router = new AppRouter;
