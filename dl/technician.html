@@ -77,6 +77,19 @@
 	</tr>
 </script>
 
+<script type="text/template" id="device-type-tr">
+	<tr>
+		<td><%= _.escape(name) %></a></td>
+		<td><%= _.escape(model_no) %></a></td>
+	</tr>
+</script>
+
+<script type="text/template" id="device-status-tr">
+	<tr>
+		<td><%= _.escape(tag) %></a></td>
+	</tr>
+</script>
+
 <script type="text/template" id="device-history-div">
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -455,8 +468,8 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 									class="caret"></span>
 							</button>
 							<ul class="dropdown-menu">
-								<li><a href="#">Status codes</a></li>
-								<li><a href="#">Device types</a></li>
+								<li><a href="#" onClick="return showDeviceStatuses();">Status codes</a></li>
+								<li><a href="#" onClick="return showDeviceTypes();">Device types</a></li>
 							</ul>
 						</div>
 						<button onClick="doLoadDevices()" type="button"
@@ -781,6 +794,60 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 			</div>
 		</div>
 	</div>
+	
+	<div class="modal fade" id="modalDeviceStatus" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Device Status Codes</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Tag</th>
+							</tr>
+						</thead>
+						<tbody id="device-status-tbody"></tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="modalDeviceType" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Device Types</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Model</th>
+							</tr>
+						</thead>
+						<tbody id="device-type-tbody"></tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 	<script src="public/js/jquery-1.10.2.min.js"></script>
 	<script src="public/js/bootstrap.min.js"></script>
 	<script src="public/js/underscore-min.js"></script>
