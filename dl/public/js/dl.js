@@ -68,6 +68,36 @@ var PersonRowView = Backbone.View.extend({
 	}
 });
 
+var DeviceTypeRowView = Backbone.View.extend({
+	template : _.template($('#device-type-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+var DeviceStatusRowView = Backbone.View.extend({
+	template : _.template($('#device-status-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
 var PersonDeviceHistoryDivView = Backbone.View.extend({
 	template : _.template($('#device-history-div').html()),
 	tagName : 'div',
@@ -178,6 +208,56 @@ var PersonDeviceHistoryView = Backbone.View.extend({
 
 		this.collection.forEach(function(item) {
 			var itemView = new PersonDeviceHistoryDivView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var DeviceTypeTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#device-type-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new DeviceTypeRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var DeviceStatusTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#device-status-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new DeviceStatusRowView({
 				model : item
 			});
 			element.append(itemView.template(itemView.model.toJSON()));
@@ -346,6 +426,9 @@ function doLoadPeople(page) {
 				$('#peopleNextLi').addClass('disabled');
 			}
 		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
 	});
 }
 
@@ -404,13 +487,13 @@ function doLoadDevices(page) {
 }
 
 function doLoadSoftware() {
-	// Nothing to do yet
+	// TODO Nothing to do yet
 	$('#softwareDetail').hide();
 	$('#softwareList').show();
 }
 
 function doLoadKeys() {
-	// Also nothing to do here
+	// TODO Also nothing to do here
 	$('#keyDetail').hide();
 	$('#keyList').show();
 }
@@ -1089,6 +1172,42 @@ var AppRouter = Backbone.Router.extend({
 		"*actions" : "defaultRoute"
 	}
 });
+
+function showDeviceStatuses() {
+	var statuses = new device_status_collection();
+	statuses.fetch({
+		success : function(results) {
+			var db = new DeviceStatusTableView({
+				collection : statuses
+			});
+			db.render();
+			
+			$('#modalDeviceStatus').modal();
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+	return false;
+}
+
+function showDeviceTypes() {
+	var types = new device_type_collection();
+	types.fetch({
+		success : function(results) {
+			var db = new DeviceTypeTableView({
+				collection : types
+			});
+			db.render();
+			
+			$('#modalDeviceType').modal();
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+	return false;
+}
 
 function showDeviceDetail(results) {
 	tabTo('devices');
