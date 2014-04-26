@@ -511,14 +511,40 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 			</div>
 
 			<div class="tab-pane" id="software">
-				<div class="bs-callout bs-callout-warning">
-					The <b>Software</b> tab has not been implemented yet.
+				<div id="softwareList">
+					<div class="bs-callout bs-callout-warning">
+						The <b>Software</b> tab has not been implemented yet.
+					</div>
+				</div>
+				<div id="softwareDetail">
+					<div class="bs-callout bs-callout-warning">
+						<b>Software detail</b> is not yet available.
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div id="softwareDetailTop"></div>
+							<div id="softwareDetailHistory"></div>
+						</div>
+					</div>
 				</div>
 			</div>
 
 			<div class="tab-pane" id="keys">
-				<div class="bs-callout bs-callout-warning">
-					The <b>Keys</b> tab has not been implemented yet.
+				<div id="keyList">
+					<div class="bs-callout bs-callout-warning">
+						The <b>Keys</b> tab has not been implemented yet.
+					</div>
+				</div>
+				<div id="keyDetail">
+					<div class="bs-callout bs-callout-warning">
+						<b>Key detail</b> is not yet available.
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div id="keyDetailTop"></div>
+							<div id="keyDetailHistory"></div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -655,9 +681,12 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 									<label for="addSoftwareCode">Product Code (if applicable)</label> <input type="text"
 										class="form-control" id="addSoftwareCode" placeholder="Code">
 								</div>
-								<div class="form-group" style="padding-left: 25px">
-									<label for="addSoftwareOwner">Allocated to</label> <input type="text"
-										class="form-control" id="addSoftwareOwner" placeholder="Person">
+								<div class="form-group" id="addSoftwareOwnerFrmGroup"
+									style="padding-left: 25px">
+									<input type="hidden" id="addSoftwarePersonId" value="" /> <label
+										for="addSoftwareOwner">Allocated to</label><br /> <input
+										type="text" class="form-control typeahead" id="addSoftwareOwner"
+										placeholder="Owner">
 								</div>
 								<div class="form-group" style="padding-left: 25px">
 									<label for="addSoftwareSelectStatus">Status</label> <select
@@ -685,13 +714,15 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 									</select>
 								</div>
 								<div class="form-group" style="padding-left: 25px">
-									<label for="inputKeySerial">Serial</label> <input type="text"
-										class="form-control" id="inputKeySerial" placeholder="Serial">
+									<label for="addKeySerial">Serial</label> <input type="text"
+										class="form-control" id="addKeySerial" placeholder="Serial">
 								</div>
-								<div class="form-group" style="padding-left: 25px">
-									<label for="inputPersonCode">Owner</label> <input type="text"
-										class="form-control" id="inputPersonCode"
-										placeholder="Staff Code">
+								<div class="form-group" id="addKeyOwnerFrmGroup"
+									style="padding-left: 25px">
+									<input type="hidden" id="addKeyPersonId" value="" /> <label
+										for="addKeyOwner">Allocated to</label><br /> <input
+										type="text" class="form-control typeahead" id="addKeyOwner"
+										placeholder="Owner">
 								</div>
 								<div class="form-group" style="padding-left: 25px">
 									<label for="addKeySelectStatus">Status</label> <select
@@ -701,7 +732,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 									</select>
 								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox" id="addSoftwareIsSpare"> Spare
+									<label> <input type="checkbox" id="addKeyIsSpare"> Spare
 									</label>
 								</div>
 								<div style="padding-left: 25px;"></div>

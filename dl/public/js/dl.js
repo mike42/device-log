@@ -405,10 +405,14 @@ function doLoadDevices(page) {
 
 function doLoadSoftware() {
 	// Nothing to do yet
+	$('#softwareDetail').hide();
+	$('#softwareList').show();
 }
 
 function doLoadKeys() {
 	// Also nothing to do here
+	$('#keyDetail').hide();
+	$('#keyList').show();
 }
 
 function warn(message) {
@@ -454,6 +458,14 @@ $('#btnAddNew').on('click', function(event) {
 	$('#addDeviceOwnerFrmGroup').removeClass('has-error');
 	$('#addDeviceOwnerFrmGroup').removeClass('has-success');
 	$('#addDevicePersonId').val('');
+	
+	$('#addSoftwareOwnerFrmGroup').removeClass('has-error');
+	$('#addSoftwareOwnerFrmGroup').removeClass('has-success');
+	$('#addSoftwarePersonId').val('');
+	
+	$('#addKeyOwnerFrmGroup').removeClass('has-error');
+	$('#addKeyOwnerFrmGroup').removeClass('has-success');
+	$('#addKeyPersonId').val('');
 
 	/* Fill combo boxes */
 	renderDeviceTypes('select#addDeviceSelectType', '');
@@ -489,8 +501,7 @@ $('#submitAddNew')
 											'checked') ? '1' : 0)
 								});
 
-						person
-								.save(
+						person.save(
 										null,
 										{
 											success : function(model, response) {
@@ -528,8 +539,7 @@ $('#submitAddNew')
 											.prop('checked') ? '1' : 0)
 								});
 
-						device
-								.save(
+						device.save(
 										null,
 										{
 											success : function(model, response) {
@@ -549,14 +559,62 @@ $('#submitAddNew')
 										});
 						break;
 					case 'addsoftware':
-						$('#addSoftwareStatus').html(
-								"You cannot add <b>Software</b> yet.");
-						$('#addSoftwareStatus').show();
+						var software = new software_model(
+							{
+								code: $('#addSoftwareCode').val(),
+								software_type_id: $('#addSoftwareSelectType').val(),
+								software_status_id: $('#addSoftwareSelectStatus').val(),
+								person_id: $('#addSoftwarePersonId').val(),
+								is_bought: ($('#addSoftwareIsBought')
+										.prop('checked') ? '1' : 0)
+							});
+						software.save(
+								null,
+								{
+									success : function(model, response) {
+										var id = model.get('id');
+										app_router.navigate('licence/'
+												+ id, {
+											trigger : true
+										});
+										$("#modalAddNew").modal('hide');
+									},
+									error : function(model, response) {
+										$('#addSoftwareStatus')
+												.html(
+														"Could not add software! Check that you have included all of the information.");
+										$('#addSoftwareStatus').show();
+									}
+								});
 						break;
 					case 'addkey':
-						$('#addKeyStatus').html(
-								"You cannot add a <b>Key</b> yet.");
-						$('#addKeyStatus').show();
+						var key = new doorkey_model(
+							{
+								serial: $('#addKeySerial').val(),
+								person_id: $('#addKeyPersonId').val(),
+								is_spare: ($('#addKeyIsSpare')
+										.prop('checked') ? '1' : 0),
+								key_type_id: $('#addKeySelectType').val(),
+								key_status_id: $('#addKeySelectStatus').val()
+							});
+						key.save(
+								null,
+								{
+									success : function(model, response) {
+										var id = model.get('id');
+										app_router.navigate('key/'
+												+ id, {
+											trigger : true
+										});
+										$("#modalAddNew").modal('hide');
+									},
+									error : function(model, response) {
+										$('#addKeyStatus')
+												.html(
+														"Could not add key! Check that you have included all of the information.");
+										$('#addKeyStatus').show();
+									}
+								});
 						break;
 					default:
 						// Do nothing on the main page
@@ -611,6 +669,26 @@ $('#addDeviceOwner').typeahead({
 	source : personSearch.ttAdapter()
 });
 
+$('#addKeyOwner').typeahead({
+	minLength : 2
+}, {
+	name : 'person-search',
+	displayKey : function(item) {
+		return item.code + ' - ' + item.firstname + ' ' + item.surname;
+	},
+	source : personSearch.ttAdapter()
+});
+
+$('#addSoftwareOwner').typeahead({
+	minLength : 2
+}, {
+	name : 'person-search',
+	displayKey : function(item) {
+		return item.code + ' - ' + item.firstname + ' ' + item.surname;
+	},
+	source : personSearch.ttAdapter()
+});
+
 $('#addDeviceOwner').on('typeahead:selected', function(evt, item) {
 	$('#addDeviceOwnerFrmGroup').removeClass('has-error');
 	$('#addDeviceOwnerFrmGroup').addClass('has-success');
@@ -622,6 +700,32 @@ $('#addDeviceOwner').on('input', function() {
 	$('#addDeviceOwnerFrmGroup').addClass('has-error');
 	$('#addDeviceOwnerFrmGroup').removeClass('has-success');
 	$('#addDevicePersonId').val('');
+});
+
+$('#addSoftwareOwner').on('typeahead:selected', function(evt, item) {
+	$('#addSoftwareOwnerFrmGroup').removeClass('has-error');
+	$('#addSoftwareOwnerFrmGroup').addClass('has-success');
+	$('#addSoftwarePersonId').val(item.id);
+});
+
+$('#addSoftwareOwner').on('input', function() {
+	// Visual cue that a person has not been selected
+	$('#addSoftwareOwnerFrmGroup').addClass('has-error');
+	$('#addSoftwareOwnerFrmGroup').removeClass('has-success');
+	$('#addSoftwarePersonId').val('');
+});
+
+$('#addKeyOwner').on('typeahead:selected', function(evt, item) {
+	$('#addKeyOwnerFrmGroup').removeClass('has-error');
+	$('#addKeyOwnerFrmGroup').addClass('has-success');
+	$('#addKeyPersonId').val(item.id);
+});
+
+$('#addKeyOwner').on('input', function() {
+	// Visual cue that a person has not been selected
+	$('#addKeyOwnerFrmGroup').addClass('has-error');
+	$('#addKeyOwnerFrmGroup').removeClass('has-success');
+	$('#addKeyPersonId').val('');
 });
 
 $('#personQuickSearch').on('typeahead:selected', function(evt, item) {
@@ -980,6 +1084,8 @@ var AppRouter = Backbone.Router.extend({
 	routes : {
 		"person/:id" : "loadPerson",
 		"device/:id" : "loadDevice",
+		"licence/:id" : "loadSoftware",
+		"key/:id" : "loadKey",
 		"*actions" : "defaultRoute"
 	}
 });
@@ -1049,6 +1155,8 @@ function showPersonDetail(results) {
 	});
 	devicesView.render();
 
+	// TODO person key list and person licence list
+	
 	/* Load history */
 	var deviceHistoryList = new DeviceHistoryCollection(results
 			.get('device_history'));
@@ -1066,6 +1174,18 @@ function showPersonDetail(results) {
 	$('#person-device-tbody a').click(function() {
 		$("#modalPersonDeviceList").modal('hide');
 	});
+}
+
+function showSoftwareDetail(results) {
+	tabTo('software');
+	$('#softwareList').hide();
+	$('#softwareDetail').show();
+}
+
+function showKeyDetail(results) {
+	tabTo('keys');
+	$('#keyList').hide();
+	$('keyDetail').show();
 }
 
 var app_router = new AppRouter;
@@ -1096,6 +1216,35 @@ app_router.on('route:loadDevice', function(id) {
 		}
 	});
 });
+
+app_router.on('route:loadSoftware', function(id) {
+	var software = new software_model({
+		id : id
+	});
+	software.fetch({
+		success : function(results) {
+			showSoftwareDetail(results);
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+});
+
+app_router.on('route:loadKey', function(id) {
+	var key = new doorkey_model({
+		id : id
+	});
+	key.fetch({
+		success : function(results) {
+			showKeyDetail(results);
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+});
+
 
 app_router.on('route:defaultRoute', function(actions) {
 	switch (actions) {
