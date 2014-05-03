@@ -518,7 +518,7 @@ class software_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `software`.`id`, `software`.`code`, `software`.`software_type_id`, `software`.`software_status_id`, `software`.`person_id`, `software`.`is_bought`, `software_type`.`id`, `software_type`.`name`, `software_status`.`id`, `software_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `software` JOIN `software_type` ON `software`.`software_type_id` = `software_type`.`id` JOIN `software_status` ON `software`.`software_status_id` = `software_status`.`id` JOIN `person` ON `software`.`person_id` = `person`.`id` WHERE code LIKE :search" . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `software`.`id`, `software`.`code`, `software`.`software_type_id`, `software`.`software_status_id`, `software`.`person_id`, `software`.`is_bought`, `software_type`.`id`, `software_type`.`name`, `software_status`.`id`, `software_status`.`tag`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname` FROM `software` JOIN `software_type` ON `software`.`software_type_id` = `software_type`.`id` JOIN `software_status` ON `software`.`software_status_id` = `software_status`.`id` JOIN `person` ON `software`.`person_id` = `person`.`id` WHERE `software`.code LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();

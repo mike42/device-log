@@ -165,5 +165,29 @@ class software_controller {
 			return array('error' => 'Failed to list', 'code' => '500');
 		}
 	}
+	
+	public static function search($page = 1, $itemspp = 20) {
+		/* Check permission */
+		$role = session::getRole();
+		if(!isset(core::$permission[$role]['software']['read']) || count(core::$permission[$role]['software']['read']) == 0) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+		if(!isset($_GET['q'])) {
+			return array('error' => 'No search term specified', 'code' => '403');
+		}
+	
+		/* Retrieve and filter rows */
+		try {
+			$search = $_GET['q'];
+			$software_list = software_model::search_by_code($search, ($page - 1) * $itemspp, $itemspp);
+			$ret = array();
+			foreach($software_list as $software) {
+				$ret[] = $software-> to_array_filtered($role);
+			}
+			return $ret;
+		} catch(Exception $e) {
+			return array('error' => 'Failed to list' . $e -> getMessage(), 'code' => '500');
+		}
+	}
 }
 ?>
