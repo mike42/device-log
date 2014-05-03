@@ -80,14 +80,22 @@
 <script type="text/template" id="software-template-tr">
 	<tr>
 		<td><a href="#licence/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
-
+		<td><%= _.escape(software_type.name) %></td>
+		<td><a href="#licence/<%= _.escape(id) %>"><%= _.escape(code) %></a></td>
+		<td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname) %> <%= _.escape(person.surname) %> (<%= _.escape(person.code) %>)</a></td>
+		<td><%= _.escape(software_status.tag) %></td>
+		<td><%= yn(is_bought) %></td>
 	</tr>
 </script>
 
 <script type="text/template" id="key-template-tr">
 	<tr>
 		<td><a href="#key/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
-
+		<td><%= _.escape(key_type.name) %></td>
+		<td><a href="#key/<%= _.escape(id) %>"><%= _.escape(serial) %></a></td>
+		<td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname) %> <%= _.escape(person.surname) %> (<%= _.escape(person.code) %>)</a></td>
+		<td><%= _.escape(key_status.name) %></td>
+		<td><%= yn(is_spare) %></td>
 	</tr>
 </script>
 
