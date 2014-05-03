@@ -461,14 +461,22 @@ function doLoadDevices(page) {
 	});
 }
 
-function doLoadSoftware() {
-	// TODO Nothing to do yet
+function doLoadSoftware(page) {
+	var count = 100;
+	if (typeof page == "undefined") {
+		page = 1;
+	}
+	$('tbody#software-tbody').empty();
 	$('#softwareDetail').hide();
 	$('#softwareList').show();
 }
 
-function doLoadKeys() {
-	// TODO Also nothing to do here
+function doLoadKeys(page) {
+	var count = 100;
+	if (typeof page == "undefined") {
+		page = 1;
+	}
+	$('tbody#keys-tbody').empty();
 	$('#keyDetail').hide();
 	$('#keyList').show();
 }
@@ -683,19 +691,33 @@ $('#submitAddNew')
 var personSearch = new Bloodhound({
 	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
 	queryTokenizer : Bloodhound.tokenizers.whitespace,
-	remote : '/dl/api/person/search/1/10?q=%QUERY'
+	remote : '/dl/api/person/search/1/15?q=%QUERY'
 });
 personSearch.initialize();
 
 var deviceSearch = new Bloodhound({
 	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
 	queryTokenizer : Bloodhound.tokenizers.whitespace,
-	remote : '/dl/api/device/search/1/10?q=%QUERY'
+	remote : '/dl/api/device/search/1/15?q=%QUERY'
 });
 deviceSearch.initialize();
 
+var softwareSearch = new Bloodhound({
+	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
+	queryTokenizer : Bloodhound.tokenizers.whitespace,
+	remote : '/dl/api/software/search/1/15?q=%QUERY'
+});
+softwareSearch.initialize();
+
+var keySearch = new Bloodhound({
+	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
+	queryTokenizer : Bloodhound.tokenizers.whitespace,
+	remote : '/dl/api/doorkey/search/1/15?q=%QUERY'
+});
+keySearch.initialize();
+
 $('#personQuickSearch').typeahead({
-	minLength : 2
+	minLength : 1
 }, {
 	name : 'person-search',
 	displayKey : function(item) {
@@ -704,21 +726,19 @@ $('#personQuickSearch').typeahead({
 	source : personSearch.ttAdapter()
 });
 
-$('#deviceQuickSearch').typeahead(
-		{
-			minLength : 2
-		},
-		{
-			name : 'device-search',
-			displayKey : function(item) {
-				return item.sn + ' - ' + item.person.firstname + ' '
-						+ item.person.surname;
-			},
-			source : deviceSearch.ttAdapter()
-		});
+$('#deviceQuickSearch').typeahead({
+	minLength : 1
+}, {
+	name : 'device-search',
+	displayKey : function(item) {
+		return item.sn + ' - ' + item.person.firstname + ' '
+			+ item.person.surname;
+	},
+	source : deviceSearch.ttAdapter()
+});
 
 $('#addDeviceOwner').typeahead({
-	minLength : 2
+	minLength : 1
 }, {
 	name : 'person-search',
 	displayKey : function(item) {
@@ -728,7 +748,7 @@ $('#addDeviceOwner').typeahead({
 });
 
 $('#addKeyOwner').typeahead({
-	minLength : 2
+	minLength : 1
 }, {
 	name : 'person-search',
 	displayKey : function(item) {
@@ -738,13 +758,35 @@ $('#addKeyOwner').typeahead({
 });
 
 $('#addSoftwareOwner').typeahead({
-	minLength : 2
+	minLength : 1
 }, {
 	name : 'person-search',
 	displayKey : function(item) {
 		return item.code + ' - ' + item.firstname + ' ' + item.surname;
 	},
 	source : personSearch.ttAdapter()
+});
+
+$('#softwareQuickSearch').typeahead({
+	minLength : 1
+}, {
+	name : 'software-search',
+	displayKey : function(item) {
+		return item.code + ' - ' + item.software_type.name + ' - ' + item.person.firstname + ' '
+		+ item.person.surname;
+	},
+	source : softwareSearch.ttAdapter()
+});
+
+$('#keyQuickSearch').typeahead({
+	minLength : 1
+}, {
+	name : 'key-search',
+	displayKey : function(item) {
+		return item.serial + ' - ' + item.key_type.name + ' - ' + item.person.firstname + ' '
+		+ item.person.surname;
+	},
+	source : keySearch.ttAdapter()
 });
 
 $('#addDeviceOwner').on('typeahead:selected', function(evt, item) {

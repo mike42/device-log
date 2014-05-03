@@ -468,8 +468,10 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 									class="caret"></span>
 							</button>
 							<ul class="dropdown-menu">
-								<li><a href="#" onClick="return showDeviceStatuses();">Status codes</a></li>
-								<li><a href="#" onClick="return showDeviceTypes();">Device types</a></li>
+								<li><a href="#" onClick="return showDeviceStatuses();">Status
+										codes</a></li>
+								<li><a href="#" onClick="return showDeviceTypes();">Device
+										types</a></li>
 							</ul>
 						</div>
 						<button onClick="doLoadDevices()" type="button"
@@ -525,9 +527,28 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 
 			<div class="tab-pane" id="software">
 				<div id="softwareList">
-					<div class="bs-callout bs-callout-warning">
-						The <b>Software</b> tab has not been implemented yet.
-					</div>
+					<p style="padding-top: 10px">Quick Search:</p>
+					<form class="col-sm-6">
+						<div class="input-group">
+							<input id="softwareQuickSearch" type="text"
+								class="form-control typeahead" placeholder="Product Code"
+								autocomplete="off">
+						</div>
+					</form>
+
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Type</th>
+								<th>Product code</th>
+								<th>Owner</th>
+								<th>Install Status</th>
+								<th>Bought</th>
+							</tr>
+						</thead>
+						<tbody id="software-tbody"></tbody>
+					</table>
 				</div>
 				<div id="softwareDetail">
 					<div class="bs-callout bs-callout-warning">
@@ -544,9 +565,28 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 
 			<div class="tab-pane" id="keys">
 				<div id="keyList">
-					<div class="bs-callout bs-callout-warning">
-						The <b>Keys</b> tab has not been implemented yet.
-					</div>
+					<p style="padding-top: 10px">Quick Search:</p>
+					<form class="col-sm-6">
+						<div class="input-group">
+							<input id="keyQuickSearch" type="text"
+								class="form-control typeahead" placeholder="Key Serial"
+								autocomplete="off">
+						</div>
+					</form>
+
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Type</th>
+								<th>Key serial</th>
+								<th>Owner</th>
+								<th>Status</th>
+								<th>Spare</th>
+							</tr>
+						</thead>
+						<tbody id="key-tbody"></tbody>
+					</table>
 				</div>
 				<div id="keyDetail">
 					<div class="bs-callout bs-callout-warning">
@@ -691,15 +731,16 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 									</select>
 								</div>
 								<div class="form-group" style="padding-left: 25px">
-									<label for="addSoftwareCode">Product Code (if applicable)</label> <input type="text"
-										class="form-control" id="addSoftwareCode" placeholder="Code">
+									<label for="addSoftwareCode">Product Code (if
+										applicable)</label> <input type="text" class="form-control"
+										id="addSoftwareCode" placeholder="Code">
 								</div>
 								<div class="form-group" id="addSoftwareOwnerFrmGroup"
 									style="padding-left: 25px">
 									<input type="hidden" id="addSoftwarePersonId" value="" /> <label
 										for="addSoftwareOwner">Allocated to</label><br /> <input
-										type="text" class="form-control typeahead" id="addSoftwareOwner"
-										placeholder="Owner">
+										type="text" class="form-control typeahead"
+										id="addSoftwareOwner" placeholder="Owner">
 								</div>
 								<div class="form-group" style="padding-left: 25px">
 									<label for="addSoftwareSelectStatus">Status</label> <select
@@ -745,7 +786,8 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 									</select>
 								</div>
 								<div class="checkbox" style="padding-left: 45px">
-									<label> <input type="checkbox" id="addKeyIsSpare"> Spare
+									<label> <input type="checkbox" id="addKeyIsSpare">
+										Spare
 									</label>
 								</div>
 								<div style="padding-left: 25px;"></div>
@@ -794,7 +836,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="modal fade" id="modalDeviceStatus" tabindex="-1"
 		role="dialog" aria-hidden="true">
 		<div class="modal-dialog">
@@ -820,7 +862,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="modal fade" id="modalDeviceType" tabindex="-1"
 		role="dialog" aria-hidden="true">
 		<div class="modal-dialog">
@@ -847,7 +889,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 			</div>
 		</div>
 	</div>
-	
+
 	<script src="public/js/jquery-1.10.2.min.js"></script>
 	<script src="public/js/bootstrap.min.js"></script>
 	<script src="public/js/underscore-min.js"></script>
