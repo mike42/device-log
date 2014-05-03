@@ -141,6 +141,89 @@ var DeviceTableView = Backbone.View.extend({
 	}
 });
 
+var SoftwareTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#software-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new SoftwareRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var KeyTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#key-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new KeyRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var SoftwareRowView = Backbone.View.extend({
+	template : _.template($('#software-template-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+
+var KeyRowView = Backbone.View.extend({
+	template : _.template($('#key-template-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+
+
 var PersonDeviceTableView = Backbone.View.extend({
 	collection : null,
 	el : 'tbody#person-device-tbody',
@@ -469,6 +552,51 @@ function doLoadSoftware(page) {
 	$('tbody#software-tbody').empty();
 	$('#softwareDetail').hide();
 	$('#softwareList').show();
+	
+	var software = new software_collection();
+	software.fetch({
+		url : '/dl/api/software/list_all/' + page + '/' + count,
+		success : function(results) {
+			var db = new SoftwareTableView({
+				collection : software
+			});
+			db.render();
+			$('#softwareQuickSearch').focus();
+
+			// Only include the prev link if page > 1
+			$('#softwarePrevLink').off('click');
+			if (page > 1) {
+				$('#softwarePrevLink').on('click', function(e) {
+					e.preventDefault();
+					doLoadSoftware(page - 1);
+				});
+				$('#softwarePrevLi').removeClass('disabled');
+			} else {
+				$('#softwarePrevLink').on('click', function(e) {
+					e.preventDefault();
+				});
+				$('#softwarePrevLi').addClass('disabled');
+			}
+
+			// If this page is full, we need the 'Next link'
+			$('#softwareNextLink').off('click');
+			if (db.collection.length == count) {
+				$('#softwareNextLink').on('click', function(e) {
+					e.preventDefault();
+					doLoadSoftware(page + 1);
+				});
+				$('#softwareNextLi').removeClass('disabled');
+			} else {
+				$('#softwareNextLink').on('click', function(e) {
+					e.preventDefault();
+				});
+				$('#softwareNextLi').addClass('disabled');
+			}
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
 }
 
 function doLoadKeys(page) {
@@ -479,6 +607,51 @@ function doLoadKeys(page) {
 	$('tbody#keys-tbody').empty();
 	$('#keyDetail').hide();
 	$('#keyList').show();
+	
+	var keys = new doorkey_collection();
+	keys.fetch({
+		url : '/dl/api/doorkey/list_all/' + page + '/' + count,
+		success : function(results) {
+			var db = new KeyTableView({
+				collection : keys
+			});
+			db.render();
+			$('#keyQuickSearch').focus();
+
+			// Only include the prev link if page > 1
+			$('#keyPrevLink').off('click');
+			if (page > 1) {
+				$('#keyPrevLink').on('click', function(e) {
+					e.preventDefault();
+					doLoadKeys(page - 1);
+				});
+				$('#keyPrevLi').removeClass('disabled');
+			} else {
+				$('#keyPrevLink').on('click', function(e) {
+					e.preventDefault();
+				});
+				$('#keyPrevLi').addClass('disabled');
+			}
+
+			// If this page is full, we need the 'Next link'
+			$('#keyNextLink').off('click');
+			if (db.collection.length == count) {
+				$('#keyNextLink').on('click', function(e) {
+					e.preventDefault();
+					doLoadKeys(page + 1);
+				});
+				$('#keyNextLi').removeClass('disabled');
+			} else {
+				$('#keyNextLink').on('click', function(e) {
+					e.preventDefault();
+				});
+				$('#keyNextLi').addClass('disabled');
+			}
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
 }
 
 function warn(message) {
@@ -847,6 +1020,18 @@ $('#personQuickSearch').on('typeahead:selected', function(evt, item) {
 
 $('#deviceQuickSearch').on('typeahead:selected', function(evt, item) {
 	app_router.navigate('device/' + item.id, {
+		trigger : true
+	});
+});
+
+$('#softwareQuickSearch').on('typeahead:selected', function(evt, item) {
+	app_router.navigate('licence/' + item.id, {
+		trigger : true
+	});
+});
+
+$('#keyQuickSearch').on('typeahead:selected', function(evt, item) {
+	app_router.navigate('key/' + item.id, {
 		trigger : true
 	});
 });
