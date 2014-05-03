@@ -1,28 +1,3 @@
-var DeviceCollection = Backbone.Collection.extend({
-	url : '/dl/api/device/list_all/1/100',
-	model : device_model
-});
-
-var DeviceTypeCollection = Backbone.Collection.extend({
-	url : '/dl/api/device_type/list_all/1/100',
-	model : device_model
-});
-
-var PersonCollection = Backbone.Collection.extend({
-	url : '/dl/api/person/list_all/1/100',
-	model : person_model
-});
-
-var DeviceHistoryCollection = Backbone.Collection.extend({
-	url : '/dl/api/device_history/list_all/1/100',
-	model : device_history_model
-});
-
-var DeviceStatusCollection = Backbone.Collection.extend({
-	url : '/dl/api/device_status/list_all/1/100',
-	model : device_status_model
-});
-
 var PersonDeviceRowView = Backbone.View.extend({
 	template : _.template($('#person-device-template-tr').html()),
 	tagName : 'tr',
@@ -386,7 +361,7 @@ function doLoadPeople(page) {
 	$('tbody#person-tbody').empty();
 	$('#personDetail').hide();
 	$('#personList').show();
-	var people = new PersonCollection();
+	var people = new person_collection();
 	people.fetch({
 		url : '/dl/api/person/list_all/' + page + '/' + count,
 		success : function(results) {
@@ -440,7 +415,7 @@ function doLoadDevices(page) {
 	$('tbody#device-tbody').empty();
 	$('#deviceDetail').hide();
 	$('#deviceList').show();
-	var devices = new DeviceCollection();
+	var devices = new device_collection();
 	devices.fetch({
 		url : '/dl/api/device/list_all/' + page + '/' + count,
 		success : function(results) {
@@ -1219,7 +1194,7 @@ function showDeviceDetail(results) {
 	$('#deviceDetail').show();
 
 	/* Load history */
-	var deviceHistoryList = new DeviceHistoryCollection(results
+	var deviceHistoryList = new device_history_collection(results
 			.get('device_history'));
 	var deviceHistoryListView = new PersonDeviceHistoryView({
 		el : 'div#deviceDetailHistory',
@@ -1268,7 +1243,7 @@ function showPersonDetail(results) {
 	$('#personDetail').show();
 
 	/* Load device list */
-	var devices = new DeviceCollection(results.get('device'));
+	var devices = new device_collection(results.get('device'));
 	var devicesView = new PersonDeviceTableView({
 		collection : devices
 	});
@@ -1277,7 +1252,7 @@ function showPersonDetail(results) {
 	// TODO person key list and person licence list
 	
 	/* Load history */
-	var deviceHistoryList = new DeviceHistoryCollection(results
+	var deviceHistoryList = new device_history_collection(results
 			.get('device_history'));
 	var deviceHistoryListView = new PersonDeviceHistoryView({
 		el : 'div#personDetailHistory',
