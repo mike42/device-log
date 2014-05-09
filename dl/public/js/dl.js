@@ -13,6 +13,37 @@ var PersonDeviceRowView = Backbone.View.extend({
 	}
 });
 
+var PersonSoftwareRowView = Backbone.View.extend({
+	template : _.template($('#person-software-template-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+
+var PersonKeyRowView = Backbone.View.extend({
+	template : _.template($('#person-key-template-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
 var DeviceRowView = Backbone.View.extend({
 	template : _.template($('#device-template-tr').html()),
 	tagName : 'tr',
@@ -241,6 +272,56 @@ var PersonDeviceTableView = Backbone.View.extend({
 
 		this.collection.forEach(function(item) {
 			var itemView = new PersonDeviceRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var PersonSoftwareTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#person-software-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new PersonSoftwareRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var PersonKeyTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#person-key-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new PersonKeyRowView({
 				model : item
 			});
 			element.append(itemView.template(itemView.model.toJSON()));
@@ -1486,8 +1567,20 @@ function showPersonDetail(results) {
 		collection : devices
 	});
 	devicesView.render();
-
-	// TODO person key list and person licence list
+	
+	/* Load licenses */
+	var software = new software_collection(results.get('software'));
+	var softwareView = new PersonSoftwareTableView({
+		collection : software
+	});
+	softwareView.render();
+	
+	/* Load keys */
+	var doorkeys = new doorkey_collection(results.get('doorkey'));
+	var keyView = new PersonKeyTableView({
+		collection : doorkeys
+	});
+	keyView.render();
 
 	/* Load history */
 	var deviceHistoryList = new device_history_collection(results
@@ -1502,9 +1595,23 @@ function showPersonDetail(results) {
 		$("#modalPersonDeviceList").modal();
 		return false;
 	});
-
+	$('#btnPersonSoftwareList').click(function() {
+		$("#modalPersonSoftwareList").modal();
+		return false;
+	});
+	$('#btnPersonKeyList').click(function() {
+		$("#modalPersonKeyList").modal();
+		return false;
+	});
+	
 	$('#person-device-tbody a').click(function() {
 		$("#modalPersonDeviceList").modal('hide');
+	});
+	$('#person-software-tbody a').click(function() {
+		$("#modalPersonSoftwareList").modal('hide');
+	});
+	$('#person-key-tbody a').click(function() {
+		$("#modalPersonKeyList").modal('hide');
 	});
 }
 

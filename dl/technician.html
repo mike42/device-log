@@ -159,6 +159,28 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 	</tr>
 </script>
 
+
+<script type="text/template" id="person-software-template-tr">
+	<tr>
+		<td><a href="#licence/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
+		<td><%= _.escape(software_type.name) %></td>
+		<td><a href="#licence/<%= _.escape(id) %>"><%= _.escape(code) %></a></td>
+		<td><%= _.escape(software_status.tag) %></td>
+		<td><%= yn(is_bought) %></td>
+	</tr>
+</script>
+
+
+<script type="text/template" id="person-key-template-tr">
+	<tr>
+		<td><a href="#key/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
+		<td><%= _.escape(key_type.name) %></td>
+		<td><a href="#key/<%= _.escape(id) %>"><%= _.escape(serial) %></a></td>
+		<td><%= _.escape(key_status.name) %></td>
+		<td><%= yn(is_spare) %></td>
+	</tr>
+</script>
+
 <script type="text/template" id="person-template-tr">
 	<tr>
 		<td><a href="#person/<%= _.escape(id) %>"><%= _.escape(code) %></a></td>
@@ -228,11 +250,11 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 		</tr>
 		<tr>
 			<th>Staff</th><td><%= yn(is_staff) %></td>
-			<th>Keys</th><td><%= doorkey.length %></td>
+			<th>Keys</th><td><a href="#" id="btnPersonKeyList"><%= doorkey.length %></a></td>
 		</tr>
 		<tr>
 			<th>Active</th><td><%= yn(is_active) %></td>
-			<th>Licenses</th><td><%= software.length %></td>
+			<th>Licenses</th><td><a href="#" id="btnPersonSoftwareList"><%= software.length %></a></td>
 		</tr>
 		<tr> <!-- Dummy row so that the image does not scale other rows -->
 			<td>&nbsp;</td><td>&nbsp;</td>
@@ -610,7 +632,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 							<tr>
 								<th>ID</th>
 								<th>Type</th>
-								<th>Key serial</th>
+								<th>Key Serial</th>
 								<th>Owner</th>
 								<th>Status</th>
 								<th>Spare</th>
@@ -868,6 +890,66 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 							</tr>
 						</thead>
 						<tbody id="person-device-tbody"></tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="modalPersonSoftwareList" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Allocated Software Licenses</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Type</th>
+								<th>Product Code</th>
+								<th>Install Status</th>
+								<th><abbr title="Bought">B</abbr></th>
+							</tr>
+						</thead>
+						<tbody id="person-software-tbody"></tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modalPersonKeyList" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Allocated Keys</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Type</th>
+								<th>Key Serial</th>
+								<th>Status</th>
+								<th><abbr title="Spare">S</abbr></th>
+							</tr>
+						</thead>
+						<tbody id="person-key-tbody"></tbody>
 					</table>
 				</div>
 				<div class="modal-footer">
