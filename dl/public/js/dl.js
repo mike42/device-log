@@ -147,6 +147,34 @@ var DeviceDetailView = Backbone.View.extend({
 	}
 });
 
+var SoftwareDetailView = Backbone.View.extend({
+	template : _.template($('#software-template-detail').html()),
+	el : 'div#softwareDetailTop',
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+var KeyDetailView = Backbone.View.extend({
+	template : _.template($('#key-template-detail').html()),
+	el : 'div#keyDetailTop',
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
 var DeviceTableView = Backbone.View.extend({
 	collection : null,
 	el : 'tbody#device-tbody',
@@ -1618,12 +1646,20 @@ function showPersonDetail(results) {
 function showSoftwareDetail(results) {
 	tabTo('software');
 	$('#softwareList').hide();
+	var itemView = new SoftwareDetailView({
+		model : results
+	});
+	itemView.render();
 	$('#softwareDetail').show();
 }
 
 function showKeyDetail(results) {
 	tabTo('keys');
 	$('#keyList').hide();
+	var itemView = new KeyDetailView({
+		model : results
+	});
+	itemView.render();
 	$('#keyDetail').show();
 }
 

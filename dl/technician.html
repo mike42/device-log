@@ -414,6 +414,37 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 <h3>History (<%= device_history.length %>)</h3>
 </script>
 
+<script type="text/template" id="software-template-detail">
+<h2><%= _.escape(software_type.name) %> / <%= _.escape(code) %></h2>
+<table class="table">
+	<tbody>
+		<tr>
+			<th>Allocation</th><td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname + ' ' + person.surname) %> (<%= _.escape(person.code) %>)</a></td><th>Status</th><td><%= _.escape(software_status.tag) %></td>
+		</tr>
+		<tr>
+			<th>Product Code</th><td><a href="#device/<%= _.escape(id) %>"><%= _.escape(code) %></a></td><th>Bought</th><td><%= yn(is_bought) %></td>
+		</tr>
+	</tbody>
+</table>
+
+<h3>History (<%= software_history.length %>)</h3>
+</script>
+
+<script type="text/template" id="key-template-detail">
+<h2><%= _.escape(key_type.name) %> / <%= _.escape(serial) %></h2>
+<table class="table">
+	<tbody>
+		<tr>
+			<th>Allocation</th><td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname + ' ' + person.surname) %> (<%= _.escape(person.code) %>)</a></td><th>Status</th><td><%= _.escape(key_status.tag) %></td>
+		</tr>
+		<tr>
+			<th>Serial</th><td><a href="#device/<%= _.escape(id) %>"><%= _.escape(serial) %></a></td><th>Spare</th><td><%= yn(is_spare) %></td>
+		</tr>
+	</tbody>
+</table>
+<h3>History (<%= key_history.length %>)</h3>
+</script>
+
 </head>
 <body>
 	<div class="container">
@@ -604,9 +635,6 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 					</div>
 				</div>
 				<div id="softwareDetail">
-					<div class="bs-callout bs-callout-warning">
-						<b>Software detail</b> is not yet available.
-					</div>
 					<div class="row">
 						<div class="col-sm-12">
 							<div id="softwareDetailTop"></div>
@@ -632,7 +660,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 							<tr>
 								<th>ID</th>
 								<th>Type</th>
-								<th>Key Serial</th>
+								<th>Key serial</th>
 								<th>Owner</th>
 								<th>Status</th>
 								<th>Spare</th>
@@ -651,9 +679,6 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 					</div>
 				</div>
 				<div id="keyDetail">
-					<div class="bs-callout bs-callout-warning">
-						<b>Key detail</b> is not yet available.
-					</div>
 					<div class="row">
 						<div class="col-sm-12">
 							<div id="keyDetailTop"></div>
