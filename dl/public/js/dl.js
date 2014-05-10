@@ -1159,6 +1159,32 @@ function editDevice(device_type_id) {
 	return false;
 }
 
+function logSoftwareChange(software_status_id) {
+	$('#modalLogSoftwareChange').modal();
+	//shChangeSelect('comment');
+	//renderSoftwareStatuses("select#shSelectStatus", software_status_id);
+	return false;
+}
+
+function logKeyChange(key_status_id) {
+	$('#modalLogKeyChange').modal();
+	//khChangeSelect('comment');
+	//renderKeyStatuses("select#khSelectStatus", key_status_id);
+	return false;
+}
+
+function editSoftware(software_type_id) {
+	$('#modalEditSoftware').modal();
+	renderSoftwareTypes('select#editSoftwareSelectType', software_type_id);
+	return false;
+}
+
+function editKey(key_type_id) {
+	$('#modalEditKey').modal();
+	renderKeyTypes('select#editKeySelectType', key_type_id);
+	return false;
+}
+
 function renderDeviceTypes(dest, device_type_id) {
 	var device_types = new device_type_collection();
 	device_types.fetch({

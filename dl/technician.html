@@ -415,6 +415,12 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 </script>
 
 <script type="text/template" id="software-template-detail">
+<div class="btn-group" style="float: right">
+	<button type="button" onClick="return logSoftwareChange(<%= _.escape(software_status_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-fire"></span> Log Change</button>
+	<button type="button"  onClick="return editSoftware(<%= _.escape(software_type_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
+	</div>
+</div>
+
 <h2><%= _.escape(software_type.name) %> / <%= _.escape(code) %></h2>
 <table class="table">
 	<tbody>
@@ -431,6 +437,12 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 </script>
 
 <script type="text/template" id="key-template-detail">
+<div class="btn-group" style="float: right">
+	<button type="button" onClick="return logKeyChange(<%= _.escape(key_status_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-fire"></span> Log Change</button>
+	<button type="button"  onClick="return editKey(<%= _.escape(key_type_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
+	</div>
+</div>
+
 <h2><%= _.escape(key_type.name) %> / <%= _.escape(serial) %></h2>
 <table class="table">
 	<tbody>
