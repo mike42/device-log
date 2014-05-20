@@ -146,7 +146,17 @@ class software_controller {
 		/* Check for child rows */
 		$software -> populate_list_software_history(0, 1);
 		if(count($software -> list_software_history) > 0) {
-			return array('error' => 'Cannot delete software because of a related software_history entry', 'code' => '400');
+			/* Check for child rows */
+			$software -> populate_list_software_history();
+			if(count($software -> list_software_history) > 0) {
+				try {
+					foreach($software -> list_software_history as $software_history) {
+						$software_history -> delete();
+					}
+				} catch(Exception $e) {
+					return array('error' => 'Cannot delete software because a related software_history entry could not be deleted', 'code' => '400');
+				}
+			}
 		}
 
 		/* Delete it */

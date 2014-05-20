@@ -146,7 +146,17 @@ class doorkey_controller {
 		/* Check for child rows */
 		$doorkey -> populate_list_key_history(0, 1);
 		if(count($doorkey -> list_key_history) > 0) {
-			return array('error' => 'Cannot delete doorkey because of a related key_history entry', 'code' => '400');
+			/* Check for child rows */
+			$doorkey -> populate_list_key_history();
+			if(count($doorkey -> list_key_history) > 0) {
+				try {
+					foreach($doorkey -> list_key_history as $key_history) {
+						$key_history -> delete();
+					}
+				} catch(Exception $e) {
+					return array('error' => 'Cannot delete doorkey because a related key_history entry could not be deleted', 'code' => '400');
+				}
+			}
 		}
 
 		/* Delete it */

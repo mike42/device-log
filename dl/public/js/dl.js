@@ -1491,6 +1491,102 @@ function editDeviceDelete() {
 	});
 }
 
+function editKeySave() {
+	var doorkey = new doorkey_model({
+		id : $('#editKeyId').val()
+	});
+	doorkey.save({
+		serial : $('#editKeySerial').val(),
+		key_type_id : $('#editKeySelectType').val()
+	}, {
+		patch : true,
+		success : function(model, response) {
+			$('#modalEditKey').on('hidden.bs.modal', function(e) {
+				doorkey.fetch({
+					success : function(results) {
+						showKeyDetail(results);
+					},
+					error : function(model, response) {
+						handleFailedRequest(response);
+					}
+				});
+			})
+			$('#modalEditKey').modal('hide');
+		},
+		error : function(model, response) {
+			$('#editKeyStatus').html(response.responseJSON.error);
+			$('#editKeyStatus').show();
+		}
+	});
+}
+
+function editKeyDelete() {
+	var doorkey = new doorkey_model({
+		id : $('#editKeyId').val()
+	});
+	doorkey.destroy({
+		success : function(model, response) {
+			$('#modalEditKey').modal('hide');
+			app_router.navigate('keys', {
+				trigger : true
+			});
+		},
+		error : function(model, response) {
+			console.log(response);
+			$('#editKeyStatus').html(response.responseJSON.error);
+			$('#editKeyStatus').show();
+		}
+	});
+}
+
+function editSoftwareSave() {
+	var software = new software_model({
+		id : $('#editSoftwareId').val()
+	});
+	software.save({
+		code : $('#editSoftwareCode').val(),
+		software_type_id : $('#editSoftwareSelectType').val()
+	}, {
+		patch : true,
+		success : function(model, response) {
+			$('#modalEditSoftware').on('hidden.bs.modal', function(e) {
+				software.fetch({
+					success : function(results) {
+						showSoftwareDetail(results);
+					},
+					error : function(model, response) {
+						handleFailedRequest(response);
+					}
+				});
+			})
+			$('#modalEditSoftware').modal('hide');
+		},
+		error : function(model, response) {
+			$('#editSoftwareStatus').html(response.responseJSON.error);
+			$('#editSoftwareStatus').show();
+		}
+	});
+}
+
+function editSoftwareDelete() {
+	var software = new software_model({
+		id : $('#editSoftwareId').val()
+	});
+	software.destroy({
+		success : function(model, response) {
+			$('#modalEditSoftware').modal('hide');
+			app_router.navigate('software', {
+				trigger : true
+			});
+		},
+		error : function(model, response) {
+			console.log(response);
+			$('#editSoftwareStatus').html(response.responseJSON.error);
+			$('#editSoftwareStatus').show();
+		}
+	});
+}
+
 function dhChangeSelect(select) {
 	$('#dh-changeselect li').removeClass('active');
 	$('#dh-select-' + select).addClass('active');
