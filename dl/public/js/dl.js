@@ -1645,7 +1645,7 @@ function logOwnerTypeahead(char) {
 function logSoftwareSave() {
 	var change = $('#shChange').val();
 	var software_history = new software_history_model({
-		software_id : $('#shDeviceId').val(),
+		software_id : $('#shSoftwareId').val(),
 	});
 
 	switch (change) {
@@ -1653,74 +1653,60 @@ function logSoftwareSave() {
 	case 'photo':
 		var att = {
 			change : change,
-			comment : $('#dhComment').val()
+			comment : $('#shComment').val()
 		};
 		break;
 	case 'owner':
 		var att = {
 			change : change,
-			comment : $('#dhComment').val(),
-			person_id : $('#dhPersonId').val()
+			comment : $('#shComment').val(),
+			person_id : $('#shPersonId').val()
 		};
 		break;
 	case 'status':
 		var att = {
 			change : change,
-			comment : $('#dhComment').val(),
-			device_status_id : $('#dhSelectStatus').val()
-		};
-		break;
-	case 'damaged':
-		var att = {
-			change : change,
-			comment : $('#dhComment').val(),
-			is_damaged : ($('#dhIsDamaged').prop('checked') ? '1' : '0')
-		};
-		break;
-	case 'spare':
-		var att = {
-			change : change,
-			comment : $('#dhComment').val(),
-			is_spare : ($('#dhIsSpare').prop('checked') ? '1' : '0')
+			comment : $('#shComment').val(),
+			software_status_id : $('#shSelectStatus').val()
 		};
 		break;
 	case 'bought':
 		var att = {
 			change : change,
-			comment : $('#dhComment').val(),
-			is_bought : ($('#dhIsBought').prop('checked') ? '1' : '0')
+			comment : $('#shComment').val(),
+			is_bought : ($('#shIsBought').prop('checked') ? '1' : '0')
 		};
 		break;
 	default:
-		$('#modalLogIncident').modal('hide');
+		$('#modalLogSoftwareChange').modal('hide');
 		return false;
 	}
-	device_history.save(att, {
+	software_history.save(att, {
 		patch : true,
 		success : function(model, response) {
-			$('#modalLogIncident').on('hidden.bs.modal', function(e) {
-				device = new device_model({
-					id : device_history.get('device_id')
+			$('#modalLogSoftwareChange').on('hidden.bs.modal', function(e) {
+				software = new software_model({
+					id : software_history.get('software_id')
 				});
-				device.fetch({
+				software.fetch({
 					success : function(results) {
-						showDeviceDetail(results);
+						showSoftwareDetail(results);
 					},
 					error : function(model, response) {
 						handleFailedRequest(response);
 					}
 				});
 			})
-			$('#modalLogIncident').modal('hide');
+			$('#modalLogSoftwareChange').modal('hide');
 		},
 		error : function(model, response) {
 			console.log(response);
-			$('#logIncidentStatus').hide();
-			$('#logIncidentStatus').html(response.responseJSON.error);
-			$('#logIncidentStatus').show(300);
+			console.log('aaa');
+			$('#logSoftwareStatus').hide();
+			$('#logSoftwareStatus').html(response.responseJSON.error);
+			$('#logSoftwareStatus').show(300);
 		}
 	});
-	
 	
 	return false;
 }

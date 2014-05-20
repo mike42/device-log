@@ -21,25 +21,68 @@ class software_history_controller {
 				$init["software_history.$field"] = $received[$field];
 			}
 		}
-			$software_history = new software_history_model($init);
-
-		/* Check parent tables */
-		if(!person_model::get($software_history -> get_person_id())) {
-			return array('error' => 'software_history is invalid because related person does not exist', 'code' => '400');
-		}
-		if(!software_model::get($software_history -> get_software_id())) {
+		$software_history = new software_history_model($init);
+		if(!$software = software_model::get($software_history -> get_software_id())) {
 			return array('error' => 'software_history is invalid because related software does not exist', 'code' => '400');
 		}
-		if(!technician_model::get($software_history -> get_technician_id())) {
+		if(!$technician = technician_model::get_by_technician_login(session::getUsername())) {
+			return array('error' => 'Failed to find out the technician submitting this.', 'code' => '400');
+		}
+		if($software_history -> get_comment() == "") {
+			return array('error' => 'Comment is required.', 'code' => '400');
+		}
+		
+		/* Fill everything else with defaults */
+		$software_history -> set_date(date('Y-m-d H:i:s'));
+
+		$software_history -> set_technician_id($technician -> get_id());
+		if($software_history -> get_change() != 'owner') {
+			$software_history -> set_person_id($software -> get_person_id());
+		}
+		if($software_history -> get_change() != 'status') {
+			$software_history -> set_software_status_id($software -> get_software_status_id());
+		}
+		if($software_history -> get_change() != 'bought') {
+			$software_history -> set_is_bought($software -> get_is_bought());
+		}
+		
+		/* Check parent tables */
+		if(!$person = person_model::get($software_history -> get_person_id())) {
+			return array('error' => 'software_history is invalid because related person does not exist', 'code' => '400');
+		}
+		if(!$technician = technician_model::get($software_history -> get_technician_id())) {
 			return array('error' => 'software_history is invalid because related technician does not exist', 'code' => '400');
 		}
-		if(!software_status_model::get($software_history -> get_software_status_id())) {
+		if(!$software_status = software_status_model::get($software_history -> get_software_status_id())) {
 			return array('error' => 'software_history is invalid because related software_status does not exist', 'code' => '400');
 		}
 
 		/* Insert new row */
 		try {
 			$software_history -> insert();
+
+			// Update related device
+			switch($software_history -> get_change()) {
+				case 'owner':
+					$software -> set_person_id($software_history -> get_person_id());
+					$software -> update();
+					break;
+				case 'status':
+					$software -> set_software_status_id($software_history -> get_software_status_id());
+					$software -> update();
+					break;
+				case 'bought':
+					$software -> set_is_bought($software_history -> get_is_bought());
+					$software -> update();
+					break;
+				default:
+					// Nothing to do.
+			}
+			$software_history -> software = $software;
+			$software_history -> person = $person;
+			$software_history -> software_status = $software_status;
+			$software_history -> technician = $technician;
+
 			return $software_history -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');
