@@ -1701,7 +1701,6 @@ function logSoftwareSave() {
 		},
 		error : function(model, response) {
 			console.log(response);
-			console.log('aaa');
 			$('#logSoftwareStatus').hide();
 			$('#logSoftwareStatus').html(response.responseJSON.error);
 			$('#logSoftwareStatus').show(300);
@@ -1712,8 +1711,70 @@ function logSoftwareSave() {
 }
 
 function logKeySave(receipt) {
+	var change = $('#khChange').val();
+	var key_history = new key_history_model({
+		key_id : $('#khKeyId').val(),
+	});
+
+	switch (change) {
+	case 'comment':
+	case 'photo':
+		var att = {
+			change : change,
+			comment : $('#khComment').val()
+		};
+		break;
+	case 'owner':
+		var att = {
+			change : change,
+			comment : $('#khComment').val(),
+			person_id : $('#khPersonId').val()
+		};
+		break;
+	case 'status':
+		var att = {
+			change : change,
+			comment : $('#khComment').val(),
+			key_status_id : $('#khSelectStatus').val()
+		};
+		break;
+	case 'bought':
+		var att = {
+			change : change,
+			comment : $('#khComment').val(),
+			is_bought : ($('#khIsBought').prop('checked') ? '1' : '0')
+		};
+		break;
+	default:
+		$('#modalLogKeyChange').modal('hide');
+		return false;
+	}
+	key_history.save(att, {
+		patch : true,
+		success : function(model, response) {
+			$('#modalLogKeyChange').on('hidden.bs.modal', function(e) {
+				doorkey = new doorkey_model({
+					id : key_history.get('key_id')
+				});
+				software.fetch({
+					success : function(results) {
+						showKeyDetail(results);
+					},
+					error : function(model, response) {
+						handleFailedRequest(response);
+					}
+				});
+			})
+			$('#modalLogKeyChange').modal('hide');
+		},
+		error : function(model, response) {
+			console.log(response);
+			$('#logKeyStatus').hide();
+			$('#logKeyStatus').html(response.responseJSON.error);
+			$('#logKeyStatus').show(300);
+		}
+	});
 	
-	alert('logKeySave() not implemented');
 	return false;
 }
 

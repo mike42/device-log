@@ -1,5 +1,32 @@
 body {
 	overflow-y: scroll;
+background: #6191bf; /* Fallback background color for non supported browsers */ 
+background-image: -moz-radial-gradient(center 45deg,circle cover, #cde6f9, #6191bf);
+background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%,900, from(#cde6f9), to(#6191bf));
+}
+
+.container {
+	background-color: #fff;
+	border-left: 2px solid #cef;
+	border-right: 2px solid #ccc;
+}
+
+.tab-pane {
+	min-height: 50em;
+}
+
+#foot {
+	border-top: 2px solid #cef;
+	border-bottom: 2px solid #ccc;
+	background-color: #6191bf;
+	color: #fff;
+	font-size: 90%;
+	text-align: center;
+	padding: 0.2em;
+}
+
+#foot a {
+	color: #eee;
 }
 
 .table-striped tbody tr:hover {
