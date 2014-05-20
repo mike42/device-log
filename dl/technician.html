@@ -459,6 +459,38 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 </script>
 
 <script type="text/template" id="software-template-detail">
+<!-- Edit software dialog -->
+<div class="modal fade" id="modalEditSoftware" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Edit software</h4>
+			</div>
+			<div class="modal-body">
+				<form role="form">
+					<div id="editSoftwareStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
+					<input type="hidden" id="editSoftwareId" value="<%= _.escape(id) %>">
+					<div class="form-group" style="padding-left: 25px">
+						<label for="editSoftwareSelectType">Model</label>
+						<select id="editSoftwareSelectType" class="btn btn-default dropdown-toggle form-control">
+							<option value="">Loading..</option>
+						</select>
+					</div>
+					<div class="form-group" style="padding-left: 25px">
+						<label for="editSoftwareSn">Product Code (if applicable)</label> <input type="text" class="form-control" id="editSoftwareCode" placeholder="Code" value="<%= _.escape(code) %>">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onClick="editSoftwareDelete()"><span class="glyphicon glyphicon-trash"></span></button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" onClick="editSoftwareSave()">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="btn-group" style="float: right">
 	<button type="button" onClick="return logSoftwareChange(<%= _.escape(software_status_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-fire"></span> Log Change</button>
 	<button type="button"  onClick="return editSoftware(<%= _.escape(software_type_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
@@ -481,6 +513,38 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 </script>
 
 <script type="text/template" id="key-template-detail">
+<!-- Edit key dialog -->
+<div class="modal fade" id="modalEditKey" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Edit key</h4>
+			</div>
+			<div class="modal-body">
+				<form role="form">
+					<div id="editKeyStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
+					<input type="hidden" id="editKeyId" value="<%= _.escape(id) %>">
+					<div class="form-group" style="padding-left: 25px">
+						<label for="editKeySelectType">Model</label>
+						<select id="editKeySelectType" class="btn btn-default dropdown-toggle form-control">
+							<option value="">Loading..</option>
+						</select>
+					</div>
+					<div class="form-group" style="padding-left: 25px">
+						<label for="editKeySerial">Serial</label> <input type="text" class="form-control" id="editKeySerial" placeholder="Serial" value="<%= _.escape(serial) %>">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onClick="editKeyDelete()"><span class="glyphicon glyphicon-trash"></span></button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" onClick="editKeySave()">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="btn-group" style="float: right">
 	<button type="button" onClick="return logKeyChange(<%= _.escape(key_status_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-fire"></span> Log Change</button>
 	<button type="button"  onClick="return editKey(<%= _.escape(key_type_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
@@ -491,7 +555,7 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 <table class="table">
 	<tbody>
 		<tr>
-			<th>Allocation</th><td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname + ' ' + person.surname) %> (<%= _.escape(person.code) %>)</a></td><th>Status</th><td><%= _.escape(key_status.tag) %></td>
+			<th>Allocation</th><td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname + ' ' + person.surname) %> (<%= _.escape(person.code) %>)</a></td><th>Status</th><td><%= _.escape(key_status.name) %></td>
 		</tr>
 		<tr>
 			<th>Serial</th><td><a href="#key/<%= _.escape(id) %>"><%= _.escape(serial) %></a></td><th>Spare</th><td><%= yn(is_spare) %></td>
