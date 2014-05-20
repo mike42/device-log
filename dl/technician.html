@@ -472,7 +472,7 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 			<th>Allocation</th><td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname + ' ' + person.surname) %> (<%= _.escape(person.code) %>)</a></td><th>Status</th><td><%= _.escape(software_status.tag) %></td>
 		</tr>
 		<tr>
-			<th>Product Code</th><td><a href="#device/<%= _.escape(id) %>"><%= _.escape(code) %></a></td><th>Bought</th><td><%= yn(is_bought) %></td>
+			<th>Product Code</th><td><a href="#licence/<%= _.escape(id) %>"><%= _.escape(code) %></a></td><th>Bought</th><td><%= yn(is_bought) %></td>
 		</tr>
 	</tbody>
 </table>
@@ -494,7 +494,7 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 			<th>Allocation</th><td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname + ' ' + person.surname) %> (<%= _.escape(person.code) %>)</a></td><th>Status</th><td><%= _.escape(key_status.tag) %></td>
 		</tr>
 		<tr>
-			<th>Serial</th><td><a href="#device/<%= _.escape(id) %>"><%= _.escape(serial) %></a></td><th>Spare</th><td><%= yn(is_spare) %></td>
+			<th>Serial</th><td><a href="#key/<%= _.escape(id) %>"><%= _.escape(serial) %></a></td><th>Spare</th><td><%= yn(is_spare) %></td>
 		</tr>
 	</tbody>
 </table>
