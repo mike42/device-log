@@ -1084,7 +1084,8 @@ var keySearch = new Bloodhound({
 keySearch.initialize();
 
 $('#personQuickSearch').typeahead({
-	minLength : 1
+	minLength : 1,
+	limit: 15
 }, {
 	name : 'person-search',
 	displayKey : function(item) {
@@ -1093,21 +1094,21 @@ $('#personQuickSearch').typeahead({
 	source : personSearch.ttAdapter()
 });
 
-$('#deviceQuickSearch').typeahead(
-		{
-			minLength : 1
-		},
-		{
-			name : 'device-search',
-			displayKey : function(item) {
-				return item.sn + ' - ' + item.person.firstname + ' '
-						+ item.person.surname;
-			},
-			source : deviceSearch.ttAdapter()
-		});
+$('#deviceQuickSearch').typeahead({
+	minLength : 1,
+	limit: 15
+}, {
+	name : 'device-search',
+	displayKey : function(item) {
+		return item.sn + ' - ' + item.person.firstname + ' '
+				+ item.person.surname;
+	},
+	source : deviceSearch.ttAdapter()
+});
 
 $('#addDeviceOwner').typeahead({
-	minLength : 1
+	minLength : 1,
+	limit: 15
 }, {
 	name : 'person-search',
 	displayKey : function(item) {
@@ -1117,7 +1118,8 @@ $('#addDeviceOwner').typeahead({
 });
 
 $('#addKeyOwner').typeahead({
-	minLength : 1
+	minLength : 1,
+	limit: 15
 }, {
 	name : 'person-search',
 	displayKey : function(item) {
@@ -1127,7 +1129,8 @@ $('#addKeyOwner').typeahead({
 });
 
 $('#addSoftwareOwner').typeahead({
-	minLength : 1
+	minLength : 1,
+	limit: 15
 }, {
 	name : 'person-search',
 	displayKey : function(item) {
@@ -1136,31 +1139,29 @@ $('#addSoftwareOwner').typeahead({
 	source : personSearch.ttAdapter()
 });
 
-$('#softwareQuickSearch').typeahead(
-		{
-			minLength : 1
-		},
-		{
-			name : 'software-search',
-			displayKey : function(item) {
-				return item.code + ' - ' + item.person.firstname + ' '
-						+ item.person.surname;
-			},
-			source : softwareSearch.ttAdapter()
-		});
+$('#softwareQuickSearch').typeahead({
+	minLength : 1,
+	limit: 15
+}, {
+	name : 'software-search',
+	displayKey : function(item) {
+		return item.code + ' - ' + item.person.firstname + ' '
+				+ item.person.surname;
+	},
+	source : softwareSearch.ttAdapter()
+});
 
-$('#keyQuickSearch').typeahead(
-		{
-			minLength : 1
-		},
-		{
-			name : 'key-search',
-			displayKey : function(item) {
-				return item.serial + ' - ' + item.key_type.name + ' - '
-						+ item.person.firstname + ' ' + item.person.surname;
-			},
-			source : keySearch.ttAdapter()
-		});
+$('#keyQuickSearch').typeahead({
+	minLength : 1,
+	limit: 15
+}, {
+	name : 'key-search',
+	displayKey : function(item) {
+		return item.serial + ' - ' + item.key_type.name + ' - '
+				+ item.person.firstname + ' ' + item.person.surname;
+	},
+	source : keySearch.ttAdapter()
+});
 
 $('#addDeviceOwner').on('typeahead:selected', function(evt, item) {
 	$('#addDeviceOwnerFrmGroup').removeClass('has-error');
@@ -1617,7 +1618,8 @@ function changeSelect(char, select) {
 function logOwnerTypeahead(char) {
 	/* Set type-ahead */
 	$('#' + char + 'hPersonSelect').typeahead({
-		minLength : 2
+		minLength : 1,
+		limit: 15
 	}, {
 		name : 'person-search',
 		displayKey : function(item) {
@@ -1640,9 +1642,86 @@ function logOwnerTypeahead(char) {
 	});
 }
 
-function logSoftwareSave(receipt) {
+function logSoftwareSave() {
+	var change = $('#shChange').val();
+	var software_history = new software_history_model({
+		software_id : $('#shDeviceId').val(),
+	});
+
+	switch (change) {
+	case 'comment':
+	case 'photo':
+		var att = {
+			change : change,
+			comment : $('#dhComment').val()
+		};
+		break;
+	case 'owner':
+		var att = {
+			change : change,
+			comment : $('#dhComment').val(),
+			person_id : $('#dhPersonId').val()
+		};
+		break;
+	case 'status':
+		var att = {
+			change : change,
+			comment : $('#dhComment').val(),
+			device_status_id : $('#dhSelectStatus').val()
+		};
+		break;
+	case 'damaged':
+		var att = {
+			change : change,
+			comment : $('#dhComment').val(),
+			is_damaged : ($('#dhIsDamaged').prop('checked') ? '1' : '0')
+		};
+		break;
+	case 'spare':
+		var att = {
+			change : change,
+			comment : $('#dhComment').val(),
+			is_spare : ($('#dhIsSpare').prop('checked') ? '1' : '0')
+		};
+		break;
+	case 'bought':
+		var att = {
+			change : change,
+			comment : $('#dhComment').val(),
+			is_bought : ($('#dhIsBought').prop('checked') ? '1' : '0')
+		};
+		break;
+	default:
+		$('#modalLogIncident').modal('hide');
+		return false;
+	}
+	device_history.save(att, {
+		patch : true,
+		success : function(model, response) {
+			$('#modalLogIncident').on('hidden.bs.modal', function(e) {
+				device = new device_model({
+					id : device_history.get('device_id')
+				});
+				device.fetch({
+					success : function(results) {
+						showDeviceDetail(results);
+					},
+					error : function(model, response) {
+						handleFailedRequest(response);
+					}
+				});
+			})
+			$('#modalLogIncident').modal('hide');
+		},
+		error : function(model, response) {
+			console.log(response);
+			$('#logIncidentStatus').hide();
+			$('#logIncidentStatus').html(response.responseJSON.error);
+			$('#logIncidentStatus').show(300);
+		}
+	});
 	
-	alert('logSoftwareSave() not implemented');
+	
 	return false;
 }
 
