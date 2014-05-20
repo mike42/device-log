@@ -1241,15 +1241,15 @@ function editDevice(device_type_id) {
 
 function logSoftwareChange(software_status_id) {
 	$('#modalLogSoftwareChange').modal();
-	//shChangeSelect('comment');
-	//renderSoftwareStatuses("select#shSelectStatus", software_status_id);
+	shChangeSelect('comment');
+	renderSoftwareStatuses("select#shSelectStatus", software_status_id);
 	return false;
 }
 
 function logKeyChange(key_status_id) {
 	$('#modalLogKeyChange').modal();
-	//khChangeSelect('comment');
-	//renderKeyStatuses("select#khSelectStatus", key_status_id);
+	khChangeSelect('comment');
+	renderKeyStatuses("select#khSelectStatus", key_status_id);
 	return false;
 }
 
@@ -1588,12 +1588,67 @@ function editSoftwareDelete() {
 }
 
 function dhChangeSelect(select) {
-	$('#dh-changeselect li').removeClass('active');
-	$('#dh-select-' + select).addClass('active');
-	$('#dhChange').val(select);
-	$('.dh-changebox').hide();
-	$('#dh-' + select).show();
+	changeSelect('d', select);
 	$('#logIncidentStatus').hide();
+	return false;
+}
+
+function shChangeSelect(select) {
+	changeSelect('s', select);
+	$('#logSoftwareStatus').hide();
+	return false;
+}
+
+function khChangeSelect(select) {
+	changeSelect('k', select);
+	$('#logKeyStatus').hide();
+	return false;
+}
+
+function changeSelect(char, select) {
+	$('#' + char + 'h-changeselect li').removeClass('active');
+	$('#' + char + 'h-select-' + select).addClass('active');
+	$('#' + char + 'hChange').val(select);
+	$('.' + char + 'h-changebox').hide();
+	$('#' + char + 'h-' + select).show();
+	return false;
+}
+
+function logOwnerTypeahead(char) {
+	/* Set type-ahead */
+	$('#' + char + 'hPersonSelect').typeahead({
+		minLength : 2
+	}, {
+		name : 'person-search',
+		displayKey : function(item) {
+			return item.code + ' - ' + item.firstname + ' ' + item.surname;
+		},
+		source : personSearch.ttAdapter()
+	});
+
+	$('#' + char + 'hPersonSelect').on('typeahead:selected', function(evt, item) {
+		$('#' + char + 'h-owner').removeClass('has-error');
+		$('#' + char + 'h-owner').addClass('has-success');
+		$('#' + char + 'hPersonId').val(item.id);
+	});
+
+	$('#' + char + 'hPersonSelect').on('input', function() {
+		// Visual cue that a person has not been selected
+		$('#' + char + 'h-owner').addClass('has-error');
+		$('#' + char + 'h-owner').removeClass('has-success');
+		$('#' + char + 'hPersonId').val('');
+	});
+}
+
+function logSoftwareSave(receipt) {
+	
+	alert('logSoftwareSave() not implemented');
+	return false;
+}
+
+function logKeySave(receipt) {
+	
+	alert('logKeySave() not implemented');
 	return false;
 }
 
@@ -1751,29 +1806,7 @@ function showDeviceDetail(results) {
 	});
 	deviceHistoryListView.render();
 
-	/* Set type-ahead */
-	$('#dhPersonSelect').typeahead({
-		minLength : 2
-	}, {
-		name : 'person-search',
-		displayKey : function(item) {
-			return item.code + ' - ' + item.firstname + ' ' + item.surname;
-		},
-		source : personSearch.ttAdapter()
-	});
-
-	$('#dhPersonSelect').on('typeahead:selected', function(evt, item) {
-		$('#dh-owner').removeClass('has-error');
-		$('#dh-owner').addClass('has-success');
-		$('#dhPersonId').val(item.id);
-	});
-
-	$('#dhPersonSelect').on('input', function() {
-		// Visual cue that a person has not been selected
-		$('#dh-owner').addClass('has-error');
-		$('#dh-owner').removeClass('has-success');
-		$('#dhPersonId').val('');
-	});
+	logOwnerTypeahead('d');
 
 	$('div#incident-photo-dropzone').dropzone({
 		url : "/dl/api/device_photo/upload/" + results.get('id'),
@@ -1862,6 +1895,8 @@ function showSoftwareDetail(results) {
 		collection : softwareHistoryList
 	});
 	softwareHistoryListView.render();
+	
+	logOwnerTypeahead('s');
 }
 
 function showKeyDetail(results) {
@@ -1881,6 +1916,8 @@ function showKeyDetail(results) {
 		collection : keyHistoryList
 	});
 	keyHistoryListView.render();
+	
+	logOwnerTypeahead('k');
 }
 
 var app_router = new AppRouter;

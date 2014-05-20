@@ -374,7 +374,6 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 							</ul>
 						</div>
 						<div class="col-sm-8" id="sh-changeboxes">
-							<div id="logIncidentStatus" class="bs-callout bs-callout-warning" style="display: none">...</div>
 							<div class="formgroup" id="dh-comment">
 								<label>Comment</label>
 								<textarea id="dhComment" placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
@@ -491,6 +490,62 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 	</div>
 </div>
 
+<!-- Log software change -->
+<div class="modal fade" id="modalLogSoftwareChange" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title"><span class="glyphicon glyphicon-fire"></span> Log software change</h4>
+			</div>
+			<div class="modal-body">
+				<form role="form">
+					<div id="logSoftwareStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
+					<div class="row">
+						<input type="hidden" id="shSoftwareId" value="<%= _.escape(id) %>">
+						<input type="hidden" id="shChange" value="comment" /> 
+						<div class="col-sm-4">
+							<ul class="nav nav-pills nav-stacked" id="sh-changeselect">
+								<li id="sh-select-comment" class="active"><a href="#" onClick="return shChangeSelect('comment');">Comment Only</a></li>
+								<li id="sh-select-owner"><a href="#" onClick="return shChangeSelect('owner');">Re-allocate</a></li>
+								<li id="sh-select-status"><a href="#" onClick="return shChangeSelect('status');">Status change</a></li>
+								<li id="sh-select-bought"><a href="#" onClick="return shChangeSelect('bought');">Set 'Bought'</a></li>
+							</ul>
+						</div>
+						<div class="col-sm-8" id="sh-changeboxes">
+							<div class="formgroup" id="sh-comment">
+								<label>Comment</label>
+								<textarea id="shComment" placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
+								<div style="padding-top: 20px;"></div>
+							</div>
+							<div class="formgroup sh-changebox" style="display: none" id="sh-owner">
+								<input type="hidden" id="shPersonId" value="" />
+								<label>Allocate to</label>
+								<input id="shPersonSelect" type="text" class="form-control typeahead" placeholder="Person's Code" autocomplete="off" value="" />
+							</div>
+							<div class="formgroup sh-changebox" style="display: none" id="sh-status">
+								<label for="shSelectStatus">New Status</label>
+								<select id="shSelectStatus" class="btn btn-default dropdown-toggle form-control">
+									<option value="">Loading..</option>
+								</select>
+							</div>
+							<div class="formgroup sh-changebox" style="display: none" id="sh-bought">
+								<div class="checkbox">
+									<label><input type="checkbox" id="shIsBought"<%= checked(is_bought) %>> Bought</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button btn-primary" class="btn btn-primary" onClick="return logSoftwareSave(true);" data-dismiss="modal">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="btn-group" style="float: right">
 	<button type="button" onClick="return logSoftwareChange(<%= _.escape(software_status_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-fire"></span> Log Change</button>
 	<button type="button"  onClick="return editSoftware(<%= _.escape(software_type_id) %>);" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit</button>
@@ -540,6 +595,68 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 				<button type="button" class="btn btn-default" onClick="editKeyDelete()"><span class="glyphicon glyphicon-trash"></span></button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				<button type="button" class="btn btn-primary" onClick="editKeySave()">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Log key change -->
+<div class="modal fade" id="modalLogKeyChange" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title"><span class="glyphicon glyphicon-fire"></span> Log Key change</h4>
+			</div>
+			<div class="modal-body">
+				<form role="form">
+					<div id="logKeyStatus" style="display: none" class="bs-callout bs-callout-warning">...</div>
+					<div class="row">
+						<input type="hidden" id="khKeyId" value="<%= _.escape(id) %>">
+						<input type="hidden" id="khChange" value="comment" /> 
+						<div class="col-sm-4">
+							<ul class="nav nav-pills nav-stacked" id="kh-changeselect">
+								<li id="kh-select-comment" class="active"><a href="#" onClick="return khChangeSelect('comment');">Comment Only</a></li>
+								<li id="kh-select-owner"><a href="#" onClick="return khChangeSelect('owner');">Re-allocate</a></li>
+								<li id="kh-select-status"><a href="#" onClick="return khChangeSelect('status');">Status change</a></li>
+								<li id="kh-select-spare"><a href="#" onClick="return khChangeSelect('spare');">Set 'Spare'</a></li>
+							</ul>
+						</div>
+						<div class="col-sm-8" id="kh-changeboxes">
+							<div class="formgroup" id="kh-comment">
+								<label>Comment</label>
+								<textarea id="khComment" placeholder="Technician comment" class="form-control" style="resize: none" rows="4"></textarea>
+								<div style="padding-top: 20px;"></div>
+							</div>
+							<div class="formgroup kh-changebox" style="display: none" id="kh-owner">
+								<input type="hidden" id="khPersonId" value="" />
+								<label>Allocate to</label>
+								<input id="khPersonSelect" type="text" class="form-control typeahead" placeholder="Person's Code" autocomplete="off" value="" />
+							</div>
+							<div class="formgroup kh-changebox" style="display: none" id="kh-status">
+								<label for="khSelectStatus">New Status</label>
+								<select id="khSelectStatus" class="btn btn-default dropdown-toggle form-control">
+									<option value="">Loading..</option>
+								</select>
+							</div>
+							<div class="formgroup kh-changebox" style="display: none" id="kh-spare">
+								<div class="checkbox">
+									<label><input type="checkbox" id="khIsSpare"<%= checked(is_spare) %>> Spare</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<div class="btn-group">
+					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Save <span class="caret"></span></button>
+					<ul class="dropdown-menu" style="text-align: left">
+						<li><a href="#" onClick="return logKeySave(true);"><span class="glyphicon glyphicon-barcode"></span> Receipt</a></li>
+						<li><a href="#" onClick="return logKeySave(false);"><span class="glyphicon glyphicon-tree-conifer"></span> No receipt</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
