@@ -147,6 +147,50 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 	</div>
 </script>
 
+<script type="text/template" id="software-history-div">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<%= _.escape(date) %> on <a href="#licence/<%= _.escape(software.id) %>"><%= _.escape(software.software_type.name) %> / <%= _.escape(software.code) %></a> by <%= _.escape(technician.name) %>
+		</div>
+		<div class="panel-body">
+<div style="float:right">
+			<% if(change == 'comment') {  %>
+&nbsp;
+			<% } else if(change == 'owner') {  %>
+Allocated &rarr; <td><%= _.escape(person.code) %></td>
+			<% } else if(change == 'status') {  %>
+Status &rarr; <td><%= _.escape(software_status.tag) %></td>
+			<% } else if(change == 'bought') {  %>
+Bought &rarr; <td><%= yn(is_bought) %></td>
+			<% } %>
+</div>
+			<%= (comment == "" ? '(no comment)' : _.escape(comment)) %>
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="key-history-div">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<%= _.escape(date) %> on <a href="#key/<%= _.escape(doorkey.id) %>"><%= _.escape(doorkey.key_type.name) %> / <%= _.escape(doorkey.serial) %></a> by <%= _.escape(technician.name) %>
+		</div>
+		<div class="panel-body">
+<div style="float:right">
+			<% if(change == 'comment') {  %>
+&nbsp;
+			<% } else if(change == 'owner') {  %>
+Allocated &rarr; <td><%= _.escape(person.code) %></td>
+			<% } else if(change == 'status') {  %>
+Status &rarr; <td><%= _.escape(key_status.tag) %></td>
+			<% } else if(change == 'bought') {  %>
+Spare &rarr; <td><%= yn(is_spare) %></td>
+			<% } %>
+</div>
+			<%= (comment == "" ? '(no comment)' : _.escape(comment)) %>
+		</div>
+	</div>
+</script>
+
 <script type="text/template" id="person-device-template-tr">
 	<tr>
 		<td><a href="#device/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
@@ -296,7 +340,7 @@ Bought &rarr; <td><%= yn(is_bought) %></td>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default"  onClick="editDeviceDelete()"><span class="glyphicon glyphicon-trash"></span></button>
+				<button type="button" class="btn btn-default" onClick="editDeviceDelete()"><span class="glyphicon glyphicon-trash"></span></button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				<button type="button" class="btn btn-primary" onClick="editDeviceSave()">Save</button>
 			</div>

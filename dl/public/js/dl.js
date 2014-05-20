@@ -119,6 +119,36 @@ var PersonDeviceHistoryDivView = Backbone.View.extend({
 	}
 });
 
+var PersonSoftwareHistoryDivView = Backbone.View.extend({
+	template : _.template($('#software-history-div').html()),
+	tagName : 'div',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+var PersonKeyHistoryDivView = Backbone.View.extend({
+	template : _.template($('#key-history-div').html()),
+	tagName : 'div',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
 var PersonDetailView = Backbone.View.extend({
 	template : _.template($('#person-template-detail').html()),
 	el : 'div#personDetailTop',
@@ -375,6 +405,56 @@ var PersonDeviceHistoryView = Backbone.View.extend({
 
 		this.collection.forEach(function(item) {
 			var itemView = new PersonDeviceHistoryDivView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var PersonSoftwareHistoryView = Backbone.View.extend({
+	collection : null,
+	el : 'div#personDetailHistory',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new PersonSoftwareHistoryDivView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var PersonKeyHistoryView = Backbone.View.extend({
+	collection : null,
+	el : 'div#personDetailHistory',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new PersonKeyHistoryDivView({
 				model : item
 			});
 			element.append(itemView.template(itemView.model.toJSON()));
@@ -1677,6 +1757,15 @@ function showSoftwareDetail(results) {
 	});
 	itemView.render();
 	$('#softwareDetail').show();
+	
+	/* Load history */
+	var softwareHistoryList = new software_history_collection(results
+			.get('software_history'));
+	var softwareHistoryListView = new PersonSoftwareHistoryView({
+		el : 'div#softwareDetailHistory',
+		collection : softwareHistoryList
+	});
+	softwareHistoryListView.render();
 }
 
 function showKeyDetail(results) {
@@ -1687,6 +1776,15 @@ function showKeyDetail(results) {
 	});
 	itemView.render();
 	$('#keyDetail').show();
+	
+	/* Load history */
+	var keyHistoryList = new key_history_collection(results
+			.get('key_history'));
+	var keyHistoryListView = new PersonKeyHistoryView({
+		el : 'div#keyDetailHistory',
+		collection : keyHistoryList
+	});
+	keyHistoryListView.render();
 }
 
 var app_router = new AppRouter;

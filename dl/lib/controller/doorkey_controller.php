@@ -21,7 +21,7 @@ class doorkey_controller {
 				$init["doorkey.$field"] = $received[$field];
 			}
 		}
-			$doorkey = new doorkey_model($init);
+		$doorkey = new doorkey_model($init);
 
 		/* Check parent tables */
 		if(!person_model::get($doorkey -> get_person_id())) {
@@ -37,6 +37,25 @@ class doorkey_controller {
 		/* Insert new row */
 		try {
 			$doorkey -> insert();
+
+			if($technician = technician_model::get_by_technician_login(session::getUsername())) {
+				/* Insert new history entry */
+				try {
+					$key_history = new key_history_model();
+					$key_history -> set_date(date('Y-m-d H:i:s'));
+					$key_history -> set_comment('Key added to database');
+					$key_history -> set_is_spare($doorkey -> get_is_spare());
+					$key_history -> set_change('owner');
+					$key_history -> set_technician_id($technician -> get_id());
+					$key_history -> set_key_id($doorkey -> get_id());
+					$key_history -> set_key_status_id($doorkey -> get_key_status_id());
+					$key_history -> set_person_id($doorkey -> get_person_id());
+					$key_history -> insert();
+				} catch(Exception $e) {
+					// Not so worried about this if it fails
+				}
+			}
+
 			return $doorkey -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');
@@ -55,7 +74,7 @@ class doorkey_controller {
 		if(!$doorkey) {
 			return array('error' => 'doorkey not found', 'code' => '404');
 		}
-		// $doorkey -> populate_list_key_history();
+		$doorkey -> populate_list_key_history();
 		return $doorkey -> to_array_filtered($role);
 	}
 
@@ -165,7 +184,7 @@ class doorkey_controller {
 			return array('error' => 'Failed to list', 'code' => '500');
 		}
 	}
-	
+
 	public static function search($page = 1, $itemspp = 20) {
 		/* Check permission */
 		$role = session::getRole();
@@ -175,7 +194,7 @@ class doorkey_controller {
 		if(!isset($_GET['q'])) {
 			return array('error' => 'No search term specified', 'code' => '403');
 		}
-	
+
 		/* Retrieve and filter rows */
 		try {
 			$search = $_GET['q'];

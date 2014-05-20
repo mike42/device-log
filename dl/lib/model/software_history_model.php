@@ -47,7 +47,7 @@ class software_history_model {
 
 	private $model_variables_changed; // Only variables which have been changed
 	private $model_variables_set; // All variables which have been set (initially or with a setter)
-	private static $change_values = array('comment', 'status', 'bought');
+	private static $change_values = array('comment', 'status', 'bought', 'owner');
 
 	/* Parent tables */
 	public $person;

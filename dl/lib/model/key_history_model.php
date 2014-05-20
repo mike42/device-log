@@ -47,7 +47,7 @@ class key_history_model {
 
 	private $model_variables_changed; // Only variables which have been changed
 	private $model_variables_set; // All variables which have been set (initially or with a setter)
-	private static $change_values = array('status', 'comment');
+	private static $change_values = array('status', 'comment', 'owner', 'spare');
 
 	/* Parent tables */
 	public $person;

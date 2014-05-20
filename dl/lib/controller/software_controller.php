@@ -37,6 +37,25 @@ class software_controller {
 		/* Insert new row */
 		try {
 			$software -> insert();
+			
+			if($technician = technician_model::get_by_technician_login(session::getUsername())) {
+				/* Insert new history entry */
+				try {
+					$software_history = new software_history_model();
+					$software_history -> set_date(date('Y-m-d H:i:s'));
+					$software_history -> set_comment('Software added to database');
+					$software_history -> set_is_bought($software -> get_is_bought());
+					$software_history -> set_change('owner');
+					$software_history -> set_technician_id($technician -> get_id());
+					$software_history -> set_software_id($software -> get_id());
+					$software_history -> set_software_status_id($software -> get_software_status_id());
+					$software_history -> set_person_id($software -> get_person_id());
+					$software_history -> insert();
+				} catch(Exception $e) {
+					// Not so worried about this if it fails
+				}
+			}
+			
 			return $software -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');
@@ -55,7 +74,7 @@ class software_controller {
 		if(!$software) {
 			return array('error' => 'software not found', 'code' => '404');
 		}
-		// $software -> populate_list_software_history();
+		$software -> populate_list_software_history();
 		return $software -> to_array_filtered($role);
 	}
 
