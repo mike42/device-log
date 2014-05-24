@@ -365,7 +365,8 @@ COMMENT = 'Photos added to an entry';
 
 INSERT INTO `key_status` (`id`, `name`) VALUES
 (1, 'In Use'),
-(2, 'Scrapped');
+(2, 'Scrapped'),
+(3, 'Lost / Stolen');
 
 --
 -- Dumping data for table `software_status`
@@ -387,7 +388,8 @@ INSERT INTO `device_status` (`id`, `tag`) VALUES
 (1, 'In Use'),
 (7, 'Scrapped'),
 (5, 'Sent for repair'),
-(6, 'Shelved');
+(6, 'Shelved'),
+(8, 'Lost / Stolen');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
