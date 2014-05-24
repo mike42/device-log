@@ -1,6 +1,7 @@
 maintenance/database/device-log.mwb.bak
 dl/site/config.php
 dl/site/photos
+maintenance/statuses/*.pdf
 config.php
 
 # Eclipse files

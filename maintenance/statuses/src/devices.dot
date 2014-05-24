@@ -1,0 +1,22 @@
+digraph G {
+graph [overlap=false];
+ac [label="Awaiting\nCollection"];
+con [label="Confiscated"];
+in [label="In for\nRepair"];
+out [label="Out for\nRepair"];
+use [label="In Use"];
+scrap [label="Scrapped"];
+shelf [label="Shelved"];
+lost [label="Lost"];
+
+use -> lost;
+use -> in -> out -> ac -> use;
+use -> con -> ac;
+con -> use;
+in -> shelf;
+in -> scrap;
+in -> ac;
+shelf -> in;
+shelf -> scrap;
+
+}
