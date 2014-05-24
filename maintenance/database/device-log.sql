@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `device-log`.`software_history` (
   `technician_id` INT NOT NULL COMMENT 'Technician who added the entry',
   `software_status_id` INT NOT NULL COMMENT 'Status code aplicable to the installation at this time',
   `comment` TEXT NOT NULL COMMENT 'Technician comment',
-  `change` ENUM('comment','status','bought') NOT NULL COMMENT 'Field which was affected by this history entry',
+  `change` enum('comment','status','bought','owner') NOT NULL COMMENT 'Field which was affected by this history entry',
   `is_bought` INT(1) NOT NULL COMMENT '1 if the software was bought-out at this point in time',
   PRIMARY KEY (`id`),
   INDEX `person_id` (`person_id` ASC),
@@ -265,7 +265,7 @@ CREATE TABLE IF NOT EXISTS `device-log`.`key_history` (
   `technician_id` INT NOT NULL COMMENT 'Technician who added this entry',
   `key_status_id` INT NOT NULL COMMENT 'Status code for the key',
   `comment` VARCHAR(45) NOT NULL COMMENT 'Technician comment',
-  `change` ENUM('status','comment') NOT NULL COMMENT 'field which was changed by this entry',
+  `change` enum('status','comment','owner','spare') NOT NULL COMMENT 'field which was changed by this entry',
   `is_spare` INT(1) NOT NULL COMMENT '1 if the key is currently spare, 0 otherwise',
   PRIMARY KEY (`id`),
   INDEX `person_id` (`person_id` ASC),
@@ -359,6 +359,35 @@ CREATE TABLE IF NOT EXISTS `device-log`.`device_photo` (
 ENGINE = InnoDB
 COMMENT = 'Photos added to an entry';
 
+--
+-- Dumping data for table `key_status`
+--
+
+INSERT INTO `key_status` (`id`, `name`) VALUES
+(1, 'In Use'),
+(2, 'Scrapped');
+
+--
+-- Dumping data for table `software_status`
+--
+
+INSERT INTO `software_status` (`id`, `tag`) VALUES
+(2, 'Approved for install'),
+(1, 'Installed'),
+(3, 'Removed');
+
+--
+-- Dumping data for table `device_status`
+--
+
+INSERT INTO `device_status` (`id`, `tag`) VALUES
+(4, 'Awaiting Collection'),
+(3, 'Confiscated'),
+(2, 'In for repair'),
+(1, 'In Use'),
+(7, 'Scrapped'),
+(5, 'Sent for repair'),
+(6, 'Shelved');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
