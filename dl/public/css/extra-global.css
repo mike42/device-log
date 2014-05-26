@@ -1,8 +1,5 @@
 body {
 	overflow-y: scroll;
-background: #6191bf; /* Fallback background color for non supported browsers */ 
-background-image: -moz-radial-gradient(center 45deg,circle cover, #cde6f9, #6191bf);
-background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%,900, from(#cde6f9), to(#6191bf));
 }
 
 .container {
