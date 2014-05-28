@@ -1645,7 +1645,7 @@ function logOwnerTypeahead(char) {
 function logSoftwareSave() {
 	var change = $('#shChange').val();
 	var software_history = new software_history_model({
-		software_id : $('#shSoftwareId').val(),
+		software_id : $('#shSoftwareId').val()
 	});
 
 	switch (change) {
@@ -1714,6 +1714,7 @@ function logKeySave(receipt) {
 	var change = $('#khChange').val();
 	var key_history = new key_history_model({
 		key_id : $('#khKeyId').val(),
+		receipt : receipt
 	});
 
 	switch (change) {
@@ -1738,11 +1739,11 @@ function logKeySave(receipt) {
 			key_status_id : $('#khSelectStatus').val()
 		};
 		break;
-	case 'bought':
+	case 'spare':
 		var att = {
 			change : change,
 			comment : $('#khComment').val(),
-			is_bought : ($('#khIsBought').prop('checked') ? '1' : '0')
+			is_spare : ($('#khIsSpare').prop('checked') ? '1' : '0')
 		};
 		break;
 	default:
@@ -1756,7 +1757,7 @@ function logKeySave(receipt) {
 				doorkey = new doorkey_model({
 					id : key_history.get('key_id')
 				});
-				software.fetch({
+				doorkey.fetch({
 					success : function(results) {
 						showKeyDetail(results);
 					},

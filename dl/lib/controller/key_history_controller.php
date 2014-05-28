@@ -21,25 +21,78 @@ class key_history_controller {
 				$init["key_history.$field"] = $received[$field];
 			}
 		}
-			$key_history = new key_history_model($init);
-
-		/* Check parent tables */
-		if(!person_model::get($key_history -> get_person_id())) {
-			return array('error' => 'key_history is invalid because related person does not exist', 'code' => '400');
-		}
-		if(!doorkey_model::get($key_history -> get_key_id())) {
+		$key_history = new key_history_model($init);
+		if(!$doorkey = doorkey_model::get($key_history -> get_key_id())) {
 			return array('error' => 'key_history is invalid because related doorkey does not exist', 'code' => '400');
 		}
-		if(!technician_model::get($key_history -> get_technician_id())) {
-			return array('error' => 'key_history is invalid because related technician does not exist', 'code' => '400');
+		if(!$technician = technician_model::get_by_technician_login(session::getUsername())) {
+			return array('error' => 'Failed to find out the technician submitting this.', 'code' => '400');
 		}
-		if(!key_status_model::get($key_history -> get_key_status_id())) {
+		if($key_history -> get_comment() == "") {
+			return array('error' => 'Comment is required.', 'code' => '400');
+		}
+		
+		/* Fill everything else with defaults */
+		$key_history -> set_date(date('Y-m-d H:i:s'));
+
+		$key_history -> set_technician_id($technician -> get_id());
+		if($key_history -> get_change() != 'owner') {
+			$key_history -> set_person_id($doorkey -> get_person_id());
+		}
+		if($key_history -> get_change() != 'status') {
+			$key_history -> set_key_status_id($doorkey -> get_key_status_id());
+		}
+		if($key_history -> get_change() != 'spare') {
+			$key_history -> set_is_spare($doorkey -> get_is_spare());
+		}
+		
+		/* Check parent tables */
+		if(!$person = person_model::get($key_history -> get_person_id())) {
+			return array('error' => 'key_history is invalid because related person does not exist', 'code' => '400');
+		}
+		if(!$key_status = key_status_model::get($key_history -> get_key_status_id())) {
 			return array('error' => 'key_history is invalid because related key_status does not exist', 'code' => '400');
+		}
+		if(!$technician = technician_model::get($key_history -> get_technician_id())) {
+			return array('error' => 'key_history is invalid because related technician does not exist', 'code' => '400');
 		}
 
 		/* Insert new row */
 		try {
 			$key_history -> insert();
+			switch($key_history -> get_change()) {
+				case 'owner':
+					$doorkey -> set_person_id($key_history -> get_person_id());
+					$doorkey -> update();
+					break;
+				case 'status':
+					$doorkey -> set_status_id($key_history -> get_status_id());
+					$doorkey -> update();
+					break;
+				case 'spare':
+					$doorkey -> set_is_spare($key_history -> get_is_spare());
+					$doorkey -> update();
+					break;
+				default:
+					// Nothing to do
+			}
+			
+			$key_history -> doorkey = $doorkey;
+			$key_history -> person = $person;
+			$key_history -> key_status = $key_status;
+			$key_history -> technician = $technician;
+			
+			if(isset($received['receipt']) && $received['receipt'] == 'true') {
+				/* Print receipt */
+				core::loadClass("ReceiptPrinter");
+			
+				try {
+					ReceiptPrinter::khReceipt($key_history);
+				} catch(Exception $e) {
+					// Ignore receipt printing issues
+				}
+			}
+			
 			return $key_history -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');

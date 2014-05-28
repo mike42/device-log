@@ -9,30 +9,15 @@ class ReceiptPrinter {
 	}
 
 	public static function dhReceipt(device_history_model $device_history) {
-		if(!isset(self::$conf['ip']) || self::$conf['ip'] == "0.0.0.0") {
-			return false;
+		if(!$fp = self::openPrinter()) {
+			return;
 		}
-		
-		if(!$fp = fsockopen(self::$conf['ip'], self::$conf['port'], $errno, $errstr, 2)) {
-			throw new Exception("Couldn't connect to receipt printer: $errno $errstr");
-		}
-		
-		/* Header */
 		$printer = new escpos($fp);
-		$printer -> set_justification(escpos::JUSTIFY_CENTER);
-		$printer -> set_emphasis(true);
-		$printer -> text(self::$conf['header'] . "\n");
-		$printer -> text($device_history -> get_date() . "\n");
-		$printer -> set_emphasis(false);
-		$printer -> set_justification(escpos::JUSTIFY_LEFT);
-		$printer -> feed();
-
-		/* Person details */
-		$printer -> set_emphasis(true);
-		$printer -> text(($device_history -> person -> get_is_staff() == '1' ? "Staff member" : "Student") . " details:\n");
-		$printer -> set_emphasis(false);
-		$printer -> text(" - " . $device_history -> person -> get_firstname() . " " . $device_history -> person -> get_surname() . " (" . $device_history -> person -> get_code() . ")\n\n");
-
+		
+		/* Receipt */
+		self::header($printer, $device_history -> get_date());
+		self::person_details($printer, $device_history -> person);
+		
 		/* Device details */
 		$printer -> set_emphasis(true);
 		$printer -> text("Device details:\n");
@@ -56,7 +41,7 @@ class ReceiptPrinter {
 		$printer -> text(" - Spare: " . ($device_history -> device -> get_is_spare() == '1' ? "Y" : "N") . "   Damaged: " . ($device_history -> device -> get_is_damaged() == '1' ? "Y" : "N") . "   Bought: " . ($device_history -> device -> get_is_bought() == '1' ? "Y" : "N") . "\n");
 		$printer -> text(" - Status: " . $device_history -> device_status -> get_tag() . "\n\n");
 		
-		/* Change details */
+		/* Device history details */
 		$printer -> set_emphasis(true);
 		$printer -> text("Notes:\n");
 		$printer -> set_emphasis(false);
@@ -66,26 +51,125 @@ class ReceiptPrinter {
 		$printer -> text("Technician: " . $device_history -> technician -> get_name() . "\n");
 		$printer -> feed();
 		
+		self::footer($printer, $device_history -> person);
+		fclose($fp);
+	}
+	
+	public static function khReceipt(key_history_model $key_history) {
+		if(!$fp = self::openPrinter()) {
+			return;
+		}
+		$printer = new escpos($fp);
+		
+		self::header($printer, $key_history -> get_date());
+		self::person_details($printer, $key_history -> person);
+		
+		/* Device details */
+		$printer -> set_emphasis(true);
+		$printer -> text("Key details:\n");
+		$printer -> set_emphasis(false);
+		$model = trim($key_history -> doorkey -> key_type -> get_name());
+		if($model == "") {
+			$model = "Not recorded";
+		}
+		$printer -> text(" - Model: " . $model . "\n");
+		$sn = trim($key_history -> doorkey -> get_serial());
+		if($sn == "") {
+			$sn = "Not recorded";
+		}
+		$printer -> text(" - Serial #: " . $sn . "\n");
+		$printer -> text(" - Spare: " . ($key_history -> doorkey -> get_is_spare() == '1' ? "Y" : "N") . "\n");
+		$printer -> text(" - Status: " . $key_history -> doorkey -> key_status -> get_name() . "\n\n");
+		
+		/* Device history details */
+		$printer -> set_emphasis(true);
+		$printer -> text("Notes:\n");
+		$printer -> set_emphasis(false);
+		$printer -> text(wordwrap($key_history -> get_comment(), 47, "\n", true) . "\n");
+		
+		$printer -> text("Technician: " . $key_history -> technician -> get_name() . "\n");
+		$printer -> feed();	
+		
+		self::footer($printer, $key_history -> person);
+		fclose($fp);
+	}
+	
+	
+	/**
+	 * Open printer and return a file handle to it
+	 * 
+	 * @throws Exception
+	 * @return boolean|resource
+	 */
+	private static function openPrinter() {
+		if(!isset(self::$conf['ip']) || self::$conf['ip'] == "0.0.0.0") {
+			// No printer set
+			return false;
+		}
+		
+		if(!$fp = fsockopen(self::$conf['ip'], self::$conf['port'], $errno, $errstr, 2)) {
+			throw new Exception("Couldn't connect to receipt printer: $errno $errstr");
+		}
+		
+		return $fp;
+	}
+	
+	/**
+	 * Print person details
+	 * 
+	 * @param escpos $printer
+	 * @param person_model $person
+	 */
+	private static function person_details(escpos $printer, person_model $person) {
+		/* Person details */
+		$printer -> set_emphasis(true);
+		$printer -> text(($person -> get_is_staff() == '1' ? "Staff member" : "Student") . " details:\n");
+		$printer -> set_emphasis(false);
+		$printer -> text(" - " . $person -> get_firstname() . " " . $person -> get_surname() . " (" . $person -> get_code() . ")\n\n");
+	}
+	
+	/**
+	 * Print header
+	 * 
+	 * @param escpos $printer
+	 * @param unknown_type $date
+	 */
+	private static function header(escpos $printer, $date) {
+		/* Header */
+		$printer -> set_justification(escpos::JUSTIFY_CENTER);
+		$printer -> set_emphasis(true);
+		$printer -> text(self::$conf['header'] . "\n");
+		$printer -> text($date . "\n");
+		$printer -> set_emphasis(false);
+		$printer -> set_justification(escpos::JUSTIFY_LEFT);
+		$printer -> feed();
+	}
+	
+	/**
+	 * Print footer
+	 * 
+	 * @param escpos $printer
+	 * @param person_model $person
+	 */
+	private static function footer(escpos $printer, person_model $person) {
 		/* Footer */
 		$printer -> set_emphasis(false);
-
+		
 		if(self::$conf['footer'] != "") {
 			$printer -> text(self::$conf['footer']  . "\n");
 			$printer -> feed();
 		}
-
+		
 		/* Barcode */
-		if(is_numeric($device_history -> person -> get_code())) {
+		if(is_numeric($person -> get_code())) {
 			$printer -> set_justification(escpos::JUSTIFY_CENTER);
-			$printer -> barcode($device_history -> person -> get_code(), escpos::BARCODE_CODE39);
+			$printer -> barcode($person -> get_code(), escpos::BARCODE_CODE39);
 			$printer -> feed();
-			$printer -> text($device_history -> person -> get_code());
+			$printer -> text($person -> get_code());
 			$printer -> feed(1);
 			$printer -> set_justification(escpos::JUSTIFY_LEFT);
 		}
 		
 		$printer -> cut();
-		
-		fclose($fp);
 	}
 }
