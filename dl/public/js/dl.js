@@ -1642,10 +1642,11 @@ function logOwnerTypeahead(char) {
 	});
 }
 
-function logSoftwareSave() {
+function logSoftwareSave(receipt) {
 	var change = $('#shChange').val();
 	var software_history = new software_history_model({
-		software_id : $('#shSoftwareId').val()
+		software_id : $('#shSoftwareId').val(),
+		receipt : receipt
 	});
 
 	switch (change) {

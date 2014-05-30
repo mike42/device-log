@@ -94,6 +94,46 @@ class ReceiptPrinter {
 		fclose($fp);
 	}
 	
+	public static function shReceipt(software_history_model $software_history) {
+		if(!$fp = self::openPrinter()) {
+			return;
+		}
+		$printer = new escpos($fp);
+		
+		/* Receipt */
+		self::header($printer, $software_history -> get_date());
+		self::person_details($printer, $software_history -> person);
+		
+		/* Software details */
+		$printer -> set_emphasis(true);
+		$printer -> text("Software details:\n");
+		$printer -> set_emphasis(false);
+		$model = trim($software_history -> software -> software_type -> get_name());
+		if($model == "") {
+			$model = "Not recorded";
+		}
+		$printer -> text(" - Type: " . $model . "\n");
+		$sn = trim($software_history -> software -> get_code());
+		if($sn == "") {
+			$sn = "Not recorded";
+		}
+		$printer -> text(" - Code: " . $sn . "\n");
+		$printer -> text(" - Bought: " . ($software_history -> software -> get_is_bought() == '1' ? "Y" : "N") . "\n");
+		$printer -> text(" - Status: " . $software_history -> software -> software_status -> get_tag() . "\n\n");
+		
+		/* Software history details */
+		$printer -> set_emphasis(true);
+		$printer -> text("Notes:\n");
+		$printer -> set_emphasis(false);
+		$printer -> text(wordwrap($software_history -> get_comment(), 47, "\n", true) . "\n");
+		
+		$printer -> text("Technician: " . $software_history -> technician -> get_name() . "\n");
+		$printer -> feed();
+		
+		self::footer($printer, $software_history -> person);
+		fclose($fp);
+		
+	}
 	
 	/**
 	 * Open printer and return a file handle to it

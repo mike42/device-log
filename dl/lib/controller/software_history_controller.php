@@ -83,6 +83,17 @@ class software_history_controller {
 			$software_history -> software_status = $software_status;
 			$software_history -> technician = $technician;
 
+			if(isset($received['receipt']) && $received['receipt'] == 'true') {
+				/* Print receipt */
+				core::loadClass("ReceiptPrinter");
+			
+				try {
+					ReceiptPrinter::shReceipt($software_history);
+				} catch(Exception $e) {
+					// Ignore receipt printing issues
+				}
+			}
+			
 			return $software_history -> to_array_filtered($role);
 		} catch(Exception $e) {
 			return array('error' => 'Failed to add to database', 'code' => '500');
