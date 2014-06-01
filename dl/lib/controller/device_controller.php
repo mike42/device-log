@@ -236,11 +236,57 @@ class device_controller {
 	}
 	
 	public static function list_spares($page, $itemspp) {
-		return array();
+		/* Check permission */
+		$role = session::getRole();
+		if(!isset(core::$permission[$role]['device']['read']) || count(core::$permission[$role]['device']['read']) == 0) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+		if((int)$page < 1 || (int)$itemspp < 1) {
+			$start = 0;
+			$limit = -1;
+		} else {
+			$start = ($page - 1) * $itemspp;
+			$limit = $itemspp;
+		}
+
+		/* Retrieve and filter rows */
+		try {
+			$device_list = device_model::list_spares($start, $limit);
+			$ret = array();
+			foreach($device_list as $device) {
+				$ret[] = $device -> to_array_filtered($role);
+			}
+			return $ret;
+		} catch(Exception $e) {
+			return array('error' => 'Failed to list', 'code' => '500');
+		}
 	}
 	
 	public static function list_in_progress($page, $itemspp) {
-		return array();
+		/* Check permission */
+		$role = session::getRole();
+		if(!isset(core::$permission[$role]['device']['read']) || count(core::$permission[$role]['device']['read']) == 0) {
+			return array('error' => 'You do not have permission to do that', 'code' => '403');
+		}
+		if((int)$page < 1 || (int)$itemspp < 1) {
+			$start = 0;
+			$limit = -1;
+		} else {
+			$start = ($page - 1) * $itemspp;
+			$limit = $itemspp;
+		}
+
+		/* Retrieve and filter rows */
+		try {
+			$device_list = device_model::list_in_progress($start, $limit);
+			$ret = array();
+			foreach($device_list as $device) {
+				$ret[] = $device -> to_array_filtered($role);
+			}
+			return $ret;
+		} catch(Exception $e) {
+			return array('error' => 'Failed to list', 'code' => '500');
+		}
 	}
 	
 }

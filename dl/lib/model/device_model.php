@@ -656,6 +656,54 @@ class device_model {
 	}
 
 	/**
+	 * List spare devices
+	 *
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function list_spares($start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device.is_spare = :is_spare" . self::SORT_CLAUSE . $ls . ";");
+		$sth -> execute(array('is_spare' => '1'));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_model($assoc);
+		}
+		return $ret;
+	}
+	
+	/**
+	 * List devices with a status ID which has progress_flag=1
+	 *
+	 * @param int $start Row to begin from. Default 0 (begin from start)
+	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
+	 */
+	public static function list_in_progress($start = 0, $limit = -1) {
+		$ls = "";
+		$start = (int)$start;
+		$limit = (int)$limit;
+		if($start >= 0 && $limit > 0) {
+			$ls = " LIMIT $start, $limit";
+		}
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE `device_status`.`progress_flag` = :progress_flag" . self::SORT_CLAUSE . $ls . ";");
+		$sth -> execute(array('progress_flag' => '1'));
+		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
+		$ret = array();
+		foreach($rows as $row) {
+			$assoc = self::row_to_assoc($row);
+			$ret[] = new device_model($assoc);
+		}
+		return $ret;
+	}
+	
+	/**
 	 * Simple search within sn field
 	 * 
 	 * @param int $start Row to begin from. Default 0 (begin from start)
