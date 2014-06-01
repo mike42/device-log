@@ -28,7 +28,6 @@ var PersonSoftwareRowView = Backbone.View.extend({
 	}
 });
 
-
 var PersonKeyRowView = Backbone.View.extend({
 	template : _.template($('#person-key-template-tr').html()),
 	tagName : 'tr',
@@ -270,8 +269,85 @@ var DeviceHistoryRecentRowView = Backbone.View.extend({
 	}
 });
 
-//overview-progress-tbody
-//overview-spare-tbody
+var DeviceSpareTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#overview-spare-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new DeviceSpareRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var DeviceSpareRowView = Backbone.View.extend({
+	template : _.template($('#overview-spare-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+var DeviceProgressTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#overview-progress-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new DeviceProgressRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var DeviceProgressRowView = Backbone.View.extend({
+	template : _.template($('#overview-progress-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
 
 var SoftwareTableView = Backbone.View.extend({
 	collection : null,
@@ -744,9 +820,6 @@ function doLoadOverview() {
 		}
 	});
 	
-	// TODO (below has unimplemented classes)
-	return;
-	
 	/* Get spare devices */
 	var spares = new device_collection();
 	spares.fetch({
@@ -776,8 +849,6 @@ function doLoadOverview() {
 			handleFailedRequest(response);
 		}
 	});
-	
-	
 }
 
 function doLoadDevices(page) {

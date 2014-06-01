@@ -64,9 +64,29 @@
     <% }); %>
 </script>
 
+<script type="text/template" id="overview-progress-tr">
+	<tr>
+		<td><a title="<%= _.escape(sn) %>" href="#device/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
+		<td><%= _.escape(device_type.name) %></td>
+		<td><%= _.escape(device_status.tag) %></td>
+		<td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname) %> <%= _.escape(person.surname) %> (<%= _.escape(person.code) %>)</a></td>
+		<td><%= yn(is_spare) %></td>
+		<td><%= yn(is_damaged) %></td>
+		<td><%= yn(is_bought) %></td>
+	</tr>
+</script>
+
+<script type="text/template" id="overview-spare-tr">
+	<tr>
+		<td><a title="<%= _.escape(sn) %>" href="#device/<%= _.escape(id) %>">#<%= _.escape(id) %></a></abbr></td>
+		<td><%= _.escape(device_type.name) %></td>
+		<td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname) %> <%= _.escape(person.surname) %> (<%= _.escape(person.code) %>)</a></td>
+	</tr>
+</script>
+
 <script type="text/template" id="device-template-tr">
 	<tr>
-		<td><a href="#device/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
+		<td><a title="<%= _.escape(sn) %>" href="#device/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
 		<td><%= _.escape(device_type.name) %></td>
 		<td><a href="#device/<%= _.escape(id) %>"><%= _.escape(sn) %></a></td>
 		<td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname) %> <%= _.escape(person.surname) %> (<%= _.escape(person.code) %>)</a></td>
@@ -738,28 +758,30 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 				<div id="overviewDetail" style="display: none;">
 					<div class="row">
 						<div class="col-sm-6">
-							<h4>In Progress</h4>
+							<h4><span class="glyphicon glyphicon-briefcase"></span> In Progress</h4>
 							<table class="table table-striped">
 								<thead>
 									<tr>
 										<th>ID</th>
 										<th>Type</th>
-										<th>Device Status</th>
 										<th>Owner</th>
+										<th>Status</th>
+										<th><abbr title="Spare">S</abbr></th>
+										<th><abbr title="Damaged">D</abbr></th>
+										<th><abbr title="Bought">B</abbr></th>
 									</tr>
 								</thead>
 								<tbody id="overview-progress-tbody"></tbody>
 							</table>
 						</div>
-						<div class="col-sm-6">	
-							<h4>Spares</h4>
+						<div class="col-sm-6">
+							<h4><span class="glyphicon glyphicon-transfer"></span> Spares</h4>
 							<table class="table table-striped">
 								<thead>
 									<tr>
 										<th>ID</th>
 										<th>Type</th>
-										<th>Serial</th>
-										<th>Allocated</th>
+										<th>Owner</th>
 									</tr>
 								</thead>
 								<tbody id="overview-spare-tbody"></tbody>
@@ -768,7 +790,7 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
-							<h4>Recent Device Updates</h4>
+							<h4><span class="glyphicon glyphicon-dashboard"></span> Recent Device Updates</h4>
 							<table class="table table-striped">
 								<thead>
 									<tr>

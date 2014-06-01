@@ -234,5 +234,14 @@ class device_controller {
 			return array('error' => 'Failed to list', 'code' => '500');
 		}
 	}
+	
+	public static function list_spares($page, $itemspp) {
+		return array();
+	}
+	
+	public static function list_in_progress($page, $itemspp) {
+		return array();
+	}
+	
 }
 ?>
