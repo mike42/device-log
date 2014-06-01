@@ -27,6 +27,7 @@ COMMENT = 'Person who has keys, devices and software';
 CREATE TABLE IF NOT EXISTS `device-log`.`device_status` (
   `id` INT NOT NULL AUTO_INCREMENT COMMENT 'Number for this status',
   `tag` VARCHAR(45) NOT NULL COMMENT 'Human-readable status code',
+  `progress_flag` int(1) NOT NULL DEFAULT '0' COMMENT '1 if the device is awaiting attention when in this status',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `tag_UNIQUE` (`tag` ASC))
 ENGINE = InnoDB
@@ -381,15 +382,15 @@ INSERT INTO `software_status` (`id`, `tag`) VALUES
 -- Dumping data for table `device_status`
 --
 
-INSERT INTO `device_status` (`id`, `tag`) VALUES
-(4, 'Awaiting Collection'),
-(3, 'Confiscated'),
-(2, 'In for repair'),
-(1, 'In Use'),
-(7, 'Scrapped'),
-(5, 'Sent for repair'),
-(6, 'Shelved'),
-(8, 'Lost / Stolen');
+INSERT INTO `device_status` (`id`, `tag`, `progress_flag`) VALUES
+(4, 'Awaiting Collection', 1),
+(3, 'Confiscated', 1),
+(2, 'In for repair', 1),
+(1, 'In Use', 0),
+(7, 'Scrapped', 0),
+(5, 'Sent for repair', 1),
+(6, 'Shelved', 0),
+(8, 'Lost / Stolen', 0);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

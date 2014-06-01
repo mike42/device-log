@@ -10,12 +10,13 @@ class device_status_model {
 	 */
 	private $tag;
 
+	/**
+	 * @var int progress_flag 1 if the device is awaiting attention when in this status
+	 */
+	private $progress_flag;
+
 	private $model_variables_changed; // Only variables which have been changed
 	private $model_variables_set; // All variables which have been set (initially or with a setter)
-
-	/* Child tables */
-	public $list_device;
-	public $list_device_history;
 
 	/* Sort clause to add when listing rows from this table */
 	const SORT_CLAUSE = " ORDER BY `device_status`.`tag`";
@@ -25,10 +26,6 @@ class device_status_model {
 	 */
 	public static function init() {
 		core::loadClass("database");
-
-		/* Child tables */
-		core::loadClass("device_model");
-		core::loadClass("device_history_model");
 	}
 
 	/**
@@ -40,6 +37,7 @@ class device_status_model {
 		/* Initialise everything as blank to avoid tripping up the permissions fitlers */
 		$this -> id = '';
 		$this -> tag = '';
+		$this -> progress_flag = '';
 
 		if(isset($fields['device_status.id'])) {
 			$this -> set_id($fields['device_status.id']);
@@ -47,10 +45,11 @@ class device_status_model {
 		if(isset($fields['device_status.tag'])) {
 			$this -> set_tag($fields['device_status.tag']);
 		}
+		if(isset($fields['device_status.progress_flag'])) {
+			$this -> set_progress_flag($fields['device_status.progress_flag']);
+		}
 
 		$this -> model_variables_changed = array();
-		$this -> list_device = array();
-		$this -> list_device_history = array();
 	}
 
 	/**
@@ -61,7 +60,8 @@ class device_status_model {
 	private function to_array() {
 		$values = array(
 			'id' => $this -> id,
-			'tag' => $this -> tag);
+			'tag' => $this -> tag,
+			'progress_flag' => $this -> progress_flag);
 		return $values;
 	}
 
@@ -83,16 +83,6 @@ class device_status_model {
 			}
 			$values[$field] = $everything[$field];
 		}
-
-		/* Add filtered versions of everything that's been loaded */
-		$values['device'] = array();
-		$values['device_history'] = array();
-		foreach($this -> list_device as $device) {
-			$values['device'][] = $device -> to_array_filtered($role);
-		}
-		foreach($this -> list_device_history as $device_history) {
-			$values['device_history'][] = $device_history -> to_array_filtered($role);
-		}
 		return $values;
 	}
 
@@ -105,7 +95,8 @@ class device_status_model {
 	private static function row_to_assoc(array $row) {
 		$values = array(
 			"device_status.id" => $row[0],
-			"device_status.tag" => $row[1]);
+			"device_status.tag" => $row[1],
+			"device_status.progress_flag" => $row[2]);
 		return $values;
 	}
 
@@ -159,6 +150,32 @@ class device_status_model {
 		$this -> tag = $tag;
 		$this -> model_variables_changed['tag'] = true;
 		$this -> model_variables_set['tag'] = true;
+	}
+
+	/**
+	 * Get progress_flag
+	 * 
+	 * @return int
+	 */
+	public function get_progress_flag() {
+		if(!isset($this -> model_variables_set['progress_flag'])) {
+			throw new Exception("device_status.progress_flag has not been initialised.");
+		}
+		return $this -> progress_flag;
+	}
+
+	/**
+	 * Set progress_flag
+	 * 
+	 * @param int $progress_flag
+	 */
+	public function set_progress_flag($progress_flag) {
+		if(!is_numeric($progress_flag)) {
+			throw new Exception("device_status.progress_flag must be numeric");
+		}
+		$this -> progress_flag = $progress_flag;
+		$this -> model_variables_changed['progress_flag'] = true;
+		$this -> model_variables_set['progress_flag'] = true;
 	}
 
 	/**
@@ -220,32 +237,10 @@ class device_status_model {
 	}
 
 	/**
-	 * List associated rows from device table
-	 * 
-	 * @param int $start Row to begin from. Default 0 (begin from start)
-	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
-	 */
-	public function populate_list_device($start = 0, $limit = -1) {
-		$device_status_id = $this -> get_id();
-		$this -> list_device = device_model::list_by_device_status_id($device_status_id, $start, $limit);
-	}
-
-	/**
-	 * List associated rows from device_history table
-	 * 
-	 * @param int $start Row to begin from. Default 0 (begin from start)
-	 * @param int $limit Maximum number of rows to retrieve. Default -1 (no limit)
-	 */
-	public function populate_list_device_history($start = 0, $limit = -1) {
-		$device_status_id = $this -> get_id();
-		$this -> list_device_history = device_history_model::list_by_device_status_id($device_status_id, $start, $limit);
-	}
-
-	/**
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT `device_status`.`id`, `device_status`.`tag` FROM device_status  WHERE `device_status`.`id` = :id;");
+		$sth = database::$dbh -> prepare("SELECT `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag` FROM device_status  WHERE `device_status`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -259,7 +254,7 @@ class device_status_model {
 	 * Retrieve by tag_UNIQUE
 	 */
 	public static function get_by_tag_UNIQUE($tag) {
-		$sth = database::$dbh -> prepare("SELECT `device_status`.`id`, `device_status`.`tag` FROM device_status  WHERE `device_status`.`tag` = :tag;");
+		$sth = database::$dbh -> prepare("SELECT `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag` FROM device_status  WHERE `device_status`.`tag` = :tag;");
 		$sth -> execute(array('tag' => $tag));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -282,7 +277,7 @@ class device_status_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `device_status`.`id`, `device_status`.`tag` FROM `device_status` " . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag` FROM `device_status` " . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -306,7 +301,7 @@ class device_status_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `device_status`.`id`, `device_status`.`tag` FROM `device_status`  WHERE tag LIKE :search" . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag` FROM `device_status`  WHERE tag LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();

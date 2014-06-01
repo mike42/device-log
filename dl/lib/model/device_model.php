@@ -548,7 +548,7 @@ class device_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM device JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE `device`.`id` = :id;");
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM device JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE `device`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
@@ -571,7 +571,7 @@ class device_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id`" . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id`" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute();
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -595,7 +595,7 @@ class device_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device.person_id = :person_id" . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device.person_id = :person_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('person_id' => $person_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -619,7 +619,7 @@ class device_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device.device_status_id = :device_status_id" . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device.device_status_id = :device_status_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('device_status_id' => $device_status_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -643,7 +643,7 @@ class device_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device.device_type_id = :device_type_id" . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE device.device_type_id = :device_type_id" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('device_type_id' => $device_type_id));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -667,7 +667,7 @@ class device_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE sn LIKE :search" . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE sn LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -691,7 +691,7 @@ class device_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE mac_eth0 LIKE :search" . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE mac_eth0 LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
@@ -715,7 +715,7 @@ class device_model {
 		if($start >= 0 && $limit > 0) {
 			$ls = " LIMIT $start, $limit";
 		}
-		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE mac_wlan0 LIKE :search" . self::SORT_CLAUSE . $ls . ";");
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM `device` JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE mac_wlan0 LIKE :search" . self::SORT_CLAUSE . $ls . ";");
 		$sth -> execute(array('search' => "%".$search."%"));
 		$rows = $sth -> fetchAll(PDO::FETCH_NUM);
 		$ret = array();
