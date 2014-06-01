@@ -679,6 +679,63 @@ function doLoadPeople(page) {
 	});
 }
 
+function doLoadOverview() {
+	$('#overviewDetail').show();
+	$('tbody#overview-recent-tbody').empty();
+	$('tbody#overview-spare-tbody').empty();
+	$('tbody#overview-office-tbody').empty();
+	
+	// TODO (below has unimplemented classes)
+	return;
+	
+	/* Get recent device changes */
+	var recent = new device_history_collection();
+	recent.fetch({
+		url : '/dl/api/device_history/list_all/1/50',
+		success : function(results) {
+			var db = new DeviceHistoryRecentTableView({
+				collection : recent
+			});
+			db.render();
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+	
+	/* Get spare devices */
+	var spares = new device_collection();
+	spares.fetch({
+		url : '/dl/api/device/list_spares/1/150',
+		success : function(results) {
+			var db = new DeviceSpareTableView({
+				collection : spares
+			});
+			db.render();
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+	
+	/* Get devices being repaired */
+	var progress = new device_collection();
+	progress.fetch({
+		url : '/dl/api/device/list_in_progress/1/150',
+		success : function(results) {
+			var db = new DeviceProgressTableView({
+				collection : progress
+			});
+			db.render();
+		},
+		error : function(model, response) {
+			handleFailedRequest(response);
+		}
+	});
+	
+	
+}
+
 function doLoadDevices(page) {
 	var count = 100;
 	if (typeof page == "undefined") {
@@ -2129,7 +2186,8 @@ app_router.on('route:defaultRoute', function(actions) {
 		doLoadKeys();
 		break;
 	default:
-
+		// Overview
+		doLoadOverview();
 	}
 });
 
