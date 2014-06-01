@@ -77,6 +77,18 @@
 	</tr>
 </script>
 
+<script type="text/template" id="device-history-recent-tr">
+	<tr>
+		<td><%= _.escape(date) %></td>
+		<td><a href="#device/<%= _.escape(device.id) %>">#<%= _.escape(device.id) %></a></td>
+		<td><%= _.escape(device.device_type.name) %></td>
+		<td><a href="#device/<%= _.escape(device.id) %>"><%= _.escape(device.sn) %></a></td>
+		<td><a href="#person/<%= _.escape(device.person.id) %>"><%= _.escape(device.person.firstname) %> <%= _.escape(device.person.surname) %> (<%= _.escape(device.person.code) %>)</a></td>
+		<td><%= _.escape(change) %></td>
+		<td><%= _.escape(technician.name) %></td>
+	</tr>
+</script>
+
 <script type="text/template" id="software-template-tr">
 	<tr>
 		<td><a href="#licence/<%= _.escape(id) %>">#<%= _.escape(id) %></a></td>
@@ -213,7 +225,6 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 		<td><%= yn(is_bought) %></td>
 	</tr>
 </script>
-
 
 <script type="text/template" id="person-key-template-tr">
 	<tr>
@@ -724,49 +735,57 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 				<div class="bs-callout bs-callout-info">
 					Welcome to <b>Device Log</b>.
 				</div>
-				<div class="row" id="overviewDetail" style="display: none;">
-					<div class="col-sm-6">
-						<h4>Device Updates</h4>
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>Device ID</th>
-									<th>Type</th>
-									<th>Change</th>
-									<th>Technician</th>
-								</tr>
-							</thead>
-							<tbody id="overview-recent-tbody"></tbody>
-						</table>
+				<div id="overviewDetail" style="display: none;">
+					<div class="row">
+						<div class="col-sm-6">
+							<h4>In Progress</h4>
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Type</th>
+										<th>Device Status</th>
+										<th>Owner</th>
+									</tr>
+								</thead>
+								<tbody id="overview-progress-tbody"></tbody>
+							</table>
+						</div>
+						<div class="col-sm-6">	
+							<h4>Spares</h4>
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Type</th>
+										<th>Serial</th>
+										<th>Allocated</th>
+									</tr>
+								</thead>
+								<tbody id="overview-spare-tbody"></tbody>
+							</table>
+						</div>
 					</div>
-					<div class="col-sm-6">
-						<h4>Spares</h4>
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Type</th>
-									<th>Serial</th>
-									<th>Allocated</th>
-								</tr>
-							</thead>
-							<tbody id="overview-spare-tbody"></tbody>
-						</table>
-						<h4>In Progress</h4>
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Type</th>
-									<th>Device Status</th>
-									<th>Owner</th>
-								</tr>
-							</thead>
-							<tbody id="overview-office-tbody"></tbody>
-						</table>
-					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<h4>Recent Device Updates</h4>
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>ID</th>
+										<th>Type</th>
+										<th>Serial</th>
+										<th>Owner</th>
+										<th>Change</th>
+										<th>Technician</th>
+									</tr>
+								</thead>
+								<tbody id="overview-recent-tbody"></tbody>
+							</table>
+						</div>
+					</div>					
 				</div>
-				
 			</div>
 
 			<div class="tab-pane" id="people">

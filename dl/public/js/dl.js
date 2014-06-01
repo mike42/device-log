@@ -230,6 +230,49 @@ var DeviceTableView = Backbone.View.extend({
 	}
 });
 
+var DeviceHistoryRecentTableView = Backbone.View.extend({
+	collection : null,
+	el : 'tbody#overview-recent-tbody',
+
+	initialize : function(options) {
+		this.collection = options.collection;
+		this.collection.bind('reset', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+
+	render : function() {
+		var element = this.$el;
+		element.empty();
+
+		this.collection.forEach(function(item) {
+			var itemView = new DeviceHistoryRecentRowView({
+				model : item
+			});
+			element.append(itemView.template(itemView.model.toJSON()));
+		});
+		return this;
+	}
+});
+
+var DeviceHistoryRecentRowView = Backbone.View.extend({
+	template : _.template($('#device-history-recent-tr').html()),
+	tagName : 'tr',
+
+	initialize : function(options) {
+		_.bindAll(this, 'render');
+		this.model.bind('change', this.render);
+	},
+
+	render : function() {
+		this.$el.html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
+
+//overview-progress-tbody
+//overview-spare-tbody
+
 var SoftwareTableView = Backbone.View.extend({
 	collection : null,
 	el : 'tbody#software-tbody',
@@ -685,9 +728,7 @@ function doLoadOverview() {
 	$('tbody#overview-spare-tbody').empty();
 	$('tbody#overview-office-tbody').empty();
 	
-	// TODO (below has unimplemented classes)
-	return;
-	
+
 	/* Get recent device changes */
 	var recent = new device_history_collection();
 	recent.fetch({
@@ -702,6 +743,9 @@ function doLoadOverview() {
 			handleFailedRequest(response);
 		}
 	});
+	
+	// TODO (below has unimplemented classes)
+	return;
 	
 	/* Get spare devices */
 	var spares = new device_collection();
@@ -2185,9 +2229,11 @@ app_router.on('route:defaultRoute', function(actions) {
 		tabTo('keys');
 		doLoadKeys();
 		break;
+	case 'overview':
 	default:
-		// Overview
+		tabTo('overview');
 		doLoadOverview();
+		break;
 	}
 });
 

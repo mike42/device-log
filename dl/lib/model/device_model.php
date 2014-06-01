@@ -209,9 +209,10 @@ class device_model {
 			"person.surname" => $row[15],
 			"device_status.id" => $row[16],
 			"device_status.tag" => $row[17],
-			"device_type.id" => $row[18],
-			"device_type.name" => $row[19],
-			"device_type.model_no" => $row[20]);
+			"device_status.progress_flag" => $row[18],
+			"device_type.id" => $row[19],
+			"device_type.name" => $row[20],
+			"device_type.model_no" => $row[21]);
 		return $values;
 	}
 
