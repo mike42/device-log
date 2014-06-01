@@ -724,6 +724,49 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 				<div class="bs-callout bs-callout-info">
 					Welcome to <b>Device Log</b>.
 				</div>
+				<div class="row" id="overviewDetail" style="display:none">
+					<div class="col-sm-6">
+						<h4>Device Updates</h4>
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Device ID</th>
+									<th>Type</th>
+									<th>Change</th>
+									<th>Technician</th>
+								</tr>
+							</thead>
+							<tbody id="overview-recent-tbody"></tbody>
+						</table>
+					</div>
+					<div class="col-sm-6">
+						<h4>Spares</h4>
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Type</th>
+									<th>Serial</th>
+									<th>Allocated</th>
+								</tr>
+							</thead>
+							<tbody id="overview-spare-tbody"></tbody>
+						</table>
+						<h4>In the Office</h4>
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Type</th>
+									<th>Device Status</th>
+									<th>Owner</th>
+								</tr>
+							</thead>
+							<tbody id="overview-office-tbody"></tbody>
+						</table>
+					</div>
+				</div>
+				
 			</div>
 
 			<div class="tab-pane" id="people">
