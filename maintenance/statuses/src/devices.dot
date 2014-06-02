@@ -1,7 +1,7 @@
 digraph G {
 	graph [overlap=false];
 	label="Device Workflow";
-	node [color=white];
+	node [style=filled,fillcolor=white];
 
 	shelf [label="Shelved"];
 	lost [label="Lost"];
