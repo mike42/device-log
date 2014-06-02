@@ -11,7 +11,7 @@
 <polygon fill="white" stroke="white" points="-4,5 -4,-394 493,-394 493,5 -4,5"/>
 <text text-anchor="middle" x="244" y="-8.4" font-family="Times Roman,serif" font-size="14.00">Device Workflow</text>
 <g id="graph2" class="cluster"><title>cluster0</title>
-<polygon fill="#f2f2f2" stroke="#f2f2f2" points="120,-89 120,-382 398,-382 398,-89 120,-89"/>
+<polygon fill="#f2f2f2" stroke="black" points="120,-89 120,-382 398,-382 398,-89 120,-89"/>
 <text text-anchor="middle" x="259" y="-365.4" font-family="Times Roman,serif" font-size="14.00">In Progress</text>
 </g>
 <!-- shelf -->

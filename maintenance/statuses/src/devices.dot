@@ -1,7 +1,7 @@
 digraph G {
 	graph [overlap=false];
 	label="Device Workflow";
-	node [style=filled,fillcolor=white];
+	node [style=filled, fillcolor=white];
 
 	shelf [label="Shelved"];
 	lost [label="Lost"];
@@ -11,7 +11,7 @@ digraph G {
 
 	subgraph cluster0 {
 		style=filled;
-		color=grey95
+		fillcolor=grey95
 		ac [label="Awaiting\nCollection"];
 		con [label="Confiscated"];
 		in [label="In for\nRepair"];

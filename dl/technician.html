@@ -928,6 +928,10 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 			<div class="tab-pane" id="software">
 				<div id="softwareList">
 					<div class="btn-group" style="float: right; padding-top: 10px;">
+						<button onClick="$('#modalSoftwareHelp').modal()" type="button"
+							class="btn btn-default">
+							<span class="glyphicon glyphicon-info-sign"></span>
+						</button>
 						<button onClick="doLoadSoftware()" type="button"
 							class="btn btn-default">
 							<span class="glyphicon glyphicon-refresh"></span>
@@ -978,6 +982,10 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 			<div class="tab-pane" id="keys">
 				<div id="keyList">
 					<div class="btn-group" style="float: right; padding-top: 10px;">
+						<button onClick="$('#modalKeyHelp').modal()" type="button"
+							class="btn btn-default">
+							<span class="glyphicon glyphicon-info-sign"></span>
+						</button>
 						<button onClick="doLoadKeys()" type="button"
 							class="btn btn-default">
 							<span class="glyphicon glyphicon-refresh"></span>
@@ -1392,7 +1400,60 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 					<h4>Confiscated devices</h4>
 					<p>A confiscated device automatically changes to "awaiting collection" at a scheduled time.</p>
 					<h4>Deleting a device</h4>
-					<p>You can never really delete a device, since its history is an audit trail. If it is lost or stolen, you mark as <b>Lost</b>. If it is damaged beyond repair, you migth mark it as <b>Scrapped</b>. When a person buys a device and leaves, the device is marked <b>bought</b>, and the person is marked <b>inactive</b>.</b></p>
+					<p>You should rarely delete a device, since its history is an audit trail. If it is lost or stolen, you mark as <b>Lost</b>. If it is damaged beyond repair, you might mark it as <b>Scrapped</b>. When a person buys a device and leaves, the device is marked <b>bought</b>, and the person is marked <b>inactive</b>.</p>
+					<p>If you click the device, it will have a <span class="glyphicon glyphicon-trash"></span> delete button which can be used if you're sure you don't need to keep a record of it.</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="modalSoftwareHelp" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Managing Software</h4>
+				</div>
+				<div class="modal-body">
+					<p>Software represents a licence to use a program. Each time a licenced program is installed, a software entry is added for the user. This allows the IT Staff to track the number of licenses in use.</p>
+					<h4>Device workflow</h4>
+					<p>Software is simply approved, installed and removed, but never repaired.</p>
+					
+					<div style="text-align: center">
+					<img src="public/diagram/software.svg" width="60%"/>
+					</div>
+					<h4>Which device?</h4>
+					<p>The device which the software is installed on is not tracked, as the right to use it is allocated to the person. App codes, for example, can be installed on any number of iPads without IT intervention. If the person changes laptops with a piece of software, their old one must have the software uninstalled, and the new one should have it installed.</p>
+					<h4>Deleting software</h4>
+					<p>Once software is removed, a record of the past installation may not be needed. If you click the edit button for the device, it will have a <span class="glyphicon glyphicon-trash"></span> delete button which can be used to remove old entries.</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+		<div class="modal fade" id="modalKeyHelp" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Managing Keys</h4>
+				</div>
+				<div class="modal-body">
+					<p>Keys are physical keys allocated to staff for opening doors. They have only two basic properties: a type and a serial number.</p>
+					<h4>Key workflow</h4>
+					<p>Keys have only a few states, as they are only used by staff, and never sent off-site.</p>
+					<div style="text-align: center">
+						<img src="public/diagram/keys.svg" width="70%"/>
+					</div>
+					<h4>Deleting a key</h4>
+					<p>You should rarely delete a key, since its history is an audit trail. If it is lost or stolen, you mark as <b>Lost / Stolen</b>. If it is damaged beyond repair, you might mark it as <b>Scrapped</b>.</p>
+					<p>If you click the edit button for the key, it will have a <span class="glyphicon glyphicon-trash"></span> delete button which can be used if you've added it in error.</p>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
