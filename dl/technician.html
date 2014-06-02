@@ -70,9 +70,6 @@
 		<td><%= _.escape(device_type.name) %></td>
 		<td><%= _.escape(device_status.tag) %></td>
 		<td><a href="#person/<%= _.escape(person.id) %>"><%= _.escape(person.firstname) %> <%= _.escape(person.surname) %> (<%= _.escape(person.code) %>)</a></td>
-		<td><%= yn(is_spare) %></td>
-		<td><%= yn(is_damaged) %></td>
-		<td><%= yn(is_bought) %></td>
 	</tr>
 </script>
 
@@ -757,24 +754,21 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 				</div>
 				<div id="overviewDetail" style="display: none;">
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-7">
 							<h4><span class="glyphicon glyphicon-briefcase"></span> In Progress</h4>
 							<table class="table table-striped">
 								<thead>
 									<tr>
 										<th>ID</th>
 										<th>Type</th>
-										<th>Owner</th>
 										<th>Status</th>
-										<th><abbr title="Spare">S</abbr></th>
-										<th><abbr title="Damaged">D</abbr></th>
-										<th><abbr title="Bought">B</abbr></th>
+										<th>Owner</th>
 									</tr>
 								</thead>
 								<tbody id="overview-progress-tbody"></tbody>
 							</table>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-5">
 							<h4><span class="glyphicon glyphicon-transfer"></span> Spares</h4>
 							<table class="table table-striped">
 								<thead>
