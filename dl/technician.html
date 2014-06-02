@@ -870,6 +870,10 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 										types</a></li>
 							</ul>
 						</div>
+						<button onClick="$('#modalDeviceHelp').modal()" type="button"
+							class="btn btn-default">
+							<span class="glyphicon glyphicon-info-sign"></span>
+						</button>
 						<button onClick="doLoadDevices()" type="button"
 							class="btn btn-default">
 							<span class="glyphicon glyphicon-refresh"></span>
@@ -923,6 +927,12 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 
 			<div class="tab-pane" id="software">
 				<div id="softwareList">
+					<div class="btn-group" style="float: right; padding-top: 10px;">
+						<button onClick="doLoadSoftware()" type="button"
+							class="btn btn-default">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</div>
 					<p style="padding-top: 10px">Quick Search:</p>
 					<form class="col-sm-6">
 						<div class="input-group">
@@ -967,6 +977,12 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 
 			<div class="tab-pane" id="keys">
 				<div id="keyList">
+					<div class="btn-group" style="float: right; padding-top: 10px;">
+						<button onClick="doLoadKeys()" type="button"
+							class="btn btn-default">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</div>
 					<p style="padding-top: 10px">Quick Search:</p>
 					<form class="col-sm-6">
 						<div class="input-group">
@@ -1353,6 +1369,30 @@ Spare &rarr; <td><%= yn(is_spare) %></td>
 						</thead>
 						<tbody id="device-type-tbody"></tbody>
 					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="modalDeviceHelp" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Managing Devices</h4>
+				</div>
+				<div class="modal-body">
+					<p>Devices have some basic properties, such as MAC addresses, serial numbers and a model. Other properties change over time, such as the person who uses the device, or whether it is damaged.</p>
+					<h4>Device workflow</h4>
+					<p>This workflow shows how a device status would typically change during processes:</p>
+					<img src="public/diagram/devices.svg" width="100%"/>
+					<h4>Confiscated devices</h4>
+					<p>A confiscated device automatically changes to "awaiting collection" at a scheduled time.</p>
+					<h4>Deleting a device</h4>
+					<p>You can never really delete a device, since its history is an audit trail. If it is lost or stolen, you mark as <b>Lost</b>. If it is damaged beyond repair, you migth mark it as <b>Scrapped</b>. When a person buys a device and leaves, the device is marked <b>bought</b>, and the person is marked <b>inactive</b>.</b></p>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
