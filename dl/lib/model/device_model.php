@@ -549,7 +549,7 @@ class device_model {
 	 * Retrieve by primary key
 	 */
 	public static function get($id) {
-		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM device JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE `device`.`id` = :id;");
+		$sth = database::$dbh -> prepare("SELECT `device`.`id`, `device`.`is_spare`, `device`.`is_damaged`, `device`.`sn`, `device`.`mac_eth0`, `device`.`mac_wlan0`, `device`.`is_bought`, `device`.`person_id`, `device`.`device_status_id`, `device`.`device_type_id`, `person`.`id`, `person`.`code`, `person`.`is_staff`, `person`.`is_active`, `person`.`firstname`, `person`.`surname`, `device_status`.`id`, `device_status`.`tag`, `device_status`.`progress_flag`, `device_type`.`id`, `device_type`.`name`, `device_type`.`model_no` FROM device JOIN `person` ON `device`.`person_id` = `person`.`id` JOIN `device_status` ON `device`.`device_status_id` = `device_status`.`id` JOIN `device_type` ON `device`.`device_type_id` = `device_type`.`id` WHERE `device`.`id` = :id;");
 		$sth -> execute(array('id' => $id));
 		$row = $sth -> fetch(PDO::FETCH_NUM);
 		if($row === false){
