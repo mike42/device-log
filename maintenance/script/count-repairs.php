@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * Count the number of devices which have been handed in for repair this week
