@@ -4,9 +4,11 @@ source=src
 clutter=.
 
 default:
-	for file in devices software keys; do \
-		neato -Tps2 $(source)/$$file.dot -o $(clutter)/$$file.ps && \
-		ps2pdf $(clutter)/$$file.ps $(clutter)/$$file.pdf; \
+	for file in devices; do \
+		dot -Tsvg $(source)/$$file.dot -o $(clutter)/$$file.svg; \
+	done
+	for file in software keys; do \
+		neato -Tsvg $(source)/$$file.dot -o $(clutter)/$$file.svg; \
 	done
 	rm -f $(clutter)/*.ps
 

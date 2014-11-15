@@ -2031,6 +2031,8 @@ function logIncidentSave(receipt) {
 			$('#logIncidentStatus').show(300);
 		}
 	});
+	
+	return false;
 }
 
 /* Navigation */

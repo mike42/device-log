@@ -1,22 +1,37 @@
 digraph G {
-graph [overlap=false];
-ac [label="Awaiting\nCollection"];
-con [label="Confiscated"];
-in [label="In for\nRepair"];
-out [label="Out for\nRepair"];
-use [label="In Use"];
-scrap [label="Scrapped"];
-shelf [label="Shelved"];
-lost [label="Lost"];
+	graph [overlap=false];
+	label="Device Workflow";
+	node [style=filled, fillcolor=white];
 
-use -> lost;
-use -> in -> out -> ac -> use;
-use -> con -> ac;
-con -> use;
-in -> shelf;
-in -> scrap;
-in -> ac;
-shelf -> in;
-shelf -> scrap;
+	shelf [label="Shelved"];
+	lost [label="Lost"];
+	use [label="In Use"];
+	scrap [label="Scrapped"];
+
+
+	subgraph cluster0 {
+		style=filled;
+		fillcolor=grey95
+		ac [label="Awaiting\nCollection"];
+		con [label="Confiscated"];
+		in [label="In for\nRepair"];
+		out [label="Out for\nRepair"];
+		con -> ac;
+		in -> out -> ac;
+		out -> in;
+		label="In Progress";
+	}
+
+	use -> lost;
+	lost -> use;
+	use -> in;
+	ac -> use;
+	use -> con;
+	con -> use;
+	in -> shelf;
+	in -> scrap;
+	in -> ac;
+	shelf -> in;
+	shelf -> scrap;
 
 }

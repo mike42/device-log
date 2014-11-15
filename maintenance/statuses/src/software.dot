@@ -1,8 +1,10 @@
 digraph G {
-    graph [overlap=false];
-    app [label="Approved for\ninstall"];
-    in [label="Installed"];
-    rm [label="Removed"];
-    app -> in -> rm -> app;
+	graph [overlap=false];
+	label="Software Workflow";
+
+	app [label="Approved for\ninstall"];
+	in [label="Installed"];
+	rm [label="Removed"];
+	app -> in -> rm -> app;
 }
 

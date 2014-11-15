@@ -1,14 +1,16 @@
 digraph G {
-    graph [overlap=false];
-    ac [label="Awaiting\nCollection"];
-    use [label="In Use"];
-    scrap [label="Scrapped"];
-    lost [label="Lost / Stolen"];
-    in [label="In for\nMaintenance"];
-    ac -> use;
-    use -> lost;
-    use -> scrap;
-    in -> ac;
-    use -> in;
+	graph [overlap=false];
+	label="Key Workflow";
+
+	ac [label="Awaiting\nCollection"];
+	use [label="In Use"];
+	scrap [label="Scrapped"];
+	lost [label="Lost / Stolen"];
+	in [label="In for\nMaintenance"];
+	ac -> use;
+	use -> lost;
+	use -> scrap;
+	in -> ac;
+	use -> in;
 }
 
