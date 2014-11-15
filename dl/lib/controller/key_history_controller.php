@@ -66,7 +66,7 @@ class key_history_controller {
 					$doorkey -> update();
 					break;
 				case 'status':
-					$doorkey -> set_status_id($key_history -> get_status_id());
+					$doorkey -> set_key_status_id($key_history -> get_key_status_id());
 					$doorkey -> update();
 					break;
 				case 'spare':
