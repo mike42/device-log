@@ -1230,28 +1230,32 @@ $('#submitAddNew')
 var personSearch = new Bloodhound({
 	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
 	queryTokenizer : Bloodhound.tokenizers.whitespace,
-	remote : '/dl/api/person/search/1/15?q=%QUERY'
+	remote : '/dl/api/person/search/1/15?q=%QUERY',
+	limit: 15
 });
 personSearch.initialize();
 
 var deviceSearch = new Bloodhound({
 	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
 	queryTokenizer : Bloodhound.tokenizers.whitespace,
-	remote : '/dl/api/device/search/1/15?q=%QUERY'
+	remote : '/dl/api/device/search/1/15?q=%QUERY',
+	limit: 15
 });
 deviceSearch.initialize();
 
 var softwareSearch = new Bloodhound({
 	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
 	queryTokenizer : Bloodhound.tokenizers.whitespace,
-	remote : '/dl/api/software/search/1/15?q=%QUERY'
+	remote : '/dl/api/software/search/1/15?q=%QUERY',
+	limit: 15
 });
 softwareSearch.initialize();
 
 var keySearch = new Bloodhound({
 	datumTokenizer : Bloodhound.tokenizers.obj.whitespace('value'),
 	queryTokenizer : Bloodhound.tokenizers.whitespace,
-	remote : '/dl/api/doorkey/search/1/15?q=%QUERY'
+	remote : '/dl/api/doorkey/search/1/15?q=%QUERY',
+	limit: 15
 });
 keySearch.initialize();
 
