@@ -14,4 +14,4 @@ $ret = array();
 foreach($devices as $device) {
 	$ret[] = $device -> to_array_filtered('user');
 }
-echo json_encode($ret);
+echo json_encode($ret) . "\n";
